@@ -11,60 +11,66 @@ function getIndex(list, id) {
 
 var  messageApi = Vue.resource('/devices/control/db{/id}');
 
-Vue.component('device-form', {
-    props: ['devices', 'deviceAttr'],
+Vue.component('control-form', {
+    props: ['controls', 'deviceAttr'],
     data: function() {
         return {
             name: '',
-            type: '',
-            gpio: '',
+            gpio_number: '',
             creation_date: '',
+            signal: '',
+            pwm_status: '',
             id: ''
         }
     },
     watch: {
       deviceAttr: function(newVal, oldVal) {
          this.name = newVal.name;
-         this.type = newVal.type;
-         this.gpio = newVal.gpio;
+         this.gpio_number = newVal.gpio_number;
          this.creation_date = newVal.creation_date;
+         this.signal = newVal.signal;
+         this.pwm_status = newVal.pwm_status;
          this.id = newVal.id;
       }
     },
     template:
         '<div>'+
-            '<input type="text" placeholder=" type " v-model="type" />' +
             '<input type="text" placeholder=" name " v-model="name" />' +
-            '<input type="text" placeholder=" gpio " v-model="gpio" />' +
+            '<input type="text" placeholder=" gpio_number " v-model="gpio_number" />' +
+            '<input type="text" placeholder=" signal " v-model="signal" />' +
+            '<input type="text" placeholder=" pwm_status " v-model="pwm_status" />' +
             '<input type="button" value="Save" @click="save" />' +
         '</div>',
     methods: {
         save: function() {
-            var device = {
-                gpio: this.gpio,
-                type: this.type,
+            var control = {
+                gpio_number: this.gpio_number,
+                signal: this.signal,
+                pwm_status: this.pwm_status,
                 name: this.name
              };
 
             if(this.id) {
-                messageApi.update({id: this.id}, device).then(result =>
+                messageApi.update({id: this.id}, control).then(result =>
                     result.json().then(data => {
-                        var index = getIndex(this.devices, data.id);
-                        this.devices.splice(index, 1, data);
+                        var index = getIndex(this.controls, data.id);
+                        this.controls.splice(index, 1, data);
                         this.name = ''
-                        this.type = ''
-                        this.gpio = ''
+                        this.signal = ''
+                        this.pwm_status = ''
+                        this.gpio_number = ''
                         this.id = ''
                         this.creation_date = ''
                     })
                 )
             } else {
-                messageApi.save({}, device).then(result =>
+                messageApi.save({}, control).then(result =>
                                 result.json().then(data => {
-                                    this.devices.push(data);
+                                    this.controls.push(data);
                                     this.name = ''
-                                    this.type = ''
-                                    this.gpio = ''
+                                    this.pwm_status = ''
+                                    this.signal = ''
+                                    this.gpio_number = ''
                                 })
                             )
             }
@@ -73,12 +79,12 @@ Vue.component('device-form', {
     }
 });
 
-Vue.component('device-row', {
-    props: ['device', 'editMethod', 'devices'],
+Vue.component('control-row', {
+    props: ['control', 'editMethod', 'controls'],
     template:
         '<div>'+
-            '<i>(ID: {{ device.id }})</i>' +
-                ' NAME: {{ device.name }}, TYPE: {{ device.type }}, GPIO: {{ device.gpio }}, DATE: {{ device.creation_date }}'+
+            '<i>(ID: {{ control.id }})</i>' +
+                ' NAME: {{ control.name }}, GPIO_NUMBER : {{ control.gpio_number }}, SIGNAL : {{ control.signal }}, PWM : {{ control.pwm_status }}, DATE: {{ control.creation_date }}'+
             '<span style="position: absolute; right: 0">' +
                 '<input type="button" value="Edit" @click="edit" />' +
                 '<input type="button" value="X" @click="del" />' +
@@ -86,41 +92,41 @@ Vue.component('device-row', {
         '</div>',
     methods: {
         edit: function() {
-            this.editMethod(this.device);
+            this.editMethod(this.control);
         },
 
         del: function() {
-            messageApi.remove({id: this.device.id}).then(result => {
+            messageApi.remove({id: this.control.id}).then(result => {
                 if (result.ok) {
-                    this.devices.splice(this.devices.indexOf(this.device), 1)
+                    this.controls.splice(this.controls.indexOf(this.control), 1)
                 }
             })
         }
     }
 });
 
-Vue.component('devices-list', {
-    props: ['devices'],
+Vue.component('controls-list', {
+    props: ['controls'],
     data: function() {
         return {
-            device: null
+            control: null
         }
     },
     template:
     '<div style="position: relative; width: 600px;">'
-        +'<device-form :devices="devices" :deviceAttr="device" />'
-        +'<device-row v-for="device in devices" :key="device.id" :device="device" :editMethod="editMethod" :devices="devices" />'+
+        +'<control-form :controls="controls" :deviceAttr="control" />'
+        +'<control-row v-for="control in controls" :key="control.id" :control="control" :editMethod="editMethod" :controls="controls" />'+
     '</div>',
     created: function() {
         messageApi.get().then(result =>
             result.json().then(data =>
-                data.forEach(device => this.devices.push(device))
+                data.forEach(control => this.controls.push(control))
             )
         )
     },
     methods: {
-        editMethod: function(device) {
-            this.device = device;
+        editMethod: function(control) {
+            this.control = control;
 
         }
     }
@@ -128,8 +134,8 @@ Vue.component('devices-list', {
 
 var app = new Vue({
     el: '#app',
-    template: '<devices-list :devices="devices" />',
+    template: '<controls-list :controls="controls" />',
     data: {
-        devices: []
+        controls: []
     }
 });

@@ -5,24 +5,44 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "controls")
-@ToString(of = {"id", "name", "gpioNumber", "state", "creationDate"})
+@Table(name = "outputs")
+@ToString(of = {"id", "name", "gpioNumber", "creationDate", "signal", "pwmStatus"})
 @EqualsAndHashCode(of = {"id"})
-public class Control {
+public class Output implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "gpio_number")
     private Integer gpioNumber;
-    private String name;
-    private Integer state;
+
+    @Column(name = "signal")
+    private Integer signal;
+
+    @Column(name = "pwm_status")
+    private Boolean pwmStatus;
 
     @Column(updatable = false, name = "creation_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime creationDate;
+
+    public Output() {
+    }
+
+    public Output(String name, Integer gpioNumber, Integer signal, Boolean pwmStatus) {
+        this.name = name;
+        this.gpioNumber = gpioNumber;
+        this.signal = signal;
+        this.pwmStatus = pwmStatus;
+        this.creationDate = LocalDateTime.now();
+    }
 
     public Integer getId() {
         return id;
@@ -48,12 +68,12 @@ public class Control {
         this.name = name;
     }
 
-    public Integer getState() {
-        return state;
+    public Integer getSignal() {
+        return signal;
     }
 
-    public void setState(Integer state) {
-        this.state = state;
+    public void setSignal(Integer signal) {
+        this.signal = signal;
     }
 
     public LocalDateTime getCreationDate() {
@@ -62,5 +82,13 @@ public class Control {
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Boolean getPwmStatus() {
+        return pwmStatus;
+    }
+
+    public void setPwmStatus(Boolean pwmStatus) {
+        this.pwmStatus = pwmStatus;
     }
 }
