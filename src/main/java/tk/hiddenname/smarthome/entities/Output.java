@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "outputs")
-@ToString(of = {"id", "name", "gpioNumber", "creationDate", "signal", "pwmStatus"})
+@ToString(of = {"id", "name", "gpioNumber", "creationDate", "signal", "type"})
 @EqualsAndHashCode(of = {"id"})
 public class Output implements Serializable {
     @Id
@@ -26,23 +26,12 @@ public class Output implements Serializable {
     @Column(name = "signal")
     private Integer signal;
 
-    @Column(name = "pwm_status")
-    private Boolean pwmStatus;
+    @Column(name = "type")
+    private String type;
 
     @Column(updatable = false, name = "creation_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime creationDate;
-
-    public Output() {
-    }
-
-    public Output(String name, Integer gpioNumber, Integer signal, Boolean pwmStatus) {
-        this.name = name;
-        this.gpioNumber = gpioNumber;
-        this.signal = signal;
-        this.pwmStatus = pwmStatus;
-        this.creationDate = LocalDateTime.now();
-    }
 
     public Integer getId() {
         return id;
@@ -84,11 +73,11 @@ public class Output implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public Boolean getPwmStatus() {
-        return pwmStatus;
+    public String getType() {
+        return type;
     }
 
-    public void setPwmStatus(Boolean pwmStatus) {
-        this.pwmStatus = pwmStatus;
+    public void setType(String type) {
+        this.type = type;
     }
 }
