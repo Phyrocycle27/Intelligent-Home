@@ -3,8 +3,10 @@ package tk.hiddenname.smarthome.gpio;
 import com.pi4j.io.gpio.*;
 import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entities.Output;
+import tk.hiddenname.smarthome.exception.OutputNotFoundException;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,21 +31,29 @@ public class Outputs {
         controller = GpioFactory.getInstance();
     }
 
+    @PreDestroy
+    public void destroy() {
+        controller.shutdown();
+    }
+
     public void add(Output output) {
         switch (output.getType()) {
             case PWM:
+                System.out.println("pwm gpio added");
                 pwmOutputs.put(
                         output.getId(),
                         controller.provisionPwmOutputPin(
                                 getPinByGPIONumber(output.getGpioNumber()), output.getName(), 0));
                 break;
             case DIGITAL:
+                System.out.println("digital gpio added");
                 digitalOutputs.put(
                         output.getId(),
                         controller.provisionDigitalOutputPin(
                                 getPinByGPIONumber(output.getGpioNumber()), output.getName(), PinState.LOW));
                 break;
             case ANALOG:
+                System.out.println("analog gpio added");
                 analogOutputs.put(
                         output.getId(),
                         controller.provisionAnalogOutputPin(
@@ -52,32 +62,31 @@ public class Outputs {
         }
     }
 
-    public Object get(Integer id) {
+    private Map getMap(Integer id) throws OutputNotFoundException{
         if (analogOutputs.containsKey(id)) {
-            return analogOutputs.get(id);
+            return analogOutputs;
         } else if (digitalOutputs.containsKey(id)) {
-            return digitalOutputs.get(id);
-        } else return pwmOutputs.getOrDefault(id, null);
+            return digitalOutputs;
+        } else if (pwmOutputs.containsKey(id)) {
+            return pwmOutputs;
+        } else throw new OutputNotFoundException(id);
     }
 
-    private GpioPinOutput createOutput(Output output) {
-        switch (output.getType()) {
-            case PWM:
-                return controller.provisionPwmOutputPin(
-                        getPinByGPIONumber(output.getGpioNumber()), output.getName(), 0);
-            case DIGITAL:
-                return controller.provisionDigitalOutputPin(
-                        getPinByGPIONumber(output.getGpioNumber()), output.getName(), PinState.LOW);
-            case ANALOG:
-                return controller.provisionAnalogOutputPin(
-                        getPinByGPIONumber(output.getGpioNumber()), output.getName(), 0.0);
-            default:
-                return null;
-        }
+    public Object get(Integer id) throws OutputNotFoundException{
+        return getMap(id).get(id);
     }
 
-    private Pin getPinByGPIONumber(int gpioNumber) {
-        switch (gpioNumber) {
+    public void delete(Integer id) throws OutputNotFoundException {
+        getMap(id).remove(id);
+    }
+
+    public void replace(Integer id, Output output) throws OutputNotFoundException {
+        delete(id);
+        add(output);
+    }
+
+    private Pin getPinByGPIONumber(int pinNumber) {
+        switch (pinNumber) {
             case 2:
                 return RaspiPin.GPIO_08;
             case 3:

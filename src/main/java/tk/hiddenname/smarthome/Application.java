@@ -3,13 +3,23 @@ package tk.hiddenname.smarthome;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import tk.hiddenname.smarthome.entities.Output;
+import tk.hiddenname.smarthome.gpio.Outputs;
+import tk.hiddenname.smarthome.repository.OutputRepository;
 
 @SpringBootApplication
 public class Application {
 
     public static void main(String[] args) {
-        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-        SpringApplication.run(Application.class);
+        ApplicationContext ctx = SpringApplication.run(Application.class);
+
+        Outputs outputs = ctx.getBean(Outputs.class);
+        OutputRepository repo = ctx.getBean(OutputRepository.class);
+
+        System.out.println("----------------------------------------------------");
+        for (Output output: repo.findAll()) {
+            System.out.println(" (*) Output found: " + output.toString());
+            outputs.add(output);
+        }
     }
 }
