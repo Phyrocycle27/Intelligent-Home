@@ -39,21 +39,21 @@ public class Outputs {
     public void add(Output output) {
         switch (output.getType()) {
             case PWM:
-                System.out.println("pwm gpio added");
+                System.out.println("pwm gpio add..");
                 pwmOutputs.put(
                         output.getId(),
                         controller.provisionPwmOutputPin(
                                 getPinByGPIONumber(output.getGpioNumber()), output.getName(), 0));
                 break;
             case DIGITAL:
-                System.out.println("digital gpio added");
+                System.out.println("digital gpio add...");
                 digitalOutputs.put(
                         output.getId(),
                         controller.provisionDigitalOutputPin(
                                 getPinByGPIONumber(output.getGpioNumber()), output.getName(), PinState.LOW));
                 break;
             case ANALOG:
-                System.out.println("analog gpio added");
+                System.out.println("analog gpio add...");
                 analogOutputs.put(
                         output.getId(),
                         controller.provisionAnalogOutputPin(
@@ -62,7 +62,7 @@ public class Outputs {
         }
     }
 
-    private Map getMap(Integer id) throws OutputNotFoundException{
+    private Map getMap(Integer id) throws OutputNotFoundException {
         if (analogOutputs.containsKey(id)) {
             return analogOutputs;
         } else if (digitalOutputs.containsKey(id)) {
@@ -72,7 +72,7 @@ public class Outputs {
         } else throw new OutputNotFoundException(id);
     }
 
-    public Object get(Integer id) throws OutputNotFoundException{
+    public Object get(Integer id) throws OutputNotFoundException {
         return getMap(id).get(id);
     }
 

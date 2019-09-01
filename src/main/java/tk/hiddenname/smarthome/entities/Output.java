@@ -5,14 +5,13 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "outputs")
 @ToString(of = {"id", "name", "gpioNumber", "creationDate", "signal", "type"})
 @EqualsAndHashCode(of = {"id"})
-public class Output implements Serializable {
+public class Output {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
