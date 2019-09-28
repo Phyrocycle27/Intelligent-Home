@@ -1,9 +1,8 @@
 package tk.hiddenname.smarthome.exception;
 
-public class OutputNotFoundException extends Exception{
-    private int outputId;
+public class OutputNotFoundException extends RuntimeException {
 
-    public OutputNotFoundException(int outputId) {
-        super(String.format("Output is not found with id : '%s'", outputId));
+    public OutputNotFoundException(String type, int id) {
+        super(String.format("Not found %s output with id '%d'", type, id));
     }
 }
