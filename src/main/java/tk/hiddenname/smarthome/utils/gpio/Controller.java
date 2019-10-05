@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.gpio;
+package tk.hiddenname.smarthome.utils.gpio;
 
 import com.pi4j.io.gpio.GpioPinAnalogOutput;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;

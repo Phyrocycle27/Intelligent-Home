@@ -5,9 +5,13 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tk.hiddenname.smarthome.entities.DigitalOutput;
+import tk.hiddenname.smarthome.controller.assembler.DigitalOutputResourceAssembler;
+import tk.hiddenname.smarthome.controller.assembler.StateResourceAssembler;
+import tk.hiddenname.smarthome.entity.output.DigitalOutput;
+import tk.hiddenname.smarthome.entity.State;
 import tk.hiddenname.smarthome.exception.OutputNotFoundException;
 import tk.hiddenname.smarthome.repository.DigitalOutputsRepository;
+import tk.hiddenname.smarthome.service.DigitalOutputService;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -19,21 +23,25 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/outputs/digital")
-class DigitalOutputRestController {
+public class DigitalOutputRestController {
 
-    private final String TYPE = "digital";
-    private final DigitalOutputsRepository repository;
+    private final String TYPE = "digital"; // Type of output which support the controller
+    private final DigitalOutputsRepository repository; // repository which connects postgresDB to our program
     private final DigitalOutputResourceAssembler assembler;
+    private final StateResourceAssembler stateAssembler;
+    private final DigitalOutputService service;
 
-    DigitalOutputRestController(DigitalOutputsRepository repository,
-                                DigitalOutputResourceAssembler assembler) {
+    public DigitalOutputRestController(DigitalOutputsRepository repository, DigitalOutputService service,
+                                       DigitalOutputResourceAssembler assembler, StateResourceAssembler stateAssembler) {
 
         this.repository = repository;
+        this.service = service;
         this.assembler = assembler;
+        this.stateAssembler = stateAssembler;
     }
 
     @GetMapping
-    Resources<Resource<DigitalOutput>> getAll() {
+    public Resources<Resource<DigitalOutput>> getAll() {
 
         List<Resource<DigitalOutput>> outputs = repository.findAll().stream()
                 .map(assembler::toResource)
@@ -44,7 +52,7 @@ class DigitalOutputRestController {
     }
 
     @GetMapping("/{id}")
-    Resource<DigitalOutput> getOne(@PathVariable Integer id) {
+    public Resource<DigitalOutput> getOne(@PathVariable Integer id) {
 
         return assembler.toResource(
                 repository.findById(id)
@@ -52,9 +60,10 @@ class DigitalOutputRestController {
     }
 
     @PostMapping
-    ResponseEntity<?> create(@RequestBody DigitalOutput newOutput) throws URISyntaxException {
+    public ResponseEntity<?> create(@RequestBody DigitalOutput newOutput) throws URISyntaxException {
 
         Resource<DigitalOutput> resource = assembler.toResource(repository.save(newOutput));
+        service.save(newOutput);
 
         return ResponseEntity
                 .created(new URI(resource.getId().expand().getHref()))
@@ -62,8 +71,8 @@ class DigitalOutputRestController {
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<?> replace(@RequestBody DigitalOutput newOutput,
-                              @PathVariable Integer id) throws URISyntaxException {
+    public ResponseEntity<?> replace(@RequestBody DigitalOutput newOutput,
+                                     @PathVariable Integer id) throws URISyntaxException {
 
         DigitalOutput updatedOutput = repository.findById(id)
                 .map(output -> {
@@ -74,7 +83,7 @@ class DigitalOutputRestController {
                     newOutput.setId(id);
                     return repository.save(newOutput);
                 });
-
+        service.update(newOutput, id);
         Resource<DigitalOutput> resource = assembler.toResource(updatedOutput);
 
         return ResponseEntity
@@ -83,10 +92,22 @@ class DigitalOutputRestController {
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<?> delete(@PathVariable Integer id) {
-
+    public ResponseEntity<?> delete(@PathVariable Integer id) {
         repository.deleteById(id);
+        service.delete(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    // Work with state
+
+    @GetMapping("/{id}/state")
+    public Resource<State> getState(@PathVariable Integer outputId) {
+
+        State state = new State(outputId, repository.findById(outputId).orElseThrow(
+                () -> new OutputNotFoundException(TYPE, outputId))
+                .getState());
+
+        return stateAssembler.toResource(state);
     }
 }

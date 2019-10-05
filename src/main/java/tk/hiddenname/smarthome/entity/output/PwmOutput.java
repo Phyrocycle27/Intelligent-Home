@@ -1,19 +1,15 @@
-package tk.hiddenname.smarthome.entities;
+package tk.hiddenname.smarthome.entity.output;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
+@Data
 @Entity
 @Table(name = "PWM_OUTPUTS")
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true, of = {"signal"})
 public class PwmOutput extends Output {
 
-    @Getter
-    @Setter
     private Integer signal;
 }

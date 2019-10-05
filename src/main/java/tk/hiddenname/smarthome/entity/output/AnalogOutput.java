@@ -1,9 +1,6 @@
-package tk.hiddenname.smarthome.entities;
+package tk.hiddenname.smarthome.entity.output;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -11,7 +8,7 @@ import javax.persistence.*;
 @Table(name = "ANALOG_OUTPUTS")
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true, of = {"signal"})
-public class AnalogOutput extends Output{
+public class AnalogOutput extends Output {
 
     @Getter
     @Setter
