@@ -107,7 +107,7 @@ public class DigitalOutputRestController {
         return stateAssembler.toResource(service.getState(outputId));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/")
     public ResponseEntity<?> setState(
             @PathVariable Integer id, @RequestParam Boolean newState) throws URISyntaxException {
 

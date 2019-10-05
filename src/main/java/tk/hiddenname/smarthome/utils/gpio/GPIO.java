@@ -11,7 +11,7 @@ public class GPIO {
 
     public static GpioPinDigitalOutput convert(DigitalOutput output) {
         return Application.getGpioFactory().provisionDigitalOutputPin(
-                getPinByGPIONumber(output.getGpioNumber()), output.getName(), PinState.getState(output.getState()));
+                getPinByGPIONumber(output.getGpioNumber()), output.getName(), PinState.LOW);
     }
 
     /*public static GpioPinAnalogOutput convert(AnalogOutput output) {
