@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tk.hiddenname.smarthome.controller.assembler.DigitalOutputResourceAssembler;
 import tk.hiddenname.smarthome.controller.assembler.StateResourceAssembler;
-import tk.hiddenname.smarthome.entity.output.DigitalOutput;
 import tk.hiddenname.smarthome.entity.State;
+import tk.hiddenname.smarthome.entity.output.DigitalOutput;
 import tk.hiddenname.smarthome.exception.OutputNotFoundException;
 import tk.hiddenname.smarthome.repository.DigitalOutputsRepository;
 import tk.hiddenname.smarthome.service.DigitalOutputService;
@@ -25,11 +25,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping("/outputs/digital")
 public class DigitalOutputRestController {
 
-    private final String TYPE = "digital"; // Type of output which support the controller
+    public static final String TYPE = "digital"; // Type of output which support the controller
     private final DigitalOutputsRepository repository; // repository which connects postgresDB to our program
     private final DigitalOutputResourceAssembler assembler;
-    private final StateResourceAssembler stateAssembler;
     private final DigitalOutputService service;
+    private final StateResourceAssembler stateAssembler;
 
     public DigitalOutputRestController(DigitalOutputsRepository repository, DigitalOutputService service,
                                        DigitalOutputResourceAssembler assembler, StateResourceAssembler stateAssembler) {
@@ -77,13 +77,14 @@ public class DigitalOutputRestController {
         DigitalOutput updatedOutput = repository.findById(id)
                 .map(output -> {
                     BeanUtils.copyProperties(newOutput, output, "id");
+                    service.update(newOutput, id);
                     return repository.save(output);
                 })
                 .orElseGet(() -> {
                     newOutput.setId(id);
+                    service.save(newOutput);
                     return repository.save(newOutput);
                 });
-        service.update(newOutput, id);
         Resource<DigitalOutput> resource = assembler.toResource(updatedOutput);
 
         return ResponseEntity
@@ -103,11 +104,17 @@ public class DigitalOutputRestController {
 
     @GetMapping("/{id}/state")
     public Resource<State> getState(@PathVariable Integer outputId) {
+        return stateAssembler.toResource(service.getState(outputId));
+    }
 
-        State state = new State(outputId, repository.findById(outputId).orElseThrow(
-                () -> new OutputNotFoundException(TYPE, outputId))
-                .getState());
+    @PutMapping("/{id}")
+    public ResponseEntity<?> setState(
+            @PathVariable Integer id, @RequestParam Boolean newState) throws URISyntaxException {
 
-        return stateAssembler.toResource(state);
+        Resource<State> resource = stateAssembler.toResource(service.setState(id, newState));
+
+        return ResponseEntity
+                .created(new URI(resource.getId().expand().getHref()))
+                .body(resource);
     }
 }
