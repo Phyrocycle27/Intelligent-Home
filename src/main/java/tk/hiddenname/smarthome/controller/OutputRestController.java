@@ -128,6 +128,7 @@ public class OutputRestController {
                     System.out.println("New output: "+ newOutput);
                     getDataService(newOutput.getType()).save(newOutput);
                     return repository.save(newOutput);*/
+
                 );
 
         System.out.println("Updated output is: " + updatedOutput);
