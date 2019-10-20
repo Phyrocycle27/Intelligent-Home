@@ -1,38 +1,60 @@
 package tk.hiddenname.smarthome;
 
-import com.pi4j.io.gpio.*;
-import com.pi4j.wiringpi.Gpio;
+import com.pi4j.io.gpio.GpioController;
+import com.pi4j.io.gpio.GpioFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import tk.hiddenname.smarthome.entity.output.DigitalOutput;
-import tk.hiddenname.smarthome.repository.DigitalOutputsRepository;
-import tk.hiddenname.smarthome.service.DigitalOutputServiceImpl;
+import tk.hiddenname.smarthome.entity.Output;
+import tk.hiddenname.smarthome.repository.OutputsRepository;
+import tk.hiddenname.smarthome.service.digital.DigitalOutputServiceImpl;
+import tk.hiddenname.smarthome.service.pwm.PwmOutputServiceImpl;
 import tk.hiddenname.smarthome.utils.gpio.GPIO;
 
 @SpringBootApplication
 public class Application {
 
-    private static final GpioController GPIO_FACTORY = GpioFactory.getInstance();
+    private static final GpioController GPIO_FACTORY;
+
+    static {
+        GPIO.setPwmRange(1024);
+        GPIO_FACTORY = GpioFactory.getInstance();
+    }
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext ctx =
-                SpringApplication.run(Application.class, args);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> Application.getGpioController().shutdown()));
 
-        Gpio.wiringPiSetup();
+        ConfigurableApplicationContext ctx = SpringApplication.run(Application.class, args);
 
-        // Digital outputs
+        OutputsRepository repo = ctx.getBean(OutputsRepository.class);
         {
-            DigitalOutputsRepository repo = ctx.getBean(DigitalOutputsRepository.class);
+            // Digital outputs
             DigitalOutputServiceImpl service = ctx.getBean(DigitalOutputServiceImpl.class);
 
-            for (DigitalOutput output : repo.findAll()) {
-                service.getMap().put(output.getId(), GPIO.convert(output));
+            for (Output output : repo.findByType("digital")) {
+                service.getMap().put(output.getOutputId(), GPIO.createDigitalPin(
+                        output.getGpio(),
+                        output.getName(),
+                        output.getReverse()
+                ));
+            }
+        }
+        {
+            // Pwm outputs
+            PwmOutputServiceImpl service = ctx.getBean(PwmOutputServiceImpl.class);
+
+            for (Output output : repo.findByType("pwm")) {
+                service.getMap().put(output.getOutputId(), GPIO.createPwmPin(
+                        output.getGpio(),
+                        output.getName(),
+                        output.getReverse()
+                ));
             }
         }
     }
 
-    public static GpioController getGpioFactory() {
+
+    public static GpioController getGpioController() {
         return GPIO_FACTORY;
     }
 }

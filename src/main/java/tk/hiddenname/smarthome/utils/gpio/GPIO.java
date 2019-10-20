@@ -1,26 +1,56 @@
 package tk.hiddenname.smarthome.utils.gpio;
 
-import com.pi4j.io.gpio.GpioPinDigitalOutput;
-import com.pi4j.io.gpio.Pin;
-import com.pi4j.io.gpio.PinState;
-import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.io.gpio.*;
+import com.pi4j.wiringpi.Gpio;
 import tk.hiddenname.smarthome.Application;
-import tk.hiddenname.smarthome.entity.output.DigitalOutput;
+import tk.hiddenname.smarthome.exception.OutputAlreadyExistException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GPIO {
 
-    public static GpioPinDigitalOutput convert(DigitalOutput output) {
-        return Application.getGpioFactory().provisionDigitalOutputPin(
-                getPinByGPIONumber(output.getGpioNumber()), output.getName(), PinState.LOW);
+    private static Integer pwmRange;
+    private static List<Integer> usedGpios = new ArrayList<>();
+
+    public static GpioPinDigitalOutput createDigitalPin(Integer gpio, String name, Boolean reverse) {
+
+        if (isExist(gpio)) throw new OutputAlreadyExistException(gpio);
+
+        GpioPinDigitalOutput pin = Application.getGpioController().provisionDigitalOutputPin(
+                getPinByGPIONumber(gpio), name, PinState.getState(reverse));
+
+        usedGpios.add(gpio);
+
+        pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
+
+        return pin;
     }
 
-    /*public static GpioPinAnalogOutput convert(AnalogOutput output) {
+    public static GpioPinPwmOutput createPwmPin(Integer gpio, String name, Boolean reverse) {
 
+        if (isExist(gpio)) throw new OutputAlreadyExistException(gpio);
+
+        GpioPinPwmOutput pin = Application.getGpioController().provisionPwmOutputPin(
+                getPinByGPIONumber(gpio), name, reverse ? pwmRange : 0
+        );
+        pin.setPwmRange(pwmRange);
+
+        usedGpios.add(gpio);
+
+        pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
+
+        return pin;
     }
 
-    public static GpioPinPwmOutput convert(PwmOutput output) {
+    public static void deletePin(GpioPin pin) {
+        Application.getGpioController().unprovisionPin(pin);
+        usedGpios.remove(Integer.valueOf(Gpio.wpiPinToGpio(pin.getPin().getAddress())));
+    }
 
-    }*/
+    public static boolean isExist(Integer gpio) {
+        return usedGpios.contains(gpio);
+    }
 
     private static Pin getPinByGPIONumber(int gpioNumber) {
         switch (gpioNumber) {
@@ -83,5 +113,13 @@ public class GPIO {
             default:
                 return null;
         }
+    }
+
+    public static Integer getPwmRange() {
+        return pwmRange;
+    }
+
+    public static void setPwmRange(Integer pwmRange) {
+        GPIO.pwmRange = pwmRange;
     }
 }

@@ -3,19 +3,19 @@ package tk.hiddenname.smarthome.controller.assembler;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceAssembler;
 import org.springframework.stereotype.Component;
-import tk.hiddenname.smarthome.controller.DigitalOutputRestController;
-import tk.hiddenname.smarthome.entity.State;
+import tk.hiddenname.smarthome.controller.OutputRestController;
+import tk.hiddenname.smarthome.entity.signal.DigitalState;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @Component
-public class StateResourceAssembler implements ResourceAssembler<State, Resource<State>> {
+public class DigitalStateResourceAssembler implements ResourceAssembler<DigitalState, Resource<DigitalState>> {
 
     @Override
-    public Resource<State> toResource(State state) {
+    public Resource<DigitalState> toResource(DigitalState state) {
 
         return new Resource<>(state,
-                linkTo(methodOn(DigitalOutputRestController.class).getState(state.getOutputId())).withSelfRel());
+                linkTo(methodOn(OutputRestController.class).getState(state.getOutputId())).withSelfRel());
     }
 }
