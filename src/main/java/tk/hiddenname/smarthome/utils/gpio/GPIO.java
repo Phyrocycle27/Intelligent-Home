@@ -2,20 +2,21 @@ package tk.hiddenname.smarthome.utils.gpio;
 
 import com.pi4j.io.gpio.*;
 import com.pi4j.wiringpi.Gpio;
+import lombok.Getter;
+import lombok.Setter;
 import tk.hiddenname.smarthome.Application;
-import tk.hiddenname.smarthome.exception.OutputAlreadyExistException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GPIO {
 
+    @Getter
+    @Setter
     private static Integer pwmRange;
     private static List<Integer> usedGpios = new ArrayList<>();
 
     public static GpioPinDigitalOutput createDigitalPin(Integer gpio, String name, Boolean reverse) {
-
-        if (isExist(gpio)) throw new OutputAlreadyExistException(gpio);
 
         GpioPinDigitalOutput pin = Application.getGpioController().provisionDigitalOutputPin(
                 getPinByGPIONumber(gpio), name, PinState.getState(reverse));
@@ -28,8 +29,6 @@ public class GPIO {
     }
 
     public static GpioPinPwmOutput createPwmPin(Integer gpio, String name, Boolean reverse) {
-
-        if (isExist(gpio)) throw new OutputAlreadyExistException(gpio);
 
         GpioPinPwmOutput pin = Application.getGpioController().provisionPwmOutputPin(
                 getPinByGPIONumber(gpio), name, reverse ? pwmRange : 0
@@ -113,13 +112,5 @@ public class GPIO {
             default:
                 return null;
         }
-    }
-
-    public static Integer getPwmRange() {
-        return pwmRange;
-    }
-
-    public static void setPwmRange(Integer pwmRange) {
-        GPIO.pwmRange = pwmRange;
     }
 }

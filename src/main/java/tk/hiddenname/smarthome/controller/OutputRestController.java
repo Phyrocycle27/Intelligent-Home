@@ -1,5 +1,6 @@
 package tk.hiddenname.smarthome.controller;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.Resource;
@@ -12,12 +13,14 @@ import tk.hiddenname.smarthome.controller.assembler.PwmSignalResourceAssembler;
 import tk.hiddenname.smarthome.entity.Output;
 import tk.hiddenname.smarthome.entity.signal.DigitalState;
 import tk.hiddenname.smarthome.entity.signal.PwmSignal;
+import tk.hiddenname.smarthome.exception.OutputAlreadyExistException;
 import tk.hiddenname.smarthome.exception.OutputNotFoundException;
 import tk.hiddenname.smarthome.exception.TypeNotFoundException;
 import tk.hiddenname.smarthome.repository.OutputsRepository;
 import tk.hiddenname.smarthome.service.OutputService;
 import tk.hiddenname.smarthome.service.digital.DigitalOutputServiceImpl;
 import tk.hiddenname.smarthome.service.pwm.PwmOutputServiceImpl;
+import tk.hiddenname.smarthome.utils.gpio.GPIO;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -67,11 +70,11 @@ public class OutputRestController {
         type = type.toLowerCase();
         List<Resource<Output>> outputs;
 
-        if (type.equals("")) {
+        if (type.isEmpty()) {
             outputs = repository.findAll(Sort.by("outputId")).stream()
                     .map(assembler::toResource)
                     .collect(Collectors.toList());
-        } else if (type.equals("pwm") | type.equals("digital")){
+        } else if (type.equals("pwm") | type.equals("digital")) {
             outputs = repository.findByType(type, Sort.by("outputId")).stream()
                     .map(assembler::toResource)
                     .collect(Collectors.toList());
@@ -94,11 +97,11 @@ public class OutputRestController {
 
         newOutput.setCreationDate(LocalDateTime.now());
 
+        if (GPIO.isExist(newOutput.getGpio())) throw new OutputAlreadyExistException(newOutput.getGpio());
 
+        newOutput = repository.save(newOutput);
         getDataService(newOutput.getType()).save(newOutput);
-            Resource<Output> resource = assembler.toResource(repository.save(newOutput));
-
-        System.out.println("\nCREATE: \n\tNew output is: " + newOutput);
+        Resource<Output> resource = assembler.toResource(newOutput);
 
         return ResponseEntity
                 .created(new URI(resource.getId().expand().getHref()))
@@ -109,29 +112,15 @@ public class OutputRestController {
     public ResponseEntity<?> replace(@RequestBody Output newOutput,
                                      @PathVariable Integer id) throws URISyntaxException {
 
-        System.out.println("\nPUT:");
-
         Output updatedOutput = repository.findById(id)
                 .map(output -> {
-                    /*System.out.println("\tNew output: "+ newOutput);
-                    System.out.println("\tExisting output (before update): " + output);*/
-                    output.setName(newOutput.getName());
-                    output.setReverse(newOutput.getReverse());
-                    //System.out.println("\tExisting output (after update): " + output);
+                    BeanUtils.copyProperties(newOutput, output,
+                            "outputId", "gpio", "type", "creationDate");
                     getDataService(output.getType()).update(output);
                     return repository.save(output);
                 })
-                .orElseThrow(() -> new OutputNotFoundException(id)
+                .orElseThrow(() -> new OutputNotFoundException(id));
 
-                    /*newOutput.setOutputId(id);
-                    newOutput.setCreationDate(LocalDateTime.now());
-                    System.out.println("New output: "+ newOutput);
-                    getDataService(newOutput.getType()).save(newOutput);
-                    return repository.save(newOutput);*/
-
-                );
-
-        System.out.println("Updated output is: " + updatedOutput);
         Resource<Output> resource = assembler.toResource(updatedOutput);
 
         return ResponseEntity
