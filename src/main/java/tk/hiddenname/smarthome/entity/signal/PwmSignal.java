@@ -15,4 +15,12 @@ public class PwmSignal extends Signal {
         super(outputId);
         this.pwmSignal = signal;
     }
+
+    public Integer getPwmSignal() {
+        return pwmSignal;
+    }
+
+    public void setPwmSignal(Integer pwmSignal) {
+        this.pwmSignal = pwmSignal;
+    }
 }

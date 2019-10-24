@@ -1,12 +1,10 @@
 package tk.hiddenname.smarthome.service;
 
-import tk.hiddenname.smarthome.entity.Output;
-
 public interface OutputService {
 
     void delete(Integer id);
 
-    void save(Output newOutput);
+    void save(Integer id, Integer gpio, String name, Boolean reverse);
 
-    void update(Output newOutput);
+    void update(Integer id, String name, Boolean reverse);
 }

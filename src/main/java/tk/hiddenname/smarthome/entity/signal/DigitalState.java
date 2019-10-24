@@ -15,4 +15,12 @@ public class DigitalState extends Signal {
         super(outputId);
         this.digitalState = state;
     }
+
+    public Boolean getDigitalState() {
+        return digitalState;
+    }
+
+    public void setDigitalState(Boolean digitalState) {
+        this.digitalState = digitalState;
+    }
 }

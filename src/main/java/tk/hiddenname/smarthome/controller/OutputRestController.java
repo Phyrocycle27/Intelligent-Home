@@ -1,5 +1,6 @@
 package tk.hiddenname.smarthome.controller;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.Resource;
@@ -71,7 +72,7 @@ public class OutputRestController {
             outputs = repository.findAll(Sort.by("outputId")).stream()
                     .map(assembler::toResource)
                     .collect(Collectors.toList());
-        } else if (type.equals("pwm") | type.equals("digital")){
+        } else if (type.equals("pwm") | type.equals("digital")) {
             outputs = repository.findByType(type, Sort.by("outputId")).stream()
                     .map(assembler::toResource)
                     .collect(Collectors.toList());
@@ -94,11 +95,13 @@ public class OutputRestController {
 
         newOutput.setCreationDate(LocalDateTime.now());
 
+        getDataService(newOutput.getType()).save(
+                newOutput.getOutputId(),
+                newOutput.getGpio(),
+                newOutput.getName(),
+                newOutput.getReverse());
 
-        getDataService(newOutput.getType()).save(newOutput);
-            Resource<Output> resource = assembler.toResource(repository.save(newOutput));
-
-        System.out.println("\nCREATE: \n\tNew output is: " + newOutput);
+        Resource<Output> resource = assembler.toResource(repository.save(newOutput));
 
         return ResponseEntity
                 .created(new URI(resource.getId().expand().getHref()))
@@ -109,29 +112,19 @@ public class OutputRestController {
     public ResponseEntity<?> replace(@RequestBody Output newOutput,
                                      @PathVariable Integer id) throws URISyntaxException {
 
-        System.out.println("\nPUT:");
-
         Output updatedOutput = repository.findById(id)
                 .map(output -> {
-                    /*System.out.println("\tNew output: "+ newOutput);
-                    System.out.println("\tExisting output (before update): " + output);*/
-                    output.setName(newOutput.getName());
-                    output.setReverse(newOutput.getReverse());
-                    //System.out.println("\tExisting output (after update): " + output);
-                    getDataService(output.getType()).update(output);
+                    BeanUtils.copyProperties(newOutput, output, "outputId, creationDate, type, gpio");
+
+                    getDataService(output.getType()).update(
+                            output.getOutputId(),
+                            output.getName(),
+                            output.getReverse());
+
                     return repository.save(output);
                 })
-                .orElseThrow(() -> new OutputNotFoundException(id)
+                .orElseThrow(() -> new OutputNotFoundException(id));
 
-                    /*newOutput.setOutputId(id);
-                    newOutput.setCreationDate(LocalDateTime.now());
-                    System.out.println("New output: "+ newOutput);
-                    getDataService(newOutput.getType()).save(newOutput);
-                    return repository.save(newOutput);*/
-
-                );
-
-        System.out.println("Updated output is: " + updatedOutput);
         Resource<Output> resource = assembler.toResource(updatedOutput);
 
         return ResponseEntity
@@ -159,17 +152,22 @@ public class OutputRestController {
     @GetMapping(value = {"/control/pwm"}, produces = {"application/hal+json"})
     public Resource<PwmSignal> getPwmSignal(@RequestParam(name = "id") Integer id) {
 
-        return pwmSignalAssembler.toResource(pwmService.getSignal(repository.findById(id)
-                .orElseThrow(() -> new OutputNotFoundException(id))));
+        Output output = repository.findById(id).orElseThrow(() -> new OutputNotFoundException(id));
+
+        return pwmSignalAssembler.toResource(pwmService.getSignal(output.getOutputId(), output.getReverse()));
     }
 
     @PutMapping(value = {"/control/pwm"}, produces = {"application/hal+json"})
     public ResponseEntity<?> setPwmSignal(@RequestBody PwmSignal signal) throws URISyntaxException {
 
+        Output output = repository.findById(signal.getOutputId())
+                .orElseThrow(() -> new OutputNotFoundException(signal.getOutputId()));
+
         Resource<PwmSignal> resource = pwmSignalAssembler.toResource(pwmService.setSignal(
-                repository.findById(signal.getOutputId())
-                        .orElseThrow(() -> new OutputNotFoundException(signal.getOutputId())),
-                signal.getPwmSignal()));
+                output.getOutputId(),
+                output.getReverse(),
+                signal.getPwmSignal()
+        ));
 
         return ResponseEntity
                 .created(new URI(resource.getId().expand().getHref()))
@@ -183,17 +181,22 @@ public class OutputRestController {
     @GetMapping(value = {"/control/digital"}, produces = {"application/hal+json"})
     public Resource<DigitalState> getState(@RequestParam(name = "id") Integer id) {
 
-        return digitalStateAssembler.toResource(digitalService.getState(repository.findById(id)
-                .orElseThrow(() -> new OutputNotFoundException(id))));
+        Output output = repository.findById(id).orElseThrow(() -> new OutputNotFoundException(id));
+
+        return digitalStateAssembler.toResource(digitalService.getState(output.getOutputId(), output.getReverse()));
     }
 
     @PutMapping(value = {"/control/digital"}, produces = {"application/hal+json"})
     public ResponseEntity<?> setState(@RequestBody DigitalState state) throws URISyntaxException {
 
+        Output output = repository.findById(state.getOutputId())
+                .orElseThrow(() -> new OutputNotFoundException(state.getOutputId()));
+
         Resource<DigitalState> resource = digitalStateAssembler.toResource(digitalService.setState(
-                repository.findById(state.getOutputId())
-                        .orElseThrow(() -> new OutputNotFoundException(state.getOutputId())),
-                state.getDigitalState()));
+                output.getOutputId(),
+                output.getReverse(),
+                state.getDigitalState()
+        ));
 
         return ResponseEntity
                 .created(new URI(resource.getId().expand().getHref()))

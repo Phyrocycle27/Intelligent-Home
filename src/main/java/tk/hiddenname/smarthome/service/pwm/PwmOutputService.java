@@ -1,11 +1,12 @@
 package tk.hiddenname.smarthome.service.pwm;
 
-import tk.hiddenname.smarthome.entity.Output;
 import tk.hiddenname.smarthome.entity.signal.PwmSignal;
 
 public interface PwmOutputService {
 
-    PwmSignal getSignal(Output output);
+    PwmSignal getSignal(Integer id);
 
-    PwmSignal setSignal(Output output, Integer newSignal);
+    PwmSignal getSignal(Integer id, Boolean reverse);
+
+    PwmSignal setSignal(Integer id, Boolean reverse, Integer newSignal);
 }

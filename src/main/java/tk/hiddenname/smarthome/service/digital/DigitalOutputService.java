@@ -1,11 +1,12 @@
 package tk.hiddenname.smarthome.service.digital;
 
-import tk.hiddenname.smarthome.entity.Output;
 import tk.hiddenname.smarthome.entity.signal.DigitalState;
 
 public interface DigitalOutputService {
 
-    DigitalState getState(Output output);
+    DigitalState getState(Integer id);
 
-    DigitalState setState(Output output, Boolean newState);
+    DigitalState getState(Integer id, Boolean reverse);
+
+    DigitalState setState(Integer id, Boolean reverse, Boolean newState);
 }

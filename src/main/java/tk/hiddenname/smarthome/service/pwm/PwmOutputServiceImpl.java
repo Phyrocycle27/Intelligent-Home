@@ -3,7 +3,6 @@ package tk.hiddenname.smarthome.service.pwm;
 import com.pi4j.io.gpio.GpioPinPwmOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tk.hiddenname.smarthome.entity.Output;
 import tk.hiddenname.smarthome.entity.signal.PwmSignal;
 import tk.hiddenname.smarthome.exception.OutputNotFoundException;
 import tk.hiddenname.smarthome.service.OutputService;
@@ -16,16 +15,13 @@ import java.util.Map;
 @Service
 public class PwmOutputServiceImpl implements OutputService, PwmOutputService {
 
-    private final OutputController controller;
     private static Map<Integer, GpioPinPwmOutput> map;
-
-    static {
-        map = new HashMap<>();
-    }
+    private final OutputController controller;
 
     @Autowired
     public PwmOutputServiceImpl(OutputController controller) {
         this.controller = controller;
+        map = new HashMap<>();
     }
 
     @Override
@@ -36,48 +32,40 @@ public class PwmOutputServiceImpl implements OutputService, PwmOutputService {
     }
 
     @Override
-    public void save(Output newOutput) {
-        map.put(newOutput.getOutputId(), GPIO.createPwmPin(
-                newOutput.getGpio(),
-                newOutput.getName(),
-                newOutput.getReverse()
-        ));
+    public void save(Integer id, Integer gpio, String name, Boolean reverse) {
+        map.put(id, GPIO.createPwmPin(gpio, name, reverse));
     }
 
     @Override
-    public void update(Output newOutput) {
-        System.out.println("\nNew output is: "+newOutput);
-        System.out.println("Updatable output's id is: "+ newOutput.getOutputId());
-        System.out.println("Curr map is: " + map);
-        map.get(newOutput.getOutputId()).setName(newOutput.getName());
-        setSignal(newOutput, 0);
+    public void update(Integer id, String name, Boolean reverse) {
+        map.get(id).setName(name);
+        setSignal(id, reverse, getSignal(id).getPwmSignal());
     }
 
     @Override
-    public PwmSignal getSignal(Output output) {
-        GpioPinPwmOutput pin = map.getOrDefault(output.getOutputId(), null);
+    public PwmSignal getSignal(Integer id) {
+        GpioPinPwmOutput pin = map.getOrDefault(id, null);
 
-        if (pin == null) throw new OutputNotFoundException(output.getOutputId());
-
-        else {
-            return new PwmSignal(output.getOutputId(), output.getReverse() ?
-                    GPIO.getPwmRange() - pin.getPwm() : pin.getPwm());
-        }
+        if (pin == null) throw new OutputNotFoundException(id);
+        return new PwmSignal(id, pin.getPwm());
     }
 
     @Override
-    public PwmSignal setSignal(Output output, Integer newSignal) {
-        GpioPinPwmOutput pin = map.getOrDefault(output.getOutputId(), null);
+    public PwmSignal getSignal(Integer id, Boolean reverse) {
+        GpioPinPwmOutput pin = map.getOrDefault(id, null);
 
-        if (pin == null) throw new OutputNotFoundException(output.getOutputId());
-        else {
-            Integer currSignal = controller.setSignal(
-                    map.get(output.getOutputId()), output.getReverse() ?
-                            GPIO.getPwmRange() - newSignal : newSignal);
+        if (pin == null) throw new OutputNotFoundException(id);
+        return new PwmSignal(id, reverse ? GPIO.getPwmRange() - pin.getPwm() : pin.getPwm());
+    }
 
-            return new PwmSignal(output.getOutputId(), output.getReverse() ?
-                    GPIO.getPwmRange() - currSignal : currSignal);
-        }
+    @Override
+    public PwmSignal setSignal(Integer id, Boolean reverse, Integer newSignal) {
+        GpioPinPwmOutput pin = map.getOrDefault(id, null);
+
+        if (pin == null) throw new OutputNotFoundException(id);
+
+        Integer currSignal = controller.setSignal(map.get(id), reverse ? GPIO.getPwmRange() - newSignal : newSignal);
+        return new PwmSignal(id, reverse ? GPIO.getPwmRange() - currSignal : currSignal);
     }
 
     public Map<Integer, GpioPinPwmOutput> getMap() {
