@@ -1,7 +1,7 @@
 package tk.hiddenname.smarthome.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
@@ -32,6 +32,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = {"/outputs"})
+@AllArgsConstructor
 public class OutputRestController {
 
     private final OutputsRepository repository; // repository which connects postgresDB to our program
@@ -44,22 +45,6 @@ public class OutputRestController {
     // State and signal resource assemblers
     private final DigitalStateResourceAssembler digitalStateAssembler;
     private final PwmSignalResourceAssembler pwmSignalAssembler;
-
-    @Autowired
-    public OutputRestController(OutputsRepository repository, OutputResourceAssembler assembler,
-                                DigitalOutputServiceImpl digitalService, PwmOutputServiceImpl pwmService,
-                                DigitalStateResourceAssembler digitalStateAssembler,
-                                PwmSignalResourceAssembler pwmSignalAssembler) {
-
-        this.repository = repository;
-        this.assembler = assembler;
-
-        this.digitalService = digitalService;
-        this.pwmService = pwmService;
-
-        this.digitalStateAssembler = digitalStateAssembler;
-        this.pwmSignalAssembler = pwmSignalAssembler;
-    }
 
     @GetMapping(produces = {"application/hal+json"})
     public Resources<Resource<Output>> getAll(

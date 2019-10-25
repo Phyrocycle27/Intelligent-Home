@@ -1,26 +1,18 @@
 package tk.hiddenname.smarthome.entity.signal;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
 
-@Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(of = {"pwmSignal"}, callSuper = true)
 public class PwmSignal extends Signal {
 
+    @Getter
     private Integer pwmSignal;
 
-    public PwmSignal(Integer outputId, Integer signal) {
+    public PwmSignal(Integer outputId, Integer pwmSignal) {
         super(outputId);
-        this.pwmSignal = signal;
-    }
-
-    public Integer getPwmSignal() {
-        return pwmSignal;
-    }
-
-    public void setPwmSignal(Integer pwmSignal) {
         this.pwmSignal = pwmSignal;
     }
 }

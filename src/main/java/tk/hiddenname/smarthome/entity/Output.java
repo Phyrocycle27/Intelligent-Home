@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@NoArgsConstructor
 @Table(name = "outputs")
 @EqualsAndHashCode(of = {"outputId"}, callSuper = false)
 public class Output extends ResourceSupport {

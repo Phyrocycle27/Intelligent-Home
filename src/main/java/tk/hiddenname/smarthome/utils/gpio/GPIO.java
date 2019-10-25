@@ -5,6 +5,7 @@ import com.pi4j.wiringpi.Gpio;
 import lombok.Getter;
 import lombok.Setter;
 import tk.hiddenname.smarthome.Application;
+import tk.hiddenname.smarthome.exception.OutputAlreadyExistException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,8 @@ public class GPIO {
         GpioPinDigitalOutput pin = Application.getGpioController().provisionDigitalOutputPin(
                 getPinByGPIONumber(gpio), name, PinState.getState(reverse));
 
+        if (isExist(gpio)) throw new OutputAlreadyExistException(gpio);
+
         usedGpios.add(gpio);
 
         pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
@@ -33,6 +36,9 @@ public class GPIO {
         GpioPinPwmOutput pin = Application.getGpioController().provisionPwmOutputPin(
                 getPinByGPIONumber(gpio), name, reverse ? pwmRange : 0
         );
+
+        if (isExist(gpio)) throw new OutputAlreadyExistException(gpio);
+
         pin.setPwmRange(pwmRange);
 
         usedGpios.add(gpio);
@@ -47,7 +53,7 @@ public class GPIO {
         usedGpios.remove(Integer.valueOf(Gpio.wpiPinToGpio(pin.getPin().getAddress())));
     }
 
-    public static boolean isExist(Integer gpio) {
+    private static boolean isExist(Integer gpio) {
         return usedGpios.contains(gpio);
     }
 
