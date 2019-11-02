@@ -13,7 +13,9 @@ import tk.hiddenname.smarthome.controller.assembler.PwmSignalResourceAssembler;
 import tk.hiddenname.smarthome.entity.Output;
 import tk.hiddenname.smarthome.entity.signal.DigitalState;
 import tk.hiddenname.smarthome.entity.signal.PwmSignal;
+import tk.hiddenname.smarthome.exception.OutputAlreadyExistException;
 import tk.hiddenname.smarthome.exception.OutputNotFoundException;
+import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.TypeNotFoundException;
 import tk.hiddenname.smarthome.repository.OutputsRepository;
 import tk.hiddenname.smarthome.service.OutputService;
@@ -76,7 +78,8 @@ public class OutputRestController {
     }
 
     @PostMapping(produces = {"application/hal+json"})
-    public ResponseEntity<?> create(@RequestBody Output newOutput) throws URISyntaxException {
+    public ResponseEntity<?> create(@RequestBody Output newOutput)
+            throws URISyntaxException, OutputAlreadyExistException, PinSignalSupportException {
 
         newOutput.setCreationDate(LocalDateTime.now());
 

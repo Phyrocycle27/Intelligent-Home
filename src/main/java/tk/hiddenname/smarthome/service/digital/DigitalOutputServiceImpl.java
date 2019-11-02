@@ -4,7 +4,9 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.hiddenname.smarthome.entity.signal.DigitalState;
+import tk.hiddenname.smarthome.exception.OutputAlreadyExistException;
 import tk.hiddenname.smarthome.exception.OutputNotFoundException;
+import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.service.OutputService;
 import tk.hiddenname.smarthome.utils.gpio.GPIO;
 import tk.hiddenname.smarthome.utils.gpio.OutputController;
@@ -32,7 +34,8 @@ public class DigitalOutputServiceImpl implements OutputService, DigitalOutputSer
     }
 
     @Override
-    public void save(Integer id, Integer gpio, String name, Boolean reverse) {
+    public void save(Integer id, Integer gpio, String name, Boolean reverse)
+            throws OutputAlreadyExistException, PinSignalSupportException {
         map.put(id, GPIO.createDigitalPin(gpio, name, reverse));
     }
 

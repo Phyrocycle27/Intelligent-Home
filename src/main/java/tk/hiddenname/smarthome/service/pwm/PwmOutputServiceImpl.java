@@ -4,7 +4,9 @@ import com.pi4j.io.gpio.GpioPinPwmOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.hiddenname.smarthome.entity.signal.PwmSignal;
+import tk.hiddenname.smarthome.exception.OutputAlreadyExistException;
 import tk.hiddenname.smarthome.exception.OutputNotFoundException;
+import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.service.OutputService;
 import tk.hiddenname.smarthome.utils.gpio.GPIO;
 import tk.hiddenname.smarthome.utils.gpio.OutputController;
@@ -32,7 +34,8 @@ public class PwmOutputServiceImpl implements OutputService, PwmOutputService {
     }
 
     @Override
-    public void save(Integer id, Integer gpio, String name, Boolean reverse) {
+    public void save(Integer id, Integer gpio, String name, Boolean reverse)
+            throws OutputAlreadyExistException, PinSignalSupportException {
         map.put(id, GPIO.createPwmPin(gpio, name, reverse));
     }
 

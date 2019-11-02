@@ -6,46 +6,73 @@ import lombok.Getter;
 import lombok.Setter;
 import tk.hiddenname.smarthome.Application;
 import tk.hiddenname.smarthome.exception.OutputAlreadyExistException;
+import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class GPIO {
 
     @Getter
     @Setter
     private static Integer pwmRange;
-    private static List<Integer> usedGpios = new ArrayList<>();
+    private static List<Integer> usedGpios;
+    private static final Set<Integer> digitalGpios;
+    private static final Set<Integer> pwmGpios;
 
-    public static GpioPinDigitalOutput createDigitalPin(Integer gpio, String name, Boolean reverse) {
+    static {
+        usedGpios = new ArrayList<>();
+        digitalGpios = new HashSet<Integer>(){{
+            add(4); add(17); add(18);add(27); add(22); add(23);
+            add(24); add(5); add(6);add(13); add(19); add(26);
+            add(12); add(16); add(20); add(21);
+        }};
 
-        GpioPinDigitalOutput pin = Application.getGpioController().provisionDigitalOutputPin(
-                getPinByGPIONumber(gpio), name, PinState.getState(reverse));
-
-        if (isExist(gpio)) throw new OutputAlreadyExistException(gpio);
-
-        usedGpios.add(gpio);
-
-        pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
-
-        return pin;
+        pwmGpios = new HashSet<Integer>(){{
+            add(23); add(24); add(18); add(12);
+        }};
     }
 
-    public static GpioPinPwmOutput createPwmPin(Integer gpio, String name, Boolean reverse) {
+    public static GpioPinDigitalOutput createDigitalPin(Integer gpio, String name, Boolean reverse)
+            throws OutputAlreadyExistException, PinSignalSupportException {
 
-        GpioPinPwmOutput pin = Application.getGpioController().provisionPwmOutputPin(
-                getPinByGPIONumber(gpio), name, reverse ? pwmRange : 0
-        );
+        if (digitalGpios.contains(gpio)) {
+            if (isExist(gpio)) throw new OutputAlreadyExistException(gpio);
 
-        if (isExist(gpio)) throw new OutputAlreadyExistException(gpio);
+            GpioPinDigitalOutput pin = Application.getGpioController().provisionDigitalOutputPin(
+                    getPinByGPIONumber(gpio), name, PinState.getState(reverse));
 
-        pin.setPwmRange(pwmRange);
+            usedGpios.add(gpio);
 
-        usedGpios.add(gpio);
+            pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
 
-        pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
+            return pin;
+        } else throw new PinSignalSupportException(gpio);
 
-        return pin;
+
+    }
+
+    public static GpioPinPwmOutput createPwmPin(Integer gpio, String name, Boolean reverse)
+            throws OutputAlreadyExistException, PinSignalSupportException {
+
+        if (pwmGpios.contains(gpio)) {
+            if (isExist(gpio)) throw new OutputAlreadyExistException(gpio);
+
+            GpioPinPwmOutput pin = Application.getGpioController().provisionPwmOutputPin(
+                    getPinByGPIONumber(gpio), name, reverse ? pwmRange : 0);
+
+            pin.setPwmRange(pwmRange);
+
+            usedGpios.add(gpio);
+
+            pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
+
+            return pin;
+        } else throw new PinSignalSupportException(gpio);
+
+
     }
 
     public static void deletePin(GpioPin pin) {
@@ -59,10 +86,6 @@ public class GPIO {
 
     private static Pin getPinByGPIONumber(int gpioNumber) {
         switch (gpioNumber) {
-            case 2:
-                return RaspiPin.GPIO_08;
-            case 3:
-                return RaspiPin.GPIO_09;
             case 4:
                 return RaspiPin.GPIO_07;
             case 17:
@@ -71,14 +94,6 @@ public class GPIO {
                 return RaspiPin.GPIO_02;
             case 22:
                 return RaspiPin.GPIO_03;
-            case 10:
-                return RaspiPin.GPIO_12;
-            case 9:
-                return RaspiPin.GPIO_13;
-            case 11:
-                return RaspiPin.GPIO_14;
-            case 0:
-                return RaspiPin.GPIO_30;
             case 5:
                 return RaspiPin.GPIO_21;
             case 6:
@@ -89,24 +104,12 @@ public class GPIO {
                 return RaspiPin.GPIO_24;
             case 26:
                 return RaspiPin.GPIO_25;
-            case 14:
-                return RaspiPin.GPIO_15;
-            case 15:
-                return RaspiPin.GPIO_16;
             case 18:
                 return RaspiPin.GPIO_01;
             case 23:
                 return RaspiPin.GPIO_04;
             case 24:
                 return RaspiPin.GPIO_05;
-            case 25:
-                return RaspiPin.GPIO_06;
-            case 8:
-                return RaspiPin.GPIO_10;
-            case 7:
-                return RaspiPin.GPIO_11;
-            case 1:
-                return RaspiPin.GPIO_31;
             case 12:
                 return RaspiPin.GPIO_26;
             case 16:
@@ -118,5 +121,23 @@ public class GPIO {
             default:
                 return null;
         }
+    }
+
+    public Set<Integer> getAvailableDigitalGpios() {
+        Set<Integer> gpios = new HashSet<>();
+
+        for (Integer gpio : digitalGpios) {
+            if(!usedGpios.contains(gpio)) gpios.add(gpio);
+        }
+        return gpios;
+    }
+
+    public Set<Integer> getAvailablePwmGpios() {
+        Set<Integer> gpios = new HashSet<>();
+
+        for (Integer gpio : pwmGpios) {
+            if(!usedGpios.contains(gpio)) gpios.add(gpio);
+        }
+        return gpios;
     }
 }
