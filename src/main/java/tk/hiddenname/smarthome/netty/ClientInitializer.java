@@ -12,16 +12,20 @@ import io.netty.handler.ssl.SslContext;
 public class ClientInitializer extends ChannelInitializer<SocketChannel> {
 
     private final SslContext sslCtx;
+    private final String HOST;
+    private final int PORT;
 
-    public ClientInitializer(SslContext sslCtx) {
+    public ClientInitializer(SslContext sslCtx, String host, int port) {
         this.sslCtx = sslCtx;
+        HOST = host;
+        PORT = port;
     }
 
     @Override
     protected void initChannel(SocketChannel ch) {
         ChannelPipeline pipeline = ch.pipeline();
 
-        pipeline.addLast(sslCtx.newHandler(ch.alloc(), "192.168.1.54", 3141));
+        pipeline.addLast(sslCtx.newHandler(ch.alloc(), HOST, PORT));
         pipeline.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(
                 1048576, 0, 4, 0, 4
         ));

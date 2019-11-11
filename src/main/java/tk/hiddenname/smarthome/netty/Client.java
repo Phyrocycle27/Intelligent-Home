@@ -47,7 +47,7 @@ public class Client implements Runnable {
             Bootstrap bootstrap = new io.netty.bootstrap.Bootstrap()
                     .group(group)
                     .channel(NioSocketChannel.class)
-                    .handler(new ClientInitializer(sslCtx));
+                    .handler(new ClientInitializer(sslCtx, HOST, PORT));
 
             Channel channel = bootstrap.connect(HOST, PORT).sync().channel();
 

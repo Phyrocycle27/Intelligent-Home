@@ -21,8 +21,6 @@ import java.util.logging.Logger;
 public class Application {
 
     private static final Logger LOGGER;
-//    private static final String CPUINFO_PATH = "/proc/cpuinfo";
-//    private static final String CONFIG_PATH = "/home/pi/IdeaProjects/smarthome/classes/config.properties";
     private static final String HOST = "192.168.1.54";
     private static final int PORT = 3141;
 
@@ -39,38 +37,6 @@ public class Application {
         gpioController = GpioFactory.getInstance();
 
         LOGGER = Logger.getLogger(Application.class.getName());
-        // ****************** PROPERTIES SET *****************************
-
-        /*try(FileInputStream configIn = new FileInputStream(CONFIG_PATH);
-            FileOutputStream configOut = new FileOutputStream(CONFIG_PATH))
-        {
-            Properties prop = new Properties();
-            prop.load(configIn);
-
-            // Serial number of IoT device
-            if (!prop.containsKey("serial") || !prop.getProperty("serial").isEmpty()) {
-                log("ID not defined in config file!");
-                FileInputStream cpuinfoIn = new FileInputStream(CPUINFO_PATH);
-                Properties cpuinfoProp = new Properties();
-
-                cpuinfoProp.load(cpuinfoIn);
-                serial = cpuinfoProp.getProperty("Serial");
-                configOut.write(("serial = " + serial).getBytes());
-
-                cpuinfoIn.close();
-                cpuinfoProp.clear();
-            } else serial = prop.getProperty("serial");
-
-            if (!prop.containsKey("allowConnectionToServer")) {
-                allowConnectionToServer = false;
-                configOut.write(("allowConnectionToServer = false").getBytes());
-            } else allowConnectionToServer =
-                    Boolean.parseBoolean(prop.getProperty("allowConnectionToServer"));
-
-            prop.clear();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
     }
 
     public static void main(String[] args) {
