@@ -3,6 +3,7 @@ package tk.hiddenname.smarthome.netty;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import org.json.JSONObject;
 import tk.hiddenname.smarthome.Application;
 import tk.hiddenname.smarthome.netty.security.CipherDecoder;
 import tk.hiddenname.smarthome.netty.security.CipherEncoder;
@@ -34,7 +35,11 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
             ch.writeAndFlush(Application.getToken());
         } else {
-            System.out.println(msg);
+            JSONObject obj = new JSONObject(msg.toString());
+
+            System.out.println(obj);
+
+
         }
     }
 

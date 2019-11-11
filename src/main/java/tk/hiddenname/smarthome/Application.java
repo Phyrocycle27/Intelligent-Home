@@ -21,8 +21,8 @@ import java.util.logging.Logger;
 public class Application {
 
     private static final Logger LOGGER;
-    private static final String CPUINFO_PATH = "/proc/cpuinfo";
-    private static final String CONFIG_PATH = "/home/pi/IdeaProjects/smarthome/classes/config.properties";
+//    private static final String CPUINFO_PATH = "/proc/cpuinfo";
+//    private static final String CONFIG_PATH = "/home/pi/IdeaProjects/smarthome/classes/config.properties";
     private static final String HOST = "192.168.1.54";
     private static final int PORT = 3141;
 
@@ -32,7 +32,7 @@ public class Application {
     @Getter
     private static final boolean allowConnectionToServer = true;
     @Getter
-    private static final String token = "XqKIs1jxTSedxCfFFGImgQpqC4I7iaNN";
+    private static final String token = "ebhtiWP9FEwQCKxVvCRPepawT88kPYa8";
 
     static {
         GPIO.setPwmRange(1024);
