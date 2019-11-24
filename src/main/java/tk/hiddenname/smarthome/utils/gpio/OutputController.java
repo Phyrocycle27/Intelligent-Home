@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 public class OutputController {
 
     public Boolean setState(GpioPinDigitalOutput output, Boolean state) {
+
         String pinName = output.getName();
 
         PinState currState = output.getState();

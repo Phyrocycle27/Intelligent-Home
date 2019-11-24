@@ -13,11 +13,18 @@ import tk.hiddenname.smarthome.utils.gpio.OutputController;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @Service
 public class DigitalOutputServiceImpl implements OutputService, DigitalOutputService {
 
+    public static final Logger LOGGER;
     private static Map<Integer, GpioPinDigitalOutput> map;
+
+    static {
+        LOGGER = Logger.getLogger(DigitalOutputService.class.getName());
+    }
+
     private final OutputController controller;
 
     @Autowired
@@ -36,6 +43,7 @@ public class DigitalOutputServiceImpl implements OutputService, DigitalOutputSer
     @Override
     public void save(Integer id, Integer gpio, String name, Boolean reverse)
             throws OutputAlreadyExistException, PinSignalSupportException {
+
         map.put(id, GPIO.createDigitalPin(gpio, name, reverse));
     }
 

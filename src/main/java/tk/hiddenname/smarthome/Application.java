@@ -31,6 +31,7 @@ public class Application {
     private static final boolean allowConnectionToServer = true;
     @Getter
     private static final String token = "ebhtiWP9FEwQCKxVvCRPepawT88kPYa8";
+    //private static final String token = "ag6EBKHA77Tlp1bluQdwAUe8EbxGyeh6";
 
     static {
         GPIO.setPwmRange(1024);

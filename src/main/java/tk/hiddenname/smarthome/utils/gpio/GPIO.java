@@ -7,72 +7,54 @@ import lombok.Setter;
 import tk.hiddenname.smarthome.Application;
 import tk.hiddenname.smarthome.exception.OutputAlreadyExistException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
+import tk.hiddenname.smarthome.exception.TypeNotFoundException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class GPIO {
+
+    private static final Logger LOGGER;
+    private static final Set<Integer> digitalGpios;
+    private static final Set<Integer> pwmGpios;
+    private static List<Integer> usedGpios;
 
     @Getter
     @Setter
     private static Integer pwmRange;
-    private static List<Integer> usedGpios;
-    private static final Set<Integer> digitalGpios;
-    private static final Set<Integer> pwmGpios;
 
     static {
         usedGpios = new ArrayList<>();
-        digitalGpios = new HashSet<Integer>(){{
-            add(4); add(17); add(18);add(27); add(22); add(23);
-            add(24); add(5); add(6);add(13); add(19); add(26);
-            add(12); add(16); add(20); add(21);
+        digitalGpios = new HashSet<Integer>() {{
+            add(4);
+            add(17);
+            add(18);
+            add(27);
+            add(22);
+            add(23);
+            add(24);
+            add(5);
+            add(6);
+            add(13);
+            add(19);
+            add(26);
+            add(12);
+            add(16);
+            add(20);
+            add(21);
         }};
 
-        pwmGpios = new HashSet<Integer>(){{
-            add(23); add(24); add(18); add(12);
+        pwmGpios = new HashSet<Integer>() {{
+            add(23);
+            add(24);
+            add(18);
+            add(12);
         }};
-    }
 
-    public static GpioPinDigitalOutput createDigitalPin(Integer gpio, String name, Boolean reverse)
-            throws OutputAlreadyExistException, PinSignalSupportException {
-
-        if (digitalGpios.contains(gpio)) {
-            if (isExist(gpio)) throw new OutputAlreadyExistException(gpio);
-
-            GpioPinDigitalOutput pin = Application.getGpioController().provisionDigitalOutputPin(
-                    getPinByGPIONumber(gpio), name, PinState.getState(reverse));
-
-            usedGpios.add(gpio);
-
-            pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
-
-            return pin;
-        } else throw new PinSignalSupportException(gpio);
-
-
-    }
-
-    public static GpioPinPwmOutput createPwmPin(Integer gpio, String name, Boolean reverse)
-            throws OutputAlreadyExistException, PinSignalSupportException {
-
-        if (pwmGpios.contains(gpio)) {
-            if (isExist(gpio)) throw new OutputAlreadyExistException(gpio);
-
-            GpioPinPwmOutput pin = Application.getGpioController().provisionPwmOutputPin(
-                    getPinByGPIONumber(gpio), name, reverse ? pwmRange : 0);
-
-            pin.setPwmRange(pwmRange);
-
-            usedGpios.add(gpio);
-
-            pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
-
-            return pin;
-        } else throw new PinSignalSupportException(gpio);
-
-
+        LOGGER = Logger.getLogger(GPIO.class.getName());
     }
 
     public static void deletePin(GpioPin pin) {
@@ -80,7 +62,38 @@ public class GPIO {
         usedGpios.remove(Integer.valueOf(Gpio.wpiPinToGpio(pin.getPin().getAddress())));
     }
 
-    private static boolean isExist(Integer gpio) {
+    public static void validate(Integer gpio, String type) throws PinSignalSupportException, TypeNotFoundException,
+            OutputAlreadyExistException {
+
+        if (!isSupports(type, gpio))
+            throw new PinSignalSupportException(gpio);
+
+        if (isExists(gpio))
+            throw new OutputAlreadyExistException(gpio);
+    }
+
+    public static boolean isType(String type) {
+        switch (type) {
+            case "digital":
+            case "pwm":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private static boolean isSupports(String type, Integer gpio) {
+        switch (type) {
+            case "digital":
+                return digitalGpios.contains(gpio);
+            case "pwm":
+                return pwmGpios.contains(gpio);
+            default:
+                return false;
+        }
+    }
+
+    private static boolean isExists(Integer gpio) {
         return usedGpios.contains(gpio);
     }
 
@@ -123,21 +136,52 @@ public class GPIO {
         }
     }
 
-    public Set<Integer> getAvailableDigitalGpios() {
-        Set<Integer> gpios = new HashSet<>();
+    public static GpioPinDigitalOutput createDigitalPin(Integer gpio, String name, Boolean reverse)
+            throws OutputAlreadyExistException, PinSignalSupportException {
+        GPIO.validate(gpio, "digital");
 
-        for (Integer gpio : digitalGpios) {
-            if(!usedGpios.contains(gpio)) gpios.add(gpio);
-        }
-        return gpios;
+        GpioPinDigitalOutput pin = Application.getGpioController().provisionDigitalOutputPin(
+                getPinByGPIONumber(gpio), name, PinState.getState(reverse));
+
+        pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
+
+        usedGpios.add(gpio);
+
+        return pin;
     }
 
-    public Set<Integer> getAvailablePwmGpios() {
-        Set<Integer> gpios = new HashSet<>();
+    public static GpioPinPwmOutput createPwmPin(Integer gpio, String name, Boolean reverse)
+            throws OutputAlreadyExistException, PinSignalSupportException {
+        GPIO.validate(gpio, "pwm");
+
+        GpioPinPwmOutput pin = Application.getGpioController().provisionPwmOutputPin(
+                getPinByGPIONumber(gpio), name, reverse ? pwmRange : 0);
+
+        pin.setPwmRange(pwmRange);
+        pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
+
+        usedGpios.add(gpio);
+
+        return pin;
+    }
+
+    public static  Set<Integer> getAvailableDigitalGpios() {
+        Set<Integer> available = new HashSet<>();
+
+        for (Integer gpio : digitalGpios) {
+            if (usedGpios.contains(gpio)) continue;
+            available.add(gpio);
+        }
+        return available;
+    }
+
+    public static Set<Integer> getAvailablePwmGpios() {
+        Set<Integer> available = new HashSet<>();
 
         for (Integer gpio : pwmGpios) {
-            if(!usedGpios.contains(gpio)) gpios.add(gpio);
+            if (usedGpios.contains(gpio)) continue;
+            available.add(gpio);
         }
-        return gpios;
+        return available;
     }
 }
