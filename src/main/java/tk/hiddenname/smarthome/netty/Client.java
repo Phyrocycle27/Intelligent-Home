@@ -8,17 +8,17 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Client implements Runnable {
 
-    private final static Logger LOGGER;
+    private final static Logger log;
 
     static {
-        LOGGER = Logger.getLogger(Client.class.getName());
+        log = LoggerFactory.getLogger(Client.class.getName());
     }
 
     private final String HOST;
@@ -29,11 +29,12 @@ public class Client implements Runnable {
         this.HOST = host;
         this.PORT = port;
         new Thread(this, "Netty thread").start();
+        log.info("Netty thread created");
     }
 
     @Override
     public void run() {
-        LOGGER.log(Level.INFO, "Netty Thread is running");
+        log.info("Netty Thread is just running");
         EventLoopGroup group = new NioEventLoopGroup();
 
         SslContext sslCtx = null;

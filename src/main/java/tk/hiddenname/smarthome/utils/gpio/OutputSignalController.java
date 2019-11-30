@@ -6,7 +6,7 @@ import com.pi4j.io.gpio.PinState;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OutputController {
+public class OutputSignalController {
 
     public Boolean setState(GpioPinDigitalOutput output, Boolean state) {
 

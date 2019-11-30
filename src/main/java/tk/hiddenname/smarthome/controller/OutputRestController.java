@@ -3,6 +3,8 @@ package tk.hiddenname.smarthome.controller;
 import lombok.AllArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.Resource;
@@ -20,18 +22,15 @@ import tk.hiddenname.smarthome.exception.OutputNotFoundException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.TypeNotFoundException;
 import tk.hiddenname.smarthome.repository.OutputsRepository;
-import tk.hiddenname.smarthome.service.OutputService;
 import tk.hiddenname.smarthome.service.digital.DigitalOutputServiceImpl;
 import tk.hiddenname.smarthome.service.pwm.PwmOutputServiceImpl;
 import tk.hiddenname.smarthome.utils.gpio.GPIO;
+import tk.hiddenname.smarthome.utils.gpio.OutputManager;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -43,10 +42,10 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @AllArgsConstructor
 public class OutputRestController {
 
-    public static final Logger LOGGER;
+    public static final Logger log;
 
     static {
-        LOGGER = Logger.getLogger(OutputRestController.class.getName());
+        log = LoggerFactory.getLogger(OutputRestController.class.getName());
     }
 
     private final OutputsRepository repository; // repository which connects postgresDB to our program
@@ -57,6 +56,8 @@ public class OutputRestController {
     // State and signal resource assemblers
     private final DigitalStateResourceAssembler digitalStateAssembler;
     private final PwmSignalResourceAssembler pwmSignalAssembler;
+    // Gpio creator
+    private final OutputManager manager;
 
     @GetMapping(produces = {"application/json"})
     public Resources<Resource<Output>> getAll(
@@ -97,13 +98,7 @@ public class OutputRestController {
 
             newOutput.setCreationDate(LocalDateTime.now());
             newOutput = repository.save(newOutput);
-            Objects.requireNonNull(getDataService(newOutput.getType())).save(
-                    newOutput.getOutputId(),
-                    newOutput.getGpio(),
-                    newOutput.getName(),
-                    newOutput.getReverse());
-
-            LOGGER.log(Level.INFO, "Create new output " + newOutput.toString());
+            manager.create(newOutput);
 
             Resource<Output> resource = assembler.toResource(newOutput);
 
@@ -120,12 +115,7 @@ public class OutputRestController {
         Output updatedOutput = repository.findById(id)
                 .map(output -> {
                     BeanUtils.copyProperties(newOutput, output, "outputId, creationDate, type, gpio");
-
-                    Objects.requireNonNull(getDataService(output.getType())).update(
-                            output.getOutputId(),
-                            output.getName(),
-                            output.getReverse());
-
+                    manager.update(output);
                     return repository.save(output);
                 })
                 .orElseThrow(() -> new OutputNotFoundException(id));
@@ -140,9 +130,9 @@ public class OutputRestController {
     @DeleteMapping(value = {"/output/{id}"}, produces = {"application/json"})
     public ResponseEntity<?> delete(@PathVariable Integer id) {
 
-        Objects.requireNonNull(getDataService(repository.findById(id)
+        manager.delete(repository.findById(id)
                 .orElseThrow(() -> new OutputNotFoundException(id))
-                .getType())).delete(id);
+        );
 
         repository.deleteById(id);
 
@@ -162,11 +152,11 @@ public class OutputRestController {
         }
     }
 
-    /* ****************************************************
-     ********************** CONTROL ************************
-     **************************************************** */
+    /* **************************************************************************************
+     ********************************** CONTROL *********************************************
+     ************************************************************************************** */
 
-    // ****************** PWM ************************
+    // ******************************** PWM *************************************************
     @GetMapping(value = {"/control/pwm"}, produces = {"application/json"})
     public Resource<PwmSignal> getPwmSignal(@RequestParam(name = "id") Integer id) {
 
@@ -192,9 +182,7 @@ public class OutputRestController {
                 .body(resource);
     }
 
-    // ********************************************************
-
-    // ******************** DIGITAL *******************************
+    // ***************************** DIGITAL **************************************************
 
     @GetMapping(value = {"/control/digital"}, produces = {"application/json"})
     public Resource<DigitalState> getState(@RequestParam(name = "id") Integer id) {
@@ -210,7 +198,8 @@ public class OutputRestController {
         Output output = repository.findById(state.getOutputId())
                 .orElseThrow(() -> new OutputNotFoundException(state.getOutputId()));
 
-        LOGGER.log(Level.INFO, "Reverse is: " + output.getReverse());
+
+        log.debug("Reverse is: " + output.getReverse());
         Resource<DigitalState> resource = digitalStateAssembler.toResource(digitalService.setState(
                 output.getOutputId(),
                 output.getReverse(),
@@ -222,16 +211,5 @@ public class OutputRestController {
                 .body(resource);
     }
 
-    // ********************************************************
-
-    private OutputService getDataService(String type) {
-        switch (type) {
-            case "digital":
-                return digitalService;
-            case "pwm":
-                return pwmService;
-            default:
-                return null;
-        }
-    }
+    // *********************************************************************************
 }

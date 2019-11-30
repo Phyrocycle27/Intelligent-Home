@@ -9,7 +9,7 @@ import tk.hiddenname.smarthome.exception.OutputNotFoundException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.service.OutputService;
 import tk.hiddenname.smarthome.utils.gpio.GPIO;
-import tk.hiddenname.smarthome.utils.gpio.OutputController;
+import tk.hiddenname.smarthome.utils.gpio.OutputSignalController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,10 +25,10 @@ public class DigitalOutputServiceImpl implements OutputService, DigitalOutputSer
         LOGGER = Logger.getLogger(DigitalOutputService.class.getName());
     }
 
-    private final OutputController controller;
+    private final OutputSignalController controller;
 
     @Autowired
-    public DigitalOutputServiceImpl(OutputController controller) {
+    public DigitalOutputServiceImpl(OutputSignalController controller) {
         this.controller = controller;
         map = new HashMap<>();
     }
@@ -73,7 +73,9 @@ public class DigitalOutputServiceImpl implements OutputService, DigitalOutputSer
     public DigitalState setState(Integer id, Boolean reverse, Boolean newState) {
         GpioPinDigitalOutput pin = map.getOrDefault(id, null);
 
-        if (pin == null) throw new OutputNotFoundException(id);
+        if (pin == null) {
+            throw new OutputNotFoundException(id);
+        }
         return new DigitalState(id, reverse ^ controller.setState(pin, reverse ^ newState));
     }
 

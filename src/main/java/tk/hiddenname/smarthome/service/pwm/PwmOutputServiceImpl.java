@@ -9,7 +9,7 @@ import tk.hiddenname.smarthome.exception.OutputNotFoundException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.service.OutputService;
 import tk.hiddenname.smarthome.utils.gpio.GPIO;
-import tk.hiddenname.smarthome.utils.gpio.OutputController;
+import tk.hiddenname.smarthome.utils.gpio.OutputSignalController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,10 +18,10 @@ import java.util.Map;
 public class PwmOutputServiceImpl implements OutputService, PwmOutputService {
 
     private static Map<Integer, GpioPinPwmOutput> map;
-    private final OutputController controller;
+    private final OutputSignalController controller;
 
     @Autowired
-    public PwmOutputServiceImpl(OutputController controller) {
+    public PwmOutputServiceImpl(OutputSignalController controller) {
         this.controller = controller;
         map = new HashMap<>();
     }
