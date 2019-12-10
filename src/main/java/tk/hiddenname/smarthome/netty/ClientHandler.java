@@ -9,31 +9,31 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 public class ClientHandler extends ChannelInboundHandlerAdapter {
 
-    private static final CloseableHttpClient httpclient;
-    private static final Logger LOGGER;
+    private static final Logger log;
 
     static {
-        httpclient = HttpClients.createDefault();
-        LOGGER = Logger.getLogger(ClientHandler.class.getName());
+        log = LoggerFactory.getLogger(ClientHandler.class);
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         Channel ch = ctx.channel();
 
-        JSONObject requestObj = new JSONObject(msg.toString());
+        JSONObject requestObj = new JSONObject(msg);
         JSONObject jsonRequest = requestObj.getJSONObject("body");
 
-        if (requestObj.getString("type").equals("request")) {
+        log.debug("Incoming mesage is: " + msg);
 
+        if (requestObj.getString("type").equals("request")) {
             HttpUriRequest request = null;
 
             switch (jsonRequest.getString("method")) {
@@ -41,7 +41,13 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
                     request = new HttpGet(jsonRequest.getString("uri"));
                     break;
                 case "PUT":
-                    request = new HttpPut(jsonRequest.getString("uri"));
+                    HttpPut put = new HttpPut(jsonRequest.getString("uri"));
+                    if (jsonRequest.keySet().contains("request_body")) {
+                        StringEntity ent = new StringEntity(jsonRequest.getJSONObject("request_body").toString(),
+                                StandardCharsets.UTF_8);
+                        put.setEntity(ent);
+                    }
+                    request = put;
                     break;
                 case "POST":
                     HttpPost post = new HttpPost(jsonRequest.getString("uri"));
@@ -58,14 +64,19 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             }
 
             if (request != null) {
+                try (CloseableHttpClient httpClient = HttpClients.createDefault();
+                     CloseableHttpResponse response = httpClient.execute(request)) {
 
-                request.addHeader("Content-Type", "application/json");
-                request.addHeader("Accept-Charset", "UTF-8");
+                    JSONObject responseBody;
+                    String entity;
 
-                try (CloseableHttpResponse response = httpclient.execute(request)) {
-                    JSONObject responseBody = new JSONObject(
-                            EntityUtils.toString(response.getEntity()))
-                            .put("code", response.getStatusLine().getStatusCode());
+                    if (response.getEntity() != null) {
+                        entity = EntityUtils.toString(response.getEntity());
+                        responseBody = new JSONObject(entity);
+                        log.debug("Received request is: " + entity);
+                    } else responseBody = new JSONObject();
+
+                    responseBody.put("code", response.getStatusLine().getStatusCode());
 
                     JSONObject responseObj = new JSONObject()
                             .put("type", "data")
@@ -81,7 +92,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        LOGGER.log(Level.WARNING, cause.getMessage());
+        log.error("ClientHandler Error", cause);
         ctx.close();
     }
 }

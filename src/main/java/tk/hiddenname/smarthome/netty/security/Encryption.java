@@ -82,7 +82,7 @@ public class Encryption {
             KeyFactory clientKeyFactory = KeyFactory.getInstance("DH");
             X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(serverPubKeyEncoded);
             PublicKey serverPubKey = clientKeyFactory.generatePublic(x509KeySpec);
-            // **************
+            // ****************************************************************
             clientKeyAgree.doPhase(serverPubKey, true);
             byte[] clientSharedSecret = clientKeyAgree.generateSecret();
             clientAesKey = new SecretKeySpec(clientSharedSecret, 0, 16, "AES");

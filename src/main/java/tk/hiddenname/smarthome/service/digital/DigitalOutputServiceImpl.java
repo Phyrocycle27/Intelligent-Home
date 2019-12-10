@@ -63,19 +63,16 @@ public class DigitalOutputServiceImpl implements OutputService, DigitalOutputSer
 
     @Override
     public DigitalState getState(Integer id, Boolean reverse) {
-        GpioPinDigitalOutput pin = map.getOrDefault(id, null);
-
-        if (pin == null) throw new OutputNotFoundException(id);
-        return new DigitalState(id, reverse ^ pin.getState().isHigh());
+        if (!map.containsKey(id)) throw new OutputNotFoundException(id);
+        return new DigitalState(id, reverse ^ getState(id).getDigitalState());
     }
 
     @Override
     public DigitalState setState(Integer id, Boolean reverse, Boolean newState) {
         GpioPinDigitalOutput pin = map.getOrDefault(id, null);
 
-        if (pin == null) {
+        if (pin == null)
             throw new OutputNotFoundException(id);
-        }
         return new DigitalState(id, reverse ^ controller.setState(pin, reverse ^ newState));
     }
 

@@ -49,7 +49,7 @@ public class OutputRestController {
     }
 
     private final OutputsRepository repository; // repository which connects postgresDB to our program
-    private final OutputResourceAssembler assembler;
+    private final OutputResourceAssembler outputAssembler;
     // services
     private final DigitalOutputServiceImpl digitalService;
     private final PwmOutputServiceImpl pwmService;
@@ -59,7 +59,7 @@ public class OutputRestController {
     // Gpio creator
     private final OutputManager manager;
 
-    @GetMapping(produces = {"application/json"})
+    @GetMapping(value = {"/all"}, produces = {"application/json"})
     public Resources<Resource<Output>> getAll(
             @RequestParam(name = "type", defaultValue = "", required = false) String type)
             throws TypeNotFoundException {
@@ -67,13 +67,13 @@ public class OutputRestController {
         type = type.toLowerCase();
         List<Resource<Output>> outputs;
 
-        if (type.equals("")) {
+        if (type.isEmpty()) {
             outputs = repository.findAll(Sort.by("outputId")).stream()
-                    .map(assembler::toResource)
+                    .map(outputAssembler::toResource)
                     .collect(Collectors.toList());
         } else if (GPIO.isType(type)) {
             outputs = repository.findByType(type, Sort.by("outputId")).stream()
-                    .map(assembler::toResource)
+                    .map(outputAssembler::toResource)
                     .collect(Collectors.toList());
         } else throw new TypeNotFoundException(type);
 
@@ -81,10 +81,9 @@ public class OutputRestController {
                 linkTo(methodOn(OutputRestController.class).getAll(type)).withSelfRel());
     }
 
-    @GetMapping(value = {"/output/{id}"}, produces = {"application/json"})
+    @GetMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public Resource<Output> getOne(@PathVariable Integer id) {
-
-        return assembler.toResource(
+        return outputAssembler.toResource(
                 repository.findById(id)
                         .orElseThrow(() -> new OutputNotFoundException(id)));
     }
@@ -100,7 +99,7 @@ public class OutputRestController {
             newOutput = repository.save(newOutput);
             manager.create(newOutput);
 
-            Resource<Output> resource = assembler.toResource(newOutput);
+            Resource<Output> resource = outputAssembler.toResource(newOutput);
 
             return ResponseEntity
                     .created(new URI(resource.getId().expand().getHref()))
@@ -108,7 +107,7 @@ public class OutputRestController {
         } else throw new TypeNotFoundException(newOutput.getType());
     }
 
-    @PutMapping(value = {"/output/{id}"}, produces = {"application/json"})
+    @PutMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public ResponseEntity<?> replace(@RequestBody Output newOutput,
                                      @PathVariable Integer id) throws URISyntaxException {
 
@@ -120,19 +119,18 @@ public class OutputRestController {
                 })
                 .orElseThrow(() -> new OutputNotFoundException(id));
 
-        Resource<Output> resource = assembler.toResource(updatedOutput);
+        Resource<Output> resource = outputAssembler.toResource(updatedOutput);
 
         return ResponseEntity
                 .created(new URI(resource.getId().expand().getHref()))
                 .body(resource);
     }
 
-    @DeleteMapping(value = {"/output/{id}"}, produces = {"application/json"})
+    @DeleteMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public ResponseEntity<?> delete(@PathVariable Integer id) {
 
         manager.delete(repository.findById(id)
-                .orElseThrow(() -> new OutputNotFoundException(id))
-        );
+                .orElseThrow(() -> new OutputNotFoundException(id)));
 
         repository.deleteById(id);
 
@@ -140,13 +138,13 @@ public class OutputRestController {
     }
 
     @GetMapping(value = {"/available"}, produces = {"application/json"})
-    public String getAvailableOutputs(@RequestParam(name = "type") String type) {
+    public JSONObject getAvailableOutputs(@RequestParam(name = "type") String type) {
         JSONObject obj = new JSONObject();
         switch (type) {
             case "digital":
-                return obj.put("available_gpios", new JSONArray(GPIO.getAvailableDigitalGpios())).toString();
+                return obj.put("available_gpios", new JSONArray(GPIO.getAvailableDigitalGpios()));
             case "pwm":
-                return obj.put("available_gpios", new JSONArray(GPIO.getAvailablePwmGpios())).toString();
+                return obj.put("available_gpios", new JSONArray(GPIO.getAvailablePwmGpios()));
             default:
                 throw new TypeNotFoundException(type);
         }
@@ -162,7 +160,7 @@ public class OutputRestController {
 
         Output output = repository.findById(id).orElseThrow(() -> new OutputNotFoundException(id));
 
-        return pwmSignalAssembler.toResource(pwmService.getSignal(output.getOutputId(), output.getReverse()));
+        return pwmSignalAssembler.toResource(pwmService.getSignal(id, output.getReverse()));
     }
 
     @PutMapping(value = {"/control/pwm"}, produces = {"application/json"})
@@ -189,7 +187,7 @@ public class OutputRestController {
 
         Output output = repository.findById(id).orElseThrow(() -> new OutputNotFoundException(id));
 
-        return digitalStateAssembler.toResource(digitalService.getState(output.getOutputId(), output.getReverse()));
+        return digitalStateAssembler.toResource(digitalService.getState(id, output.getReverse()));
     }
 
     @PutMapping(value = {"/control/digital"}, produces = {"application/hal+json"})
@@ -198,8 +196,6 @@ public class OutputRestController {
         Output output = repository.findById(state.getOutputId())
                 .orElseThrow(() -> new OutputNotFoundException(state.getOutputId()));
 
-
-        log.debug("Reverse is: " + output.getReverse());
         Resource<DigitalState> resource = digitalStateAssembler.toResource(digitalService.setState(
                 output.getOutputId(),
                 output.getReverse(),
@@ -210,6 +206,5 @@ public class OutputRestController {
                 .created(new URI(resource.getId().expand().getHref()))
                 .body(resource);
     }
-
     // *********************************************************************************
 }

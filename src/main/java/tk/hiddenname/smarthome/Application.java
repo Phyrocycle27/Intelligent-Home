@@ -27,15 +27,16 @@ public class Application {
     private static final GpioController gpioController;
     // Settings
     @Getter
-    private static final boolean allowConnectionToServer = false;
+    private static final boolean allowConnectionToServer = true;
     @Getter
-    private static final String token = "ebhtiWP9FEwQCKxVvCRPepawT88kPYa8";
-    //private static final String token = "ag6EBKHA77Tlp1bluQdwAUe8EbxGyeh6";
+    // Hidden Name
+    //private static final String token = "";
+    // Alex
+    private static final String token = "vv06uBfNYDpuDhHR2I9IwscAW89ltF6K";
 
     static {
         GPIO.setPwmRange(1024);
         gpioController = GpioFactory.getInstance();
-
         log = LoggerFactory.getLogger(Application.class.getName());
     }
 

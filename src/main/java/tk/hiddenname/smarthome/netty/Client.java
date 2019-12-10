@@ -1,7 +1,6 @@
 package tk.hiddenname.smarthome.netty;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -23,7 +22,6 @@ public class Client implements Runnable {
 
     private final String HOST;
     private final int PORT;
-    private Channel channel;
 
     public Client(String host, int port) {
         this.HOST = host;

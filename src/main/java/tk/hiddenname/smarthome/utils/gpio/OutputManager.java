@@ -2,6 +2,7 @@ package tk.hiddenname.smarthome.utils.gpio;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entity.Output;
 import tk.hiddenname.smarthome.exception.OutputAlreadyExistException;
@@ -22,6 +23,7 @@ public class OutputManager {
         log = LoggerFactory.getLogger(OutputManager.class.getName());
     }
 
+    @Autowired
     public OutputManager(DigitalOutputServiceImpl digitalService, PwmOutputServiceImpl pwmService) {
         OutputManager.digitalService = digitalService;
         OutputManager.pwmService = pwmService;
@@ -30,7 +32,7 @@ public class OutputManager {
 
     public void create(Output output) throws PinSignalSupportException, OutputAlreadyExistException {
         log.debug("Creating output... " + output.toString());
-        getDataService(output.getType()).save(
+        getService(output.getType()).save(
                 output.getOutputId(),
                 output.getGpio(),
                 output.getName(),
@@ -39,7 +41,7 @@ public class OutputManager {
     }
 
     public void update(Output output) {
-        getDataService(output.getType()).update(
+        getService(output.getType()).update(
                 output.getOutputId(),
                 output.getName(),
                 output.getReverse()
@@ -47,12 +49,12 @@ public class OutputManager {
     }
 
     public void delete(Output output) {
-        getDataService(output.getType()).delete(
+        getService(output.getType()).delete(
                 output.getOutputId()
         );
     }
 
-    private OutputService getDataService(String type) {
+    private OutputService getService(String type) {
         switch (type) {
             case "digital":
                 return digitalService;

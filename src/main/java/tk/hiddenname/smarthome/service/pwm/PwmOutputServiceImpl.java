@@ -55,10 +55,11 @@ public class PwmOutputServiceImpl implements OutputService, PwmOutputService {
 
     @Override
     public PwmSignal getSignal(Integer id, Boolean reverse) {
-        GpioPinPwmOutput pin = map.getOrDefault(id, null);
-
-        if (pin == null) throw new OutputNotFoundException(id);
-        return new PwmSignal(id, reverse ? GPIO.getPwmRange() - pin.getPwm() : pin.getPwm());
+        if (!map.containsKey(id)) throw new OutputNotFoundException(id);
+        else {
+            int signal = getSignal(id).getPwmSignal();
+            return new PwmSignal(id, reverse ? GPIO.getPwmRange() - signal : signal);
+        }
     }
 
     @Override
@@ -67,7 +68,7 @@ public class PwmOutputServiceImpl implements OutputService, PwmOutputService {
 
         if (pin == null) throw new OutputNotFoundException(id);
 
-        Integer currSignal = controller.setSignal(map.get(id), reverse ? GPIO.getPwmRange() - newSignal : newSignal);
+        Integer currSignal = controller.setSignal(pin, reverse ? GPIO.getPwmRange() - newSignal : newSignal);
         return new PwmSignal(id, reverse ? GPIO.getPwmRange() - currSignal : currSignal);
     }
 
