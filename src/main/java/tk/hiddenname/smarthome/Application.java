@@ -20,19 +20,19 @@ import tk.hiddenname.smarthome.utils.gpio.OutputManager;
 public class Application {
 
     private static final Logger log;
-    private static final String HOST = "192.168.1.54";
+    private static final String HOST = "192.168.1.74";
     private static final int PORT = 3141;
 
     @Getter
     private static final GpioController gpioController;
     // Settings
     @Getter
-    private static final boolean allowConnectionToServer = true;
+    private static final boolean allowConnectionToServer = false;
     @Getter
     // Hidden Name
     //private static final String token = "";
     // Alex
-    private static final String token = "vv06uBfNYDpuDhHR2I9IwscAW89ltF6K";
+    private static final String token = "bN40oA79nPAkixnxFKgI5pFZh7v2iExz";
 
     static {
         GPIO.setPwmRange(1024);

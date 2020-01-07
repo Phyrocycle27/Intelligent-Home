@@ -3,8 +3,6 @@ package tk.hiddenname.smarthome.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "outputs")
 @EqualsAndHashCode(of = {"outputId"}, callSuper = false)
-public class Output extends ResourceSupport {
+public class Output {
 
     @Id
     @Column(name = "id")

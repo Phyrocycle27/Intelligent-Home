@@ -74,8 +74,9 @@ public class GPIO {
     public static void validate(Integer gpio, String type) throws PinSignalSupportException, TypeNotFoundException,
             OutputAlreadyExistException {
 
-        if (!isSupports(type, gpio))
+        if (!isSupports(type, gpio)) {
             throw new PinSignalSupportException(gpio);
+        }
 
         if (isExists(gpio))
             throw new OutputAlreadyExistException(gpio);

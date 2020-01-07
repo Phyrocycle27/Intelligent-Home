@@ -8,6 +8,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +29,8 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         Channel ch = ctx.channel();
 
-        JSONObject requestObj = new JSONObject(msg);
+        JSONObject requestObj = new JSONObject(msg.toString());
         JSONObject jsonRequest = requestObj.getJSONObject("body");
-
-        log.debug("Incoming mesage is: " + msg);
 
         if (requestObj.getString("type").equals("request")) {
             HttpUriRequest request = null;
@@ -47,6 +46,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
                                 StandardCharsets.UTF_8);
                         put.setEntity(ent);
                     }
+                    put.addHeader("Content-Type", "application/json");
                     request = put;
                     break;
                 case "POST":
@@ -56,6 +56,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
                                 StandardCharsets.UTF_8);
                         post.setEntity(ent);
                     }
+                    post.addHeader("Content-Type", "application/json");
                     request = post;
                     break;
                 case "DELETE":
@@ -72,7 +73,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
                     if (response.getEntity() != null) {
                         entity = EntityUtils.toString(response.getEntity());
-                        responseBody = new JSONObject(entity);
+                        responseBody = new JSONObject();
+                        if (entity.startsWith("[")) {
+                            responseBody.put("entity", new JSONArray(entity));
+                        } else responseBody.put("entity", new JSONObject(entity));
                         log.debug("Received request is: " + entity);
                     } else responseBody = new JSONObject();
 

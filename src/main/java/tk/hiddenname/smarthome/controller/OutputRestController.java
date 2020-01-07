@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tk.hiddenname.smarthome.controller.assembler.DigitalStateResourceAssembler;
@@ -31,10 +30,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 
 @RestController
@@ -60,37 +55,30 @@ public class OutputRestController {
     private final OutputManager manager;
 
     @GetMapping(value = {"/all"}, produces = {"application/json"})
-    public Resources<Resource<Output>> getAll(
+    public List<Output> getAll(
             @RequestParam(name = "type", defaultValue = "", required = false) String type)
             throws TypeNotFoundException {
 
         type = type.toLowerCase();
-        List<Resource<Output>> outputs;
+        List<Output> devices;
 
         if (type.isEmpty()) {
-            outputs = repository.findAll(Sort.by("outputId")).stream()
-                    .map(outputAssembler::toResource)
-                    .collect(Collectors.toList());
+            devices = repository.findAll(Sort.by("outputId"));
         } else if (GPIO.isType(type)) {
-            outputs = repository.findByType(type, Sort.by("outputId")).stream()
-                    .map(outputAssembler::toResource)
-                    .collect(Collectors.toList());
+            devices = repository.findByType(type, Sort.by("outputId"));
         } else throw new TypeNotFoundException(type);
 
-        return new Resources<>(outputs,
-                linkTo(methodOn(OutputRestController.class).getAll(type)).withSelfRel());
+        return devices;
     }
 
     @GetMapping(value = {"/one/{id}"}, produces = {"application/json"})
-    public Resource<Output> getOne(@PathVariable Integer id) {
-        return outputAssembler.toResource(
-                repository.findById(id)
-                        .orElseThrow(() -> new OutputNotFoundException(id)));
+    public Output getOne(@PathVariable Integer id) {
+        return repository.findById(id).orElseThrow(() -> new OutputNotFoundException(id));
     }
 
-    @PostMapping(produces = {"application/json"})
-    public ResponseEntity<?> create(@RequestBody Output newOutput)
-            throws URISyntaxException, OutputAlreadyExistException, PinSignalSupportException, TypeNotFoundException {
+    @PostMapping(value = {"/create"}, produces = {"application/json"})
+    public Output create(@RequestBody Output newOutput) throws OutputAlreadyExistException,
+            PinSignalSupportException, TypeNotFoundException {
 
         if (GPIO.isType(newOutput.getType())) {
             GPIO.validate(newOutput.getGpio(), newOutput.getType());
@@ -98,32 +86,30 @@ public class OutputRestController {
             newOutput.setCreationDate(LocalDateTime.now());
             newOutput = repository.save(newOutput);
             manager.create(newOutput);
-
-            Resource<Output> resource = outputAssembler.toResource(newOutput);
+            return newOutput;
+            /*Resource<Output> resource = outputAssembler.toResource(newOutput);
 
             return ResponseEntity
                     .created(new URI(resource.getId().expand().getHref()))
-                    .body(resource);
+                    .body(resource);*/
         } else throw new TypeNotFoundException(newOutput.getType());
     }
 
     @PutMapping(value = {"/one/{id}"}, produces = {"application/json"})
-    public ResponseEntity<?> replace(@RequestBody Output newOutput,
-                                     @PathVariable Integer id) throws URISyntaxException {
+    public Output replace(@RequestBody Output newOutput, @PathVariable Integer id){
 
-        Output updatedOutput = repository.findById(id)
+        return repository.findById(id)
                 .map(output -> {
                     BeanUtils.copyProperties(newOutput, output, "outputId, creationDate, type, gpio");
                     manager.update(output);
                     return repository.save(output);
                 })
                 .orElseThrow(() -> new OutputNotFoundException(id));
-
-        Resource<Output> resource = outputAssembler.toResource(updatedOutput);
+        /*Resource<Output> resource = outputAssembler.toResource(updatedOutput);
 
         return ResponseEntity
                 .created(new URI(resource.getId().expand().getHref()))
-                .body(resource);
+                .body(resource);*/
     }
 
     @DeleteMapping(value = {"/one/{id}"}, produces = {"application/json"})
@@ -138,13 +124,13 @@ public class OutputRestController {
     }
 
     @GetMapping(value = {"/available"}, produces = {"application/json"})
-    public JSONObject getAvailableOutputs(@RequestParam(name = "type") String type) {
+    public String getAvailableOutputs(@RequestParam(name = "type") String type) {
         JSONObject obj = new JSONObject();
         switch (type) {
             case "digital":
-                return obj.put("available_gpios", new JSONArray(GPIO.getAvailableDigitalGpios()));
+                return obj.put("available_gpios", new JSONArray(GPIO.getAvailableDigitalGpios())).toString();
             case "pwm":
-                return obj.put("available_gpios", new JSONArray(GPIO.getAvailablePwmGpios()));
+                return obj.put("available_gpios", new JSONArray(GPIO.getAvailablePwmGpios())).toString();
             default:
                 throw new TypeNotFoundException(type);
         }
@@ -183,28 +169,26 @@ public class OutputRestController {
     // ***************************** DIGITAL **************************************************
 
     @GetMapping(value = {"/control/digital"}, produces = {"application/json"})
-    public Resource<DigitalState> getState(@RequestParam(name = "id") Integer id) {
+    public DigitalState getState(@RequestParam(name = "id") Integer id) {
 
         Output output = repository.findById(id).orElseThrow(() -> new OutputNotFoundException(id));
 
-        return digitalStateAssembler.toResource(digitalService.getState(id, output.getReverse()));
+        return digitalService.getState(id, output.getReverse());
     }
 
     @PutMapping(value = {"/control/digital"}, produces = {"application/hal+json"})
-    public ResponseEntity<?> setState(@RequestBody DigitalState state) throws URISyntaxException {
+    public DigitalState setState(@RequestBody DigitalState state) throws URISyntaxException {
 
         Output output = repository.findById(state.getOutputId())
                 .orElseThrow(() -> new OutputNotFoundException(state.getOutputId()));
 
-        Resource<DigitalState> resource = digitalStateAssembler.toResource(digitalService.setState(
+        DigitalState resource = digitalService.setState(
                 output.getOutputId(),
                 output.getReverse(),
                 state.getDigitalState()
-        ));
+        );
 
-        return ResponseEntity
-                .created(new URI(resource.getId().expand().getHref()))
-                .body(resource);
+        return resource;
     }
     // *********************************************************************************
 }
