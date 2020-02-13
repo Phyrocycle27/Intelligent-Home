@@ -1,8 +1,7 @@
 package tk.hiddenname.smarthome.netty;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.*;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -15,11 +14,17 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
 
 public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log;
+    private final Client client;
+
+    public ClientHandler(Client client) {
+        this.client = client;
+    }
 
     static {
         log = LoggerFactory.getLogger(ClientHandler.class);
@@ -95,8 +100,16 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        log.info("Unregistering");
+        final EventLoop eventLoop = ctx.channel().eventLoop();
+        eventLoop.schedule(() ->
+                client.createBootstrap(eventLoop, new Bootstrap()), 1L, TimeUnit.SECONDS);
+        super.channelInactive(ctx);
+    }
+
+    @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.error("ClientHandler Error", cause);
-        ctx.close();
+        log.error("ClientHandler Error: " + cause.getMessage());
     }
 }

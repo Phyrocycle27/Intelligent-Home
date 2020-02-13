@@ -1,6 +1,9 @@
 package tk.hiddenname.smarthome.netty;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -9,6 +12,7 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tk.hiddenname.smarthome.netty.security.ConnectionListener;
 
 import javax.net.ssl.SSLException;
 
@@ -22,37 +26,44 @@ public class Client implements Runnable {
 
     private final String HOST;
     private final int PORT;
+    private Bootstrap bootstrap;
 
     public Client(String host, int port) {
         this.HOST = host;
         this.PORT = port;
         new Thread(this, "Netty thread").start();
         log.info("Netty thread created");
+        System.out.println("Netty thread created");
     }
 
     @Override
     public void run() {
         log.info("Netty Thread is just running");
         EventLoopGroup group = new NioEventLoopGroup();
+        bootstrap = new Bootstrap();
 
-        SslContext sslCtx = null;
-        try {
-            sslCtx = SslContextBuilder.forClient()
-                    .trustManager(InsecureTrustManagerFactory.INSTANCE).build();
-        } catch (SSLException e) {
-            e.printStackTrace();
-        }
-        try {
-            Bootstrap bootstrap = new io.netty.bootstrap.Bootstrap()
-                    .group(group)
-                    .channel(NioSocketChannel.class)
-                    .handler(new ClientInitializer(sslCtx, HOST, PORT));
+        createBootstrap(group, bootstrap);
+    }
 
-            bootstrap.connect(HOST, PORT).sync().channel().closeFuture().sync();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            group.shutdownGracefully();
+    public void createBootstrap(EventLoopGroup group, Bootstrap bootstrap) {
+        if (bootstrap != null) {
+            log.info("Creating bootstrap");
+            SslContext sslCtx;
+            try {
+                sslCtx = SslContextBuilder.forClient()
+                        .trustManager(InsecureTrustManagerFactory.INSTANCE).build();
+
+                bootstrap.group(group)
+                        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
+                        .option(ChannelOption.SO_KEEPALIVE, true)
+                        .channel(NioSocketChannel.class)
+                        .handler(new ClientInitializer(sslCtx, HOST, PORT, this));
+
+                bootstrap.connect(HOST, PORT).addListener(new ConnectionListener(this));
+
+            } catch (SSLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

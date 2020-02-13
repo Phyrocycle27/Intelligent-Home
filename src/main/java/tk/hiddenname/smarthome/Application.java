@@ -27,12 +27,12 @@ public class Application {
     private static final GpioController gpioController;
     // Settings
     @Getter
-    private static final boolean allowConnectionToServer = false;
+    private static final boolean allowConnectionToServer = true;
     @Getter
     // Hidden Name
     //private static final String token = "";
     // Alex
-    private static final String token = "bN40oA79nPAkixnxFKgI5pFZh7v2iExz";
+    private static final String token = "uTuAkCo7YNMLjCDBsjKNMtoXnpDSun7Z";
 
     static {
         GPIO.setPwmRange(1024);
