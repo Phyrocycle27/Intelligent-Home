@@ -20,7 +20,7 @@ import tk.hiddenname.smarthome.utils.gpio.OutputManager;
 public class Application {
 
     private static final Logger log;
-    private static final String HOST = "192.168.1.74";
+    private static final String HOST = "87.255.8.24";
     private static final int PORT = 3141;
 
     @Getter
@@ -29,10 +29,7 @@ public class Application {
     @Getter
     private static final boolean allowConnectionToServer = true;
     @Getter
-    // Hidden Name
-    //private static final String token = "";
-    // Alex
-    private static final String token = "uTuAkCo7YNMLjCDBsjKNMtoXnpDSun7Z";
+    private static final String token = "Dq62R5gswBxAOqUITvO0KEH6aZmT6BQ8";
 
     static {
         GPIO.setPwmRange(1024);
@@ -42,8 +39,7 @@ public class Application {
 
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(() ->
-                Application.getGpioController().shutdown())
-        );
+                Application.getGpioController().shutdown()));
 
         // Run the Spring
         ApplicationContext ctx = SpringApplication.run(Application.class, args);

@@ -3,16 +3,10 @@ package tk.hiddenname.smarthome.controller;
 import lombok.AllArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
-import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tk.hiddenname.smarthome.controller.assembler.DigitalStateResourceAssembler;
-import tk.hiddenname.smarthome.controller.assembler.OutputResourceAssembler;
-import tk.hiddenname.smarthome.controller.assembler.PwmSignalResourceAssembler;
 import tk.hiddenname.smarthome.entity.Output;
 import tk.hiddenname.smarthome.entity.signal.DigitalState;
 import tk.hiddenname.smarthome.entity.signal.PwmSignal;
@@ -26,8 +20,6 @@ import tk.hiddenname.smarthome.service.pwm.PwmOutputServiceImpl;
 import tk.hiddenname.smarthome.utils.gpio.GPIO;
 import tk.hiddenname.smarthome.utils.gpio.OutputManager;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,20 +29,10 @@ import java.util.List;
 @AllArgsConstructor
 public class OutputRestController {
 
-    public static final Logger log;
-
-    static {
-        log = LoggerFactory.getLogger(OutputRestController.class.getName());
-    }
-
     private final OutputsRepository repository; // repository which connects postgresDB to our program
-    private final OutputResourceAssembler outputAssembler;
     // services
     private final DigitalOutputServiceImpl digitalService;
     private final PwmOutputServiceImpl pwmService;
-    // State and signal resource assemblers
-    private final DigitalStateResourceAssembler digitalStateAssembler;
-    private final PwmSignalResourceAssembler pwmSignalAssembler;
     // Gpio creator
     private final OutputManager manager;
 
@@ -87,16 +69,11 @@ public class OutputRestController {
             newOutput = repository.save(newOutput);
             manager.create(newOutput);
             return newOutput;
-            /*Resource<Output> resource = outputAssembler.toResource(newOutput);
-
-            return ResponseEntity
-                    .created(new URI(resource.getId().expand().getHref()))
-                    .body(resource);*/
         } else throw new TypeNotFoundException(newOutput.getType());
     }
 
     @PutMapping(value = {"/one/{id}"}, produces = {"application/json"})
-    public Output replace(@RequestBody Output newOutput, @PathVariable Integer id){
+    public Output replace(@RequestBody Output newOutput, @PathVariable Integer id) {
 
         return repository.findById(id)
                 .map(output -> {
@@ -105,11 +82,6 @@ public class OutputRestController {
                     return repository.save(output);
                 })
                 .orElseThrow(() -> new OutputNotFoundException(id));
-        /*Resource<Output> resource = outputAssembler.toResource(updatedOutput);
-
-        return ResponseEntity
-                .created(new URI(resource.getId().expand().getHref()))
-                .body(resource);*/
     }
 
     @DeleteMapping(value = {"/one/{id}"}, produces = {"application/json"})
@@ -142,28 +114,22 @@ public class OutputRestController {
 
     // ******************************** PWM *************************************************
     @GetMapping(value = {"/control/pwm"}, produces = {"application/json"})
-    public Resource<PwmSignal> getPwmSignal(@RequestParam(name = "id") Integer id) {
-
+    public PwmSignal getPwmSignal(@RequestParam(name = "id") Integer id) {
         Output output = repository.findById(id).orElseThrow(() -> new OutputNotFoundException(id));
 
-        return pwmSignalAssembler.toResource(pwmService.getSignal(id, output.getReverse()));
+        return pwmService.getSignal(id, output.getReverse());
     }
 
     @PutMapping(value = {"/control/pwm"}, produces = {"application/json"})
-    public ResponseEntity<?> setPwmSignal(@RequestBody PwmSignal signal) throws URISyntaxException {
+    public PwmSignal setPwmSignal(@RequestBody PwmSignal signal) {
 
         Output output = repository.findById(signal.getOutputId())
                 .orElseThrow(() -> new OutputNotFoundException(signal.getOutputId()));
 
-        Resource<PwmSignal> resource = pwmSignalAssembler.toResource(pwmService.setSignal(
+        return pwmService.setSignal(
                 output.getOutputId(),
                 output.getReverse(),
-                signal.getPwmSignal()
-        ));
-
-        return ResponseEntity
-                .created(new URI(resource.getId().expand().getHref()))
-                .body(resource);
+                signal.getPwmSignal());
     }
 
     // ***************************** DIGITAL **************************************************
@@ -177,18 +143,15 @@ public class OutputRestController {
     }
 
     @PutMapping(value = {"/control/digital"}, produces = {"application/hal+json"})
-    public DigitalState setState(@RequestBody DigitalState state) throws URISyntaxException {
+    public DigitalState setState(@RequestBody DigitalState state) {
 
         Output output = repository.findById(state.getOutputId())
                 .orElseThrow(() -> new OutputNotFoundException(state.getOutputId()));
 
-        DigitalState resource = digitalService.setState(
+        return digitalService.setState(
                 output.getOutputId(),
                 output.getReverse(),
                 state.getDigitalState()
         );
-
-        return resource;
     }
-    // *********************************************************************************
 }
