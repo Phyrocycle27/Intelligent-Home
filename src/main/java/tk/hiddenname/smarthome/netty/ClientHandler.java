@@ -1,7 +1,10 @@
 package tk.hiddenname.smarthome.netty;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.EventLoop;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -33,6 +36,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         Channel ch = ctx.channel();
+        log.info("new message");
 
         JSONObject requestObj = new JSONObject(msg.toString());
         JSONObject jsonRequest = requestObj.getJSONObject("body");
@@ -102,14 +106,25 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         log.info("Unregistering");
-        final EventLoop eventLoop = ctx.channel().eventLoop();
-        eventLoop.schedule(() ->
-                client.createBootstrap(eventLoop, new Bootstrap()), 1L, TimeUnit.SECONDS);
         super.channelInactive(ctx);
+        reconnect(ctx);
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         log.error("ClientHandler Error: " + cause.getMessage());
+        super.exceptionCaught(ctx, cause);
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        log.info("channel inactive");
+        super.channelInactive(ctx);
+    }
+
+    private void reconnect(ChannelHandlerContext ctx) {
+        final EventLoop eventLoop = ctx.channel().eventLoop();
+        eventLoop.schedule(() ->
+                client.createBootstrap(eventLoop, new Bootstrap()), 10L, TimeUnit.SECONDS);
     }
 }

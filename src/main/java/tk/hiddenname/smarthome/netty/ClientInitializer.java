@@ -1,6 +1,5 @@
 package tk.hiddenname.smarthome.netty;
 
-import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
@@ -8,14 +7,13 @@ import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tk.hiddenname.smarthome.Application;
 import tk.hiddenname.smarthome.netty.security.CipherDecoder;
 import tk.hiddenname.smarthome.netty.security.CipherEncoder;
 import tk.hiddenname.smarthome.netty.security.Encryption;
-
-import java.util.concurrent.TimeUnit;
 
 public class ClientInitializer extends ChannelInitializer<SocketChannel> {
 
@@ -77,13 +75,15 @@ public class ClientInitializer extends ChannelInitializer<SocketChannel> {
                     // получать в ответ прошли мы аутентификацию или нет
                     try {
                         f.sync();
-                        ch.pipeline().addAfter("cipherEncoder", "sessionHandler", new ClientHandler(client));
+                        ch.pipeline().addAfter("cipherEncoder", "idleHandler",
+                                new IdleStateHandler(0, 0, 120));
+                        ch.pipeline().addAfter("idleHandler", "eventHandler", new EventHandler());
+                        ch.pipeline().addAfter("eventHandler", "sessionHandler", new ClientHandler(client));
                         ch.pipeline().remove("auth");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
-
             }
 
             @Override

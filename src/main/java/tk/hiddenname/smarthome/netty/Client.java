@@ -1,8 +1,6 @@
 package tk.hiddenname.smarthome.netty;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -12,7 +10,6 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tk.hiddenname.smarthome.netty.security.ConnectionListener;
 
 import javax.net.ssl.SSLException;
 
@@ -26,7 +23,6 @@ public class Client implements Runnable {
 
     private final String HOST;
     private final int PORT;
-    private Bootstrap bootstrap;
 
     public Client(String host, int port) {
         this.HOST = host;
@@ -40,7 +36,7 @@ public class Client implements Runnable {
     public void run() {
         log.info("Netty Thread is just running");
         EventLoopGroup group = new NioEventLoopGroup();
-        bootstrap = new Bootstrap();
+        Bootstrap bootstrap = new Bootstrap();
 
         createBootstrap(group, bootstrap);
     }
