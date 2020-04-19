@@ -13,17 +13,11 @@ import tk.hiddenname.smarthome.utils.gpio.OutputSignalController;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 @Service
 public class DigitalOutputServiceImpl implements OutputService, DigitalOutputService {
 
-    public static final Logger LOGGER;
     private static Map<Integer, GpioPinDigitalOutput> map;
-
-    static {
-        LOGGER = Logger.getLogger(DigitalOutputService.class.getName());
-    }
 
     private final OutputSignalController controller;
 
@@ -48,6 +42,11 @@ public class DigitalOutputServiceImpl implements OutputService, DigitalOutputSer
     }
 
     @Override
+    public void update(Integer id, String name) {
+        map.get(id).setName(name);
+    }
+
+    @Override
     public void update(Integer id, String name, Boolean reverse) {
         map.get(id).setName(name);
         setState(id, reverse, getState(id).getDigitalState());
@@ -57,13 +56,17 @@ public class DigitalOutputServiceImpl implements OutputService, DigitalOutputSer
     public DigitalState getState(Integer id) {
         GpioPinDigitalOutput pin = map.getOrDefault(id, null);
 
-        if (pin == null) throw new OutputNotFoundException(id);
+        if (pin == null) {
+            throw new OutputNotFoundException(id);
+        }
         return new DigitalState(id, pin.getState().isHigh());
     }
 
     @Override
     public DigitalState getState(Integer id, Boolean reverse) {
-        if (!map.containsKey(id)) throw new OutputNotFoundException(id);
+        if (!map.containsKey(id)) {
+            throw new OutputNotFoundException(id);
+        }
         return new DigitalState(id, reverse ^ getState(id).getDigitalState());
     }
 
@@ -71,12 +74,9 @@ public class DigitalOutputServiceImpl implements OutputService, DigitalOutputSer
     public DigitalState setState(Integer id, Boolean reverse, Boolean newState) {
         GpioPinDigitalOutput pin = map.getOrDefault(id, null);
 
-        if (pin == null)
+        if (pin == null) {
             throw new OutputNotFoundException(id);
+        }
         return new DigitalState(id, reverse ^ controller.setState(pin, reverse ^ newState));
-    }
-
-    public Map<Integer, GpioPinDigitalOutput> getMap() {
-        return map;
     }
 }

@@ -40,6 +40,11 @@ public class PwmOutputServiceImpl implements OutputService, PwmOutputService {
     }
 
     @Override
+    public void update(Integer id, String name) {
+        map.get(id).setName(name);
+    }
+
+    @Override
     public void update(Integer id, String name, Boolean reverse) {
         map.get(id).setName(name);
         setSignal(id, reverse, getSignal(id).getPwmSignal());
@@ -55,24 +60,22 @@ public class PwmOutputServiceImpl implements OutputService, PwmOutputService {
 
     @Override
     public PwmSignal getSignal(Integer id, Boolean reverse) {
-        if (!map.containsKey(id)) throw new OutputNotFoundException(id);
-        else {
-            int signal = getSignal(id).getPwmSignal();
-            return new PwmSignal(id, reverse ? GPIO.getPwmRange() - signal : signal);
+        if (!map.containsKey(id)) {
+            throw new OutputNotFoundException(id);
         }
+        int signal = getSignal(id).getPwmSignal();
+        return new PwmSignal(id, reverse ? GPIO.getPwmRange() - signal : signal);
     }
 
     @Override
     public PwmSignal setSignal(Integer id, Boolean reverse, Integer newSignal) {
         GpioPinPwmOutput pin = map.getOrDefault(id, null);
 
-        if (pin == null) throw new OutputNotFoundException(id);
+        if (pin == null) {
+            throw new OutputNotFoundException(id);
+        }
 
-        Integer currSignal = controller.setSignal(pin, reverse ? GPIO.getPwmRange() - newSignal : newSignal);
+        int currSignal = controller.setSignal(pin, reverse ? GPIO.getPwmRange() - newSignal : newSignal);
         return new PwmSignal(id, reverse ? GPIO.getPwmRange() - currSignal : currSignal);
-    }
-
-    public Map<Integer, GpioPinPwmOutput> getMap() {
-        return map;
     }
 }

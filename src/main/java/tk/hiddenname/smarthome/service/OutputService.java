@@ -9,5 +9,7 @@ public interface OutputService {
 
     void save(Integer id, Integer gpio, String name, Boolean reverse) throws OutputAlreadyExistException, PinSignalSupportException;
 
+    void update(Integer id, String name);
+
     void update(Integer id, String name, Boolean reverse);
 }

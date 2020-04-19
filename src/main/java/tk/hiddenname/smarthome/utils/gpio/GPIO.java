@@ -18,7 +18,7 @@ public class GPIO {
 
     private static final Set<Integer> digitalGpios;
     private static final Set<Integer> pwmGpios;
-    private static List<Integer> usedGpios;
+    private static final List<Integer> usedGpios;
 
     @Getter
     @Setter
@@ -29,7 +29,6 @@ public class GPIO {
         digitalGpios = new HashSet<Integer>() {{
             add(2);
             add(3);
-            add(4);
             add(17);
             add(27);
             add(22);

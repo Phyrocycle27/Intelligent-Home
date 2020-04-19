@@ -73,12 +73,17 @@ public class OutputRestController {
     }
 
     @PutMapping(value = {"/one/{id}"}, produces = {"application/json"})
-    public Output replace(@RequestBody Output newOutput, @PathVariable Integer id) {
+    public Output update(@RequestBody Output newOutput, @PathVariable Integer id) {
 
         return repository.findById(id)
                 .map(output -> {
                     BeanUtils.copyProperties(newOutput, output, "outputId, creationDate, type, gpio");
-                    manager.update(output);
+                    if (output.getReverse() == newOutput.getReverse()) {
+                        manager.update(output);
+                    } else {
+                        manager.update(output, newOutput.getReverse());
+                    }
+
                     return repository.save(output);
                 })
                 .orElseThrow(() -> new OutputNotFoundException(id));

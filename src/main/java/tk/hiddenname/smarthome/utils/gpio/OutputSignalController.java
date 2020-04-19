@@ -10,11 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OutputSignalController {
 
-    public static final Logger log;
-
-    static {
-        log = LoggerFactory.getLogger(OutputSignalController.class);
-    }
+    public static final Logger log = LoggerFactory.getLogger(OutputSignalController.class);
 
     public Boolean setState(GpioPinDigitalOutput output, Boolean state) {
         String pinName = output.getName();

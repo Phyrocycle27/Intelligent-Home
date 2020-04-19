@@ -43,8 +43,15 @@ public class OutputManager {
     public void update(Output output) {
         getService(output.getType()).update(
                 output.getOutputId(),
+                output.getName()
+        );
+    }
+
+    public void update(Output output, boolean reverse) {
+        getService(output.getType()).update(
+                output.getOutputId(),
                 output.getName(),
-                output.getReverse()
+                reverse
         );
     }
 
