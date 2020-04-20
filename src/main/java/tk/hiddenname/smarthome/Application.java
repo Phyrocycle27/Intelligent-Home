@@ -8,13 +8,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import tk.hiddenname.smarthome.entity.Output;
-import tk.hiddenname.smarthome.exception.OutputAlreadyExistException;
+import tk.hiddenname.smarthome.entity.Device;
+import tk.hiddenname.smarthome.exception.DeviceAlreadyExistException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.netty.Client;
-import tk.hiddenname.smarthome.repository.OutputsRepository;
-import tk.hiddenname.smarthome.utils.gpio.GPIO;
-import tk.hiddenname.smarthome.utils.gpio.OutputManager;
+import tk.hiddenname.smarthome.repository.DeviceRepository;
+import tk.hiddenname.smarthome.service.DeviceManager;
+import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 
 @SpringBootApplication
 public class Application {
@@ -32,7 +32,7 @@ public class Application {
     private static final String token = "Dq62R5gswBxAOqUITvO0KEH6aZmT6BQ8";
 
     static {
-        GPIO.setPwmRange(1024);
+        GPIOManager.setPwmRange(1024);
         gpioController = GpioFactory.getInstance();
         log = LoggerFactory.getLogger(Application.class.getName());
     }
@@ -49,14 +49,14 @@ public class Application {
             new Client(HOST, PORT);
 
         // Creating outputs which exited in DB
-        OutputsRepository repository = ctx.getBean(OutputsRepository.class);
-        OutputManager manager = ctx.getBean(OutputManager.class);
+        DeviceRepository deviceRepo = ctx.getBean(DeviceRepository.class);
+        DeviceManager manager = ctx.getBean(DeviceManager.class);
 
-        for (Output output : repository.findAll()) {
+        for (Device device : deviceRepo.findAll()) {
             try {
-                manager.create(output);
-            } catch (PinSignalSupportException | OutputAlreadyExistException e) {
-                e.printStackTrace();
+                manager.create(device);
+            } catch (PinSignalSupportException | DeviceAlreadyExistException e) {
+                log.warn(e.getMessage());
             }
         }
     }

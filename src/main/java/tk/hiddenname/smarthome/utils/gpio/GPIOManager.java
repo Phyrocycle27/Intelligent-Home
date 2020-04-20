@@ -5,7 +5,8 @@ import com.pi4j.wiringpi.Gpio;
 import lombok.Getter;
 import lombok.Setter;
 import tk.hiddenname.smarthome.Application;
-import tk.hiddenname.smarthome.exception.OutputAlreadyExistException;
+import tk.hiddenname.smarthome.entity.GPIOType;
+import tk.hiddenname.smarthome.exception.DeviceAlreadyExistException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.TypeNotFoundException;
 
@@ -14,7 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GPIO {
+public class GPIOManager {
 
     private static final Set<Integer> digitalGpios;
     private static final Set<Integer> pwmGpios;
@@ -70,32 +71,22 @@ public class GPIO {
         usedGpios.remove(Integer.valueOf(Gpio.wpiPinToGpio(pin.getPin().getAddress())));
     }
 
-    public static void validate(Integer gpio, String type) throws PinSignalSupportException, TypeNotFoundException,
-            OutputAlreadyExistException {
+    public static void validate(Integer gpio, GPIOType type) throws PinSignalSupportException, TypeNotFoundException,
+            DeviceAlreadyExistException {
 
         if (!isSupports(type, gpio)) {
             throw new PinSignalSupportException(gpio);
         }
 
         if (isExists(gpio))
-            throw new OutputAlreadyExistException(gpio);
+            throw new DeviceAlreadyExistException(gpio);
     }
 
-    public static boolean isType(String type) {
+    private static boolean isSupports(GPIOType type, Integer gpio) {
         switch (type) {
-            case "digital":
-            case "pwm":
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    private static boolean isSupports(String type, Integer gpio) {
-        switch (type) {
-            case "digital":
+            case DIGITAL:
                 return digitalGpios.contains(gpio);
-            case "pwm":
+            case PWM:
                 return pwmGpios.contains(gpio);
             default:
                 return false;
@@ -169,12 +160,12 @@ public class GPIO {
         }
     }
 
-    public static GpioPinDigitalOutput createDigitalPin(Integer gpio, String name, Boolean reverse)
-            throws OutputAlreadyExistException, PinSignalSupportException {
-        GPIO.validate(gpio, "digital");
+    public static GpioPinDigitalOutput createDigitalOutput(Integer gpio, Boolean reverse)
+            throws DeviceAlreadyExistException, PinSignalSupportException {
+        GPIOManager.validate(gpio, GPIOType.DIGITAL);
 
         GpioPinDigitalOutput pin = Application.getGpioController()
-                .provisionDigitalOutputPin(getPinByGPIONumber(gpio), name, PinState.getState(reverse));
+                .provisionDigitalOutputPin(getPinByGPIONumber(gpio), PinState.getState(reverse));
 
         pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
 
@@ -183,12 +174,12 @@ public class GPIO {
         return pin;
     }
 
-    public static GpioPinPwmOutput createPwmPin(Integer gpio, String name, Boolean reverse)
-            throws OutputAlreadyExistException, PinSignalSupportException {
-        GPIO.validate(gpio, "pwm");
+    public static GpioPinPwmOutput createPwmOutput(Integer gpio, Boolean reverse)
+            throws DeviceAlreadyExistException, PinSignalSupportException {
+        GPIOManager.validate(gpio, GPIOType.PWM);
 
         GpioPinPwmOutput pin = Application.getGpioController()
-                .provisionPwmOutputPin(getPinByGPIONumber(gpio), name, reverse ? pwmRange : 0);
+                .provisionPwmOutputPin(getPinByGPIONumber(gpio), reverse ? pwmRange : 0);
 
         pin.setPwmRange(pwmRange);
         pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);

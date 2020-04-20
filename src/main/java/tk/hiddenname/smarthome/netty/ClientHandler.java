@@ -36,7 +36,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         Channel ch = ctx.channel();
-        log.info("new message");
+        log.info("new message " + msg.toString());
 
         JSONObject requestObj = new JSONObject(msg.toString());
         JSONObject jsonRequest = requestObj.getJSONObject("body");

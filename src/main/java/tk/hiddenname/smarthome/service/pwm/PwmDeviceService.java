@@ -2,9 +2,7 @@ package tk.hiddenname.smarthome.service.pwm;
 
 import tk.hiddenname.smarthome.entity.signal.PwmSignal;
 
-public interface PwmOutputService {
-
-    PwmSignal getSignal(Integer id);
+public interface PwmDeviceService {
 
     PwmSignal getSignal(Integer id, Boolean reverse);
 

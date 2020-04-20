@@ -1,40 +1,39 @@
 package tk.hiddenname.smarthome.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "outputs")
-@EqualsAndHashCode(of = {"outputId"}, callSuper = false)
-@AllArgsConstructor
+@Table(name = "device")
+@EqualsAndHashCode(of = {"id"})
+@RequiredArgsConstructor
 @NoArgsConstructor
-public class Output {
+public class Device {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer outputId;
+    @Column(name = "id", updatable = false, nullable = false)
+    private Integer id;
 
-    @Column
+    @NonNull
+    @Column(nullable = false)
     private String name;
 
-    @Column(name = "gpio")
-    private Integer gpio;
-
-    @Column
+    @NonNull
+    @Column(nullable = false)
     private Boolean reverse;
 
+    @NonNull
     @Column(updatable = false, name = "creation_date")
     @JsonFormat(shape = JsonFormat.Shape.OBJECT, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime creationDate;
 
-    @Column
-    private String type;
+    @NonNull
+    @JoinColumn(name = "gpio_id", nullable = false, updatable = false)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private GPIO gpio;
 }
