@@ -10,8 +10,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "device")
 @EqualsAndHashCode(of = {"id"})
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Device {
 
     @Id
@@ -19,20 +20,16 @@ public class Device {
     @Column(name = "id", updatable = false, nullable = false)
     private Integer id;
 
-    @NonNull
     @Column(nullable = false)
     private String name;
 
-    @NonNull
     @Column(nullable = false)
     private Boolean reverse;
 
-    @NonNull
     @Column(updatable = false, name = "creation_date")
     @JsonFormat(shape = JsonFormat.Shape.OBJECT, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime creationDate;
 
-    @NonNull
     @JoinColumn(name = "gpio_id", nullable = false, updatable = false)
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private GPIO gpio;

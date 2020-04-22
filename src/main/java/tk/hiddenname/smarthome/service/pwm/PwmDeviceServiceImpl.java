@@ -7,7 +7,7 @@ import tk.hiddenname.smarthome.entity.signal.PwmSignal;
 import tk.hiddenname.smarthome.exception.DeviceAlreadyExistException;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
-import tk.hiddenname.smarthome.service.OutputService;
+import tk.hiddenname.smarthome.service.GPIOService;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 import tk.hiddenname.smarthome.utils.gpio.OutputSignalController;
 
@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class PwmDeviceServiceImpl implements OutputService, PwmDeviceService {
+public class PwmDeviceServiceImpl implements GPIOService, PwmDeviceService {
 
     private static Map<Integer, GpioPinPwmOutput> map;
     private final OutputSignalController controller;

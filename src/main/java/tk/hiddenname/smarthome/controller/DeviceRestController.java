@@ -3,6 +3,8 @@ package tk.hiddenname.smarthome.controller;
 import lombok.AllArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,8 @@ import java.util.List;
 @AllArgsConstructor
 public class DeviceRestController {
 
+    private static final Logger log = LoggerFactory.getLogger(DeviceRestController.class);
+
     private final DeviceRepository deviceRepo;
     // services
     private final DigitalDeviceServiceImpl digitalService;
@@ -38,9 +42,9 @@ public class DeviceRestController {
     private final DeviceManager manager;
 
     @GetMapping(value = {"/all"}, produces = {"application/json"})
-    public List<Output> getAll(
-            @RequestParam(name = "type", defaultValue = "", required = false) String t)
+    public List<Output> getAll(@RequestParam(name = "type", defaultValue = "", required = false) String t)
             throws TypeNotFoundException {
+        log.info("************** GET method: /outputs/all?type=" + t + "************************");
 
         List<Device> devices;
 
@@ -51,9 +55,14 @@ public class DeviceRestController {
             if (t.isEmpty()) {
                 devices = deviceRepo.findAll(Sort.by("id"));
             } else {
-                throw new TypeNotFoundException(t);
+                TypeNotFoundException ex = new TypeNotFoundException(t);
+                log.warn(ex.getMessage());
+                throw ex;
             }
         }
+
+        log.info("Device list is " + devices);
+//        return devices;
 
         /* *********************** CONVERTING **************** */
         List<Output> outputs = new ArrayList<>();
@@ -70,36 +79,55 @@ public class DeviceRestController {
             ));
         }
 
+        log.info("Output list is " + outputs);
+
         return outputs;
     }
 
     @GetMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public Output getOne(@PathVariable Integer id) {
-        Device device = deviceRepo.findById(id).orElseThrow(() -> new DeviceNotFoundException(id));
+        log.info("************** GET method: /outputs/one/" + id + "************************");
 
+        Device device = deviceRepo.findById(id).orElseThrow(() -> {
+            DeviceNotFoundException e = new DeviceNotFoundException(id);
+            log.warn(e.getMessage());
+            return e;
+        });
+
+        log.info("Device is " + device);
+
+//        return device;
         /* *********************** CONVERTING **************** */
         GPIO gpio = device.getGpio();
-        return new Output(device.getId(),
+        Output output = new Output(device.getId(),
                 device.getName(),
                 gpio.getGpio(),
                 device.getReverse(),
                 device.getCreationDate(),
                 gpio.getType().toString().toLowerCase());
+
+        log.info("Output is " + output);
+
+        return output;
     }
 
     @PostMapping(value = {"/create"}, produces = {"application/json"})
     public Output create(@RequestBody Output newOutput) throws DeviceAlreadyExistException,
             PinSignalSupportException, TypeNotFoundException {
+        log.info("************** POST method: /outputs/create ************************");
+        log.info("Creating output is " + newOutput);
         try {
             /* *********************** CONVERTING **************** */
             GPIO gpio = new GPIO(newOutput.getGpio(),
-                    GPIOType.valueOf(newOutput.getType()),
+                    GPIOType.valueOf(newOutput.getType().toUpperCase()),
                     GPIOMode.OUTPUT);
 
-            Device device = new Device(newOutput.getName(),
-                    newOutput.getReverse(),
-                    LocalDateTime.now(),
-                    gpio);
+            Device device = Device.builder().name(newOutput.getName())
+                    .reverse(newOutput.getReverse())
+                    .creationDate(LocalDateTime.now())
+                    .gpio(gpio).build();
+
+            log.info("Creating device is " + device);
             /* *************************************************** */
 
             GPIOManager.validate(gpio.getGpio(), gpio.getType());
@@ -107,28 +135,32 @@ public class DeviceRestController {
             device = deviceRepo.save(device);
             manager.create(device);
 
+            log.info("Saved device is " + device);
             /* *********************** CONVERTING **************** */
             newOutput.setCreationDate(device.getCreationDate());
             newOutput.setOutputId(device.getId());
 
+            log.info("Saved output is " + newOutput);
+
+//            return device;
             return newOutput;
         } catch (IllegalArgumentException e) {
-            throw new TypeNotFoundException(newOutput.getType());
+            TypeNotFoundException ex = new TypeNotFoundException(newOutput.getType());
+            log.warn(ex.getMessage());
+            throw ex;
         }
     }
 
     @PutMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public Output update(@RequestBody Output newOutput, @PathVariable Integer id) {
-
+        log.info("************** PUT method: /outputs/one/" + id + " ************************");
+        log.info("Updating output is " + newOutput);
         /* *********************** CONVERTING **************** */
-        GPIO gpio = new GPIO(newOutput.getGpio(),
-                GPIOType.valueOf(newOutput.getType()),
-                GPIOMode.OUTPUT);
 
-        Device newDevice = new Device(newOutput.getName(),
-                newOutput.getReverse(),
-                LocalDateTime.now(),
-                gpio);
+        Device newDevice = Device.builder().name(newOutput.getName())
+                .reverse(newOutput.getReverse()).build();
+
+        log.info("Updating device is " + newDevice);
         /* *************************************************** */
 
         Device updated = deviceRepo.findById(id)
@@ -136,27 +168,38 @@ public class DeviceRestController {
                     if (device.getReverse() != newDevice.getReverse()) {
                         manager.update(device);
                     }
-
-                    BeanUtils.copyProperties(newDevice, device, "id, creationDate, gpio");
+                    BeanUtils.copyProperties(newDevice, device, "id", "creationDate", "gpio");
                     return deviceRepo.save(device);
-                }).orElseThrow(() -> new DeviceNotFoundException(id));
+                }).orElseThrow(() -> {
+                    DeviceNotFoundException e = new DeviceNotFoundException(id);
+                    log.warn(e.getMessage());
+                    return e;
+                });
 
-
+        log.info("Saved device is " + updated);
         /* *********************** CONVERTING **************** */
         GPIO g = updated.getGpio();
-        return new Output(updated.getId(),
+        Output output = new Output(updated.getId(),
                 updated.getName(),
                 g.getGpio(),
                 updated.getReverse(),
                 updated.getCreationDate(),
                 g.getType().toString().toLowerCase());
+        log.info("Saved output is " + output);
+
+        return output;
     }
 
     @DeleteMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public ResponseEntity<?> delete(@PathVariable Integer id) {
+        log.info("************** DELETE method: /outputs/one/" + id + " ************************");
 
         manager.delete(deviceRepo.findById(id)
-                .orElseThrow(() -> new DeviceNotFoundException(id)));
+                .orElseThrow(() -> {
+                    DeviceNotFoundException e = new DeviceNotFoundException(id);
+                    log.warn(e.getMessage());
+                    return e;
+                }));
 
         deviceRepo.deleteById(id);
 
@@ -175,10 +218,14 @@ public class DeviceRestController {
                 case PWM:
                     return obj.put("available_gpios", new JSONArray(GPIOManager.getAvailablePwmGpios())).toString();
                 default:
-                    throw new TypeNotFoundException(t);
+                    TypeNotFoundException e = new TypeNotFoundException(t);
+                    log.warn(e.getMessage());
+                    throw e;
             }
         } catch (IllegalArgumentException e) {
-            throw new TypeNotFoundException(t);
+            TypeNotFoundException ex = new TypeNotFoundException(t);
+            log.warn(ex.getMessage());
+            throw ex;
         }
     }
 
@@ -191,7 +238,7 @@ public class DeviceRestController {
     public PwmSignal getPwmSignal(@RequestParam(name = "id") Integer id) {
         Device device = deviceRepo.findById(id).orElseThrow(() -> new DeviceNotFoundException(id));
 
-        return pwmService.getSignal(id, device.getReverse());
+        return pwmService.getSignal(device.getGpio().getId(), device.getReverse());
     }
 
     @PutMapping(value = {"/control/pwm"}, produces = {"application/json"})
@@ -199,8 +246,7 @@ public class DeviceRestController {
         Device device = deviceRepo.findById(signal.getOutputId())
                 .orElseThrow(() -> new DeviceNotFoundException(signal.getOutputId()));
 
-        return pwmService.setSignal(
-                device.getGpio().getId(),
+        return pwmService.setSignal(device.getGpio().getId(),
                 device.getReverse(),
                 signal.getPwmSignal());
     }
@@ -211,7 +257,7 @@ public class DeviceRestController {
     public DigitalState getState(@RequestParam(name = "id") Integer id) {
         Device device = deviceRepo.findById(id).orElseThrow(() -> new DeviceNotFoundException(id));
 
-        return digitalService.getState(id, device.getReverse());
+        return digitalService.getState(device.getGpio().getId(), device.getReverse());
     }
 
     @PutMapping(value = {"/control/digital"}, produces = {"application/hal+json"})
@@ -219,8 +265,7 @@ public class DeviceRestController {
         Device device = deviceRepo.findById(state.getOutputId())
                 .orElseThrow(() -> new DeviceNotFoundException(state.getOutputId()));
 
-        return digitalService.setState(
-                device.getGpio().getId(),
+        return digitalService.setState(device.getGpio().getId(),
                 device.getReverse(),
                 state.getDigitalState()
         );

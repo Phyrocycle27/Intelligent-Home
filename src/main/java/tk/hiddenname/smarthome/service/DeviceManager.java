@@ -54,7 +54,7 @@ public class DeviceManager {
         );
     }
 
-    private OutputService getService(GPIOType type) {
+    private GPIOService getService(GPIOType type) {
         switch (type) {
             case DIGITAL:
                 return digitalService;

@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class PinSignalSupportException extends Exception{
 
     public PinSignalSupportException(int gpio) {
-        super(String.format("Gpio '%d' doesn't support the type of signal", gpio));
+        super(String.format("Gpio '%d' doesn't support this type of signal", gpio));
     }
 }

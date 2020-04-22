@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class TypeNotFoundException extends RuntimeException {
 
     public TypeNotFoundException(String type) {
-        super(String.format("Type '%s' is invalid!", type));
+        super(String.format("The type '%s' is invalid!", type));
     }
 }
