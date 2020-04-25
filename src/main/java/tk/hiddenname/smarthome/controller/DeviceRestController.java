@@ -10,11 +10,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tk.hiddenname.smarthome.entity.Device;
-import tk.hiddenname.smarthome.entity.GPIO;
 import tk.hiddenname.smarthome.entity.GPIOType;
-import tk.hiddenname.smarthome.entity.Output;
-import tk.hiddenname.smarthome.exception.DeviceAlreadyExistException;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
+import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.TypeNotFoundException;
 import tk.hiddenname.smarthome.repository.DeviceRepository;
@@ -56,25 +54,6 @@ public class DeviceRestController {
 
         log.info("Device list is " + devices);
         return devices;
-
-        /* *********************** CONVERTING **************** */
-        /*List<Output> outputs = new ArrayList<>();
-
-        for (Device device : devices) {
-            GPIO gpio = device.getGpio();
-            outputs.add(new Output(
-                    device.getId(),
-                    device.getName(),
-                    gpio.getGpio(),
-                    device.getReverse(),
-                    device.getCreationDate(),
-                    gpio.getType().toString().toLowerCase()
-            ));
-        }
-
-        log.info("Output list is " + outputs);
-
-        return outputs;*/
     }
 
     @GetMapping(value = {"/one/{id}"}, produces = {"application/json"})
@@ -90,37 +69,13 @@ public class DeviceRestController {
         log.info("Device is " + device);
 
         return device;
-        /* *********************** CONVERTING **************** */
-        /*GPIO gpio = device.getGpio();
-        Output output = new Output(device.getId(),
-                device.getName(),
-                gpio.getGpio(),
-                device.getReverse(),
-                device.getCreationDate(),
-                gpio.getType().toString().toLowerCase());
-
-        log.info("Output is " + output);
-
-        return output;*/
     }
 
     @PostMapping(value = {"/create"}, produces = {"application/json"})
-    public Device create(@RequestBody Device newDevice) throws DeviceAlreadyExistException,
+    public Device create(@RequestBody Device newDevice) throws GPIOBusyException,
             PinSignalSupportException, TypeNotFoundException {
         log.info("************** POST method: /devices/create ************************");
         log.info("Creating device is " + newDevice);
-        /* *********************** CONVERTING **************** */
-            /*GPIO gpio = new GPIO(newOutput.getGpio(),
-                    GPIOType.valueOf(newOutput.getType().toUpperCase()),
-                    GPIOMode.OUTPUT);
-
-            Device device = Device.builder().name(newOutput.getName())
-                    .reverse(newOutput.getReverse())
-                    .creationDate(LocalDateTime.now())
-                    .gpio(gpio).build();
-
-            log.info("Creating device is " + device);*/
-        /* *************************************************** */
 
         GPIOManager.validate(newDevice.getGpio().getGpio(), newDevice.getGpio().getType());
 
@@ -130,27 +85,12 @@ public class DeviceRestController {
         log.info("Saved device is " + newDevice);
 
         return newDevice;
-        /* *********************** CONVERTING **************** */
-            /*newOutput.setCreationDate(device.getCreationDate());
-            newOutput.setOutputId(device.getId());
-
-            log.info("Saved output is " + newOutput);
-
-            return device;
-            return newOutput;*/
     }
 
     @PutMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public Device update(@RequestBody Device newDevice, @PathVariable Integer id) {
         log.info("************** PUT method: /devices/one/" + id + " ************************");
         log.info("Updating device is " + newDevice);
-        /* *********************** CONVERTING **************** */
-
-        /*Device newDevice = Device.builder().name(newOutput.getName())
-                .reverse(newOutput.getReverse()).build();
-
-        log.info("Updating device is " + newDevice);*/
-        /* *************************************************** */
 
         Device updated = deviceRepo.findById(id)
                 .map(device -> {
@@ -167,17 +107,6 @@ public class DeviceRestController {
 
         log.info("Saved device is " + updated);
         return updated;
-        /* *********************** CONVERTING **************** */
-        /*GPIO g = updated.getGpio();
-        Output output = new Output(updated.getId(),
-                updated.getName(),
-                g.getGpio(),
-                updated.getReverse(),
-                updated.getCreationDate(),
-                g.getType().toString().toLowerCase());
-        log.info("Saved output is " + output);
-
-        return output;*/
     }
 
     @DeleteMapping(value = {"/one/{id}"}, produces = {"application/json"})

@@ -7,27 +7,27 @@ import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entity.Device;
 import tk.hiddenname.smarthome.entity.GPIO;
 import tk.hiddenname.smarthome.entity.GPIOType;
+import tk.hiddenname.smarthome.entity.Sensor;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.TypeNotFoundException;
-import tk.hiddenname.smarthome.service.digital.output.DigitalDeviceServiceImpl;
-import tk.hiddenname.smarthome.service.pwm.PwmDeviceServiceImpl;
+import tk.hiddenname.smarthome.service.digital.input.DigitalSensorServiceImpl;
 
 @Component
 @AllArgsConstructor
-public class DeviceManager {
+public class SensorManager {
 
-    private static final Logger log = LoggerFactory.getLogger(DeviceManager.class);
-    private static DigitalDeviceServiceImpl digitalService;
-    private static PwmDeviceServiceImpl pwmService;
+    private static final Logger log = LoggerFactory.getLogger(SensorManager.class);
 
-    public void create(Device device) throws PinSignalSupportException, GPIOBusyException {
-        log.debug("Creating device " + device.toString());
-        GPIO gpio = device.getGpio();
+    private final DigitalSensorServiceImpl digitalService;
+
+    public void create(Sensor sensor) throws PinSignalSupportException, GPIOBusyException {
+        log.debug("Creating device " + sensor.toString());
+        GPIO gpio = sensor.getGpio();
         getService(gpio.getType()).save(
                 gpio.getId(),
                 gpio.getGpio(),
-                device.getReverse()
+                sensor.getReverse()
         );
     }
 
@@ -40,7 +40,7 @@ public class DeviceManager {
         );
     }
 
-    public void delete(Device device) {
+    public void delete(Sensor device) {
         log.debug("Deleting device " + device.toString());
         GPIO gpio = device.getGpio();
         getService(gpio.getType()).delete(
@@ -49,15 +49,11 @@ public class DeviceManager {
     }
 
     private GPIOService getService(GPIOType type) {
-        switch (type) {
-            case DIGITAL:
-                return digitalService;
-            case PWM:
-                return pwmService;
-            default:
-                TypeNotFoundException e = new TypeNotFoundException(type.toString());
-                log.warn(e.getMessage());
-                throw e;
+        if (type == GPIOType.DIGITAL) {
+            return digitalService;
         }
+        TypeNotFoundException e = new TypeNotFoundException(type.toString());
+        log.warn(e.getMessage());
+        throw e;
     }
 }

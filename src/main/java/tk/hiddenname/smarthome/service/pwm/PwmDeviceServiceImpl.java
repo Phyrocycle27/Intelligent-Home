@@ -4,8 +4,8 @@ import com.pi4j.io.gpio.GpioPinPwmOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.hiddenname.smarthome.entity.signal.PwmSignal;
-import tk.hiddenname.smarthome.exception.DeviceAlreadyExistException;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
+import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.service.GPIOService;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
@@ -35,7 +35,7 @@ public class PwmDeviceServiceImpl implements GPIOService, PwmDeviceService {
 
     @Override
     public void save(Integer id, Integer gpio, Boolean reverse)
-            throws DeviceAlreadyExistException, PinSignalSupportException {
+            throws GPIOBusyException, PinSignalSupportException {
         map.put(id, GPIOManager.createPwmOutput(gpio, reverse));
     }
 

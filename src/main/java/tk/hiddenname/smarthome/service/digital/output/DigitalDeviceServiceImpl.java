@@ -1,11 +1,11 @@
-package tk.hiddenname.smarthome.service.digital;
+package tk.hiddenname.smarthome.service.digital.output;
 
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.hiddenname.smarthome.entity.signal.DigitalState;
-import tk.hiddenname.smarthome.exception.DeviceAlreadyExistException;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
+import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.service.GPIOService;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
@@ -17,7 +17,7 @@ import java.util.Map;
 @Service
 public class DigitalDeviceServiceImpl implements GPIOService, DigitalDeviceService {
 
-    private static Map<Integer, GpioPinDigitalOutput> map;
+    private final Map<Integer, GpioPinDigitalOutput> map;
 
     private final OutputSignalController controller;
 
@@ -36,7 +36,7 @@ public class DigitalDeviceServiceImpl implements GPIOService, DigitalDeviceServi
 
     @Override
     public void save(Integer id, Integer gpio, Boolean reverse)
-            throws DeviceAlreadyExistException, PinSignalSupportException {
+            throws GPIOBusyException, PinSignalSupportException {
 
         map.put(id, GPIOManager.createDigitalOutput(gpio, reverse));
     }
@@ -53,7 +53,7 @@ public class DigitalDeviceServiceImpl implements GPIOService, DigitalDeviceServi
         if (pin == null) {
             throw new DeviceNotFoundException(id);
         }
-        return new DigitalState(id, reverse ^ pin.getState().isHigh());
+        return new DigitalState(id, reverse ^ pin.isHigh());
     }
 
     @Override

@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.CONFLICT)
-public class DeviceAlreadyExistException extends Exception {
+public class GPIOBusyException extends Exception {
 
-    public DeviceAlreadyExistException(int gpio) {
-        super(String.format("The device on gpio '%d' have already created", gpio));
+    public GPIOBusyException(int gpio) {
+        super(String.format("GPIO '%d' have already busied", gpio));
     }
 }

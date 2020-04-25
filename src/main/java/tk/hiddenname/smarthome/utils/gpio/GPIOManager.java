@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import tk.hiddenname.smarthome.Application;
 import tk.hiddenname.smarthome.entity.GPIOType;
-import tk.hiddenname.smarthome.exception.DeviceAlreadyExistException;
+import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.TypeNotFoundException;
 
@@ -72,14 +72,14 @@ public class GPIOManager {
     }
 
     public static void validate(Integer gpio, GPIOType type) throws PinSignalSupportException, TypeNotFoundException,
-            DeviceAlreadyExistException {
+            GPIOBusyException {
 
         if (!isSupports(type, gpio)) {
             throw new PinSignalSupportException(gpio);
         }
 
         if (isExists(gpio))
-            throw new DeviceAlreadyExistException(gpio);
+            throw new GPIOBusyException(gpio);
     }
 
     private static boolean isSupports(GPIOType type, Integer gpio) {
@@ -161,13 +161,29 @@ public class GPIOManager {
     }
 
     public static GpioPinDigitalOutput createDigitalOutput(Integer gpio, Boolean reverse)
-            throws DeviceAlreadyExistException, PinSignalSupportException {
+            throws GPIOBusyException, PinSignalSupportException {
+
         GPIOManager.validate(gpio, GPIOType.DIGITAL);
 
         GpioPinDigitalOutput pin = Application.getGpioController()
                 .provisionDigitalOutputPin(getPinByGPIONumber(gpio), PinState.getState(reverse));
 
-        pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
+        pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF, PinMode.DIGITAL_OUTPUT);
+
+        usedGpios.add(gpio);
+
+        return pin;
+    }
+
+    public static GpioPinDigitalInput createDigitalInput(Integer gpio)
+            throws GPIOBusyException, PinSignalSupportException {
+
+        GPIOManager.validate(gpio, GPIOType.DIGITAL);
+
+        GpioPinDigitalInput pin = Application.getGpioController()
+                .provisionDigitalInputPin(getPinByGPIONumber(gpio), PinPullResistance.PULL_DOWN);
+
+        pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF, PinMode.DIGITAL_INPUT);
 
         usedGpios.add(gpio);
 
@@ -175,7 +191,7 @@ public class GPIOManager {
     }
 
     public static GpioPinPwmOutput createPwmOutput(Integer gpio, Boolean reverse)
-            throws DeviceAlreadyExistException, PinSignalSupportException {
+            throws GPIOBusyException, PinSignalSupportException {
         GPIOManager.validate(gpio, GPIOType.PWM);
 
         GpioPinPwmOutput pin = Application.getGpioController()

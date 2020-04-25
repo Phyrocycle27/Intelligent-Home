@@ -9,11 +9,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import tk.hiddenname.smarthome.entity.Device;
-import tk.hiddenname.smarthome.exception.DeviceAlreadyExistException;
+import tk.hiddenname.smarthome.entity.Sensor;
+import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.netty.Client;
 import tk.hiddenname.smarthome.repository.DeviceRepository;
+import tk.hiddenname.smarthome.repository.SensorRepository;
 import tk.hiddenname.smarthome.service.DeviceManager;
+import tk.hiddenname.smarthome.service.SensorManager;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 
 @SpringBootApplication
@@ -50,12 +53,23 @@ public class Application {
 
         // Creating outputs which exited in DB
         DeviceRepository deviceRepo = ctx.getBean(DeviceRepository.class);
-        DeviceManager manager = ctx.getBean(DeviceManager.class);
+        DeviceManager deviceManager = ctx.getBean(DeviceManager.class);
 
         for (Device device : deviceRepo.findAll()) {
             try {
-                manager.create(device);
-            } catch (PinSignalSupportException | DeviceAlreadyExistException e) {
+                deviceManager.create(device);
+            } catch (PinSignalSupportException | GPIOBusyException e) {
+                log.warn(e.getMessage());
+            }
+        }
+
+        SensorRepository sensorRepo = ctx.getBean(SensorRepository.class);
+        SensorManager sensorManager = ctx.getBean(SensorManager.class);
+
+        for (Sensor sensor : sensorRepo.findAll()) {
+            try {
+                sensorManager.create(sensor);
+            } catch (PinSignalSupportException | GPIOBusyException e) {
                 log.warn(e.getMessage());
             }
         }
