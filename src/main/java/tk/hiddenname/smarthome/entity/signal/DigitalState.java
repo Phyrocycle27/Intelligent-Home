@@ -11,8 +11,8 @@ public class DigitalState extends Signal {
     @Getter
     private Boolean digitalState;
 
-    public DigitalState(Integer outputId, Boolean digitalState) {
-        super(outputId);
+    public DigitalState(Integer id, Boolean digitalState) {
+        super(id);
         this.digitalState = digitalState;
     }
 }

@@ -11,8 +11,8 @@ public class PwmSignal extends Signal {
     @Getter
     private Integer pwmSignal;
 
-    public PwmSignal(Integer outputId, Integer pwmSignal) {
-        super(outputId);
+    public PwmSignal(Integer id, Integer pwmSignal) {
+        super(id);
         this.pwmSignal = pwmSignal;
     }
 }

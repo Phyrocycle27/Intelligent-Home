@@ -6,9 +6,9 @@ import lombok.Getter;
 import org.springframework.hateoas.ResourceSupport;
 
 @AllArgsConstructor
-@EqualsAndHashCode(of = {"outputId"}, callSuper = false)
-abstract class Signal extends ResourceSupport {
+@EqualsAndHashCode(of = {"id"})
+abstract class Signal {
 
     @Getter
-    private Integer outputId;
+    private Integer id;
 }

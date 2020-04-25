@@ -11,7 +11,7 @@ import tk.hiddenname.smarthome.service.digital.DigitalDeviceServiceImpl;
 import tk.hiddenname.smarthome.service.pwm.PwmDeviceServiceImpl;
 
 @RestController
-@RequestMapping(value = {"/outputs"})
+@RequestMapping(value = {"/control"})
 @AllArgsConstructor
 public class SignalRestController {
 
@@ -21,14 +21,14 @@ public class SignalRestController {
     private final PwmDeviceServiceImpl pwmService;
 
     // ******************************** PWM *************************************************
-    @GetMapping(value = {"/control/pwm"}, produces = {"application/json"})
+    @GetMapping(value = {"/pwm"}, produces = {"application/json"})
     public PwmSignal getPwmSignal(@RequestParam(name = "id") Integer id) {
         Device device = deviceRepo.findById(id).orElseThrow(() -> new DeviceNotFoundException(id));
 
         return pwmService.getSignal(device.getGpio().getId(), device.getReverse());
     }
 
-    @PutMapping(value = {"/control/pwm"}, produces = {"application/json"})
+    @PutMapping(value = {"/pwm"}, produces = {"application/json"})
     public PwmSignal setPwmSignal(@RequestBody PwmSignal signal) {
         Device device = deviceRepo.findById(signal.getOutputId())
                 .orElseThrow(() -> new DeviceNotFoundException(signal.getOutputId()));
@@ -40,14 +40,14 @@ public class SignalRestController {
 
     // ***************************** DIGITAL **************************************************
 
-    @GetMapping(value = {"/control/digital"}, produces = {"application/json"})
+    @GetMapping(value = {"/digital"}, produces = {"application/json"})
     public DigitalState getState(@RequestParam(name = "id") Integer id) {
         Device device = deviceRepo.findById(id).orElseThrow(() -> new DeviceNotFoundException(id));
 
         return digitalService.getState(device.getGpio().getId(), device.getReverse());
     }
 
-    @PutMapping(value = {"/control/digital"}, produces = {"application/hal+json"})
+    @PutMapping(value = {"/digital"}, produces = {"application/hal+json"})
     public DigitalState setState(@RequestBody DigitalState state) {
         Device device = deviceRepo.findById(state.getOutputId())
                 .orElseThrow(() -> new DeviceNotFoundException(state.getOutputId()));

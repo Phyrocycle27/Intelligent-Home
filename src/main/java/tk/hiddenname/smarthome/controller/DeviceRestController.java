@@ -9,7 +9,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tk.hiddenname.smarthome.entity.*;
+import tk.hiddenname.smarthome.entity.Device;
+import tk.hiddenname.smarthome.entity.GPIO;
+import tk.hiddenname.smarthome.entity.GPIOType;
+import tk.hiddenname.smarthome.entity.Output;
 import tk.hiddenname.smarthome.exception.DeviceAlreadyExistException;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
@@ -18,12 +21,10 @@ import tk.hiddenname.smarthome.repository.DeviceRepository;
 import tk.hiddenname.smarthome.service.DeviceManager;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = {"/outputs"})
+@RequestMapping(value = {"/devices"})
 @AllArgsConstructor
 public class DeviceRestController {
 
@@ -34,9 +35,9 @@ public class DeviceRestController {
     private final DeviceManager manager;
 
     @GetMapping(value = {"/all"}, produces = {"application/json"})
-    public List<Output> getAll(@RequestParam(name = "type", defaultValue = "", required = false) String t)
+    public List<Device> getAll(@RequestParam(name = "type", defaultValue = "", required = false) String t)
             throws TypeNotFoundException {
-        log.info("************** GET method: /outputs/all?type=" + t + "************************");
+        log.info("************** GET method: /devices/all?type=" + t + "************************");
 
         List<Device> devices;
 
@@ -54,10 +55,10 @@ public class DeviceRestController {
         }
 
         log.info("Device list is " + devices);
-//        return devices;
+        return devices;
 
         /* *********************** CONVERTING **************** */
-        List<Output> outputs = new ArrayList<>();
+        /*List<Output> outputs = new ArrayList<>();
 
         for (Device device : devices) {
             GPIO gpio = device.getGpio();
@@ -73,12 +74,12 @@ public class DeviceRestController {
 
         log.info("Output list is " + outputs);
 
-        return outputs;
+        return outputs;*/
     }
 
     @GetMapping(value = {"/one/{id}"}, produces = {"application/json"})
-    public Output getOne(@PathVariable Integer id) {
-        log.info("************** GET method: /outputs/one/" + id + "************************");
+    public Device getOne(@PathVariable Integer id) {
+        log.info("************** GET method: /devices/one/" + id + "************************");
 
         Device device = deviceRepo.findById(id).orElseThrow(() -> {
             DeviceNotFoundException e = new DeviceNotFoundException(id);
@@ -88,9 +89,9 @@ public class DeviceRestController {
 
         log.info("Device is " + device);
 
-//        return device;
+        return device;
         /* *********************** CONVERTING **************** */
-        GPIO gpio = device.getGpio();
+        /*GPIO gpio = device.getGpio();
         Output output = new Output(device.getId(),
                 device.getName(),
                 gpio.getGpio(),
@@ -100,17 +101,16 @@ public class DeviceRestController {
 
         log.info("Output is " + output);
 
-        return output;
+        return output;*/
     }
 
     @PostMapping(value = {"/create"}, produces = {"application/json"})
-    public Output create(@RequestBody Output newOutput) throws DeviceAlreadyExistException,
+    public Device create(@RequestBody Device newDevice) throws DeviceAlreadyExistException,
             PinSignalSupportException, TypeNotFoundException {
-        log.info("************** POST method: /outputs/create ************************");
-        log.info("Creating output is " + newOutput);
-        try {
-            /* *********************** CONVERTING **************** */
-            GPIO gpio = new GPIO(newOutput.getGpio(),
+        log.info("************** POST method: /devices/create ************************");
+        log.info("Creating device is " + newDevice);
+        /* *********************** CONVERTING **************** */
+            /*GPIO gpio = new GPIO(newOutput.getGpio(),
                     GPIOType.valueOf(newOutput.getType().toUpperCase()),
                     GPIOMode.OUTPUT);
 
@@ -119,40 +119,37 @@ public class DeviceRestController {
                     .creationDate(LocalDateTime.now())
                     .gpio(gpio).build();
 
-            log.info("Creating device is " + device);
-            /* *************************************************** */
+            log.info("Creating device is " + device);*/
+        /* *************************************************** */
 
-            GPIOManager.validate(gpio.getGpio(), gpio.getType());
+        GPIOManager.validate(newDevice.getGpio().getGpio(), newDevice.getGpio().getType());
 
-            device = deviceRepo.save(device);
-            manager.create(device);
+        newDevice = deviceRepo.save(newDevice);
+        manager.create(newDevice);
 
-            log.info("Saved device is " + device);
-            /* *********************** CONVERTING **************** */
-            newOutput.setCreationDate(device.getCreationDate());
+        log.info("Saved device is " + newDevice);
+
+        return newDevice;
+        /* *********************** CONVERTING **************** */
+            /*newOutput.setCreationDate(device.getCreationDate());
             newOutput.setOutputId(device.getId());
 
             log.info("Saved output is " + newOutput);
 
-//            return device;
-            return newOutput;
-        } catch (IllegalArgumentException e) {
-            TypeNotFoundException ex = new TypeNotFoundException(newOutput.getType());
-            log.warn(ex.getMessage());
-            throw ex;
-        }
+            return device;
+            return newOutput;*/
     }
 
     @PutMapping(value = {"/one/{id}"}, produces = {"application/json"})
-    public Output update(@RequestBody Output newOutput, @PathVariable Integer id) {
-        log.info("************** PUT method: /outputs/one/" + id + " ************************");
-        log.info("Updating output is " + newOutput);
+    public Device update(@RequestBody Device newDevice, @PathVariable Integer id) {
+        log.info("************** PUT method: /devices/one/" + id + " ************************");
+        log.info("Updating device is " + newDevice);
         /* *********************** CONVERTING **************** */
 
-        Device newDevice = Device.builder().name(newOutput.getName())
+        /*Device newDevice = Device.builder().name(newOutput.getName())
                 .reverse(newOutput.getReverse()).build();
 
-        log.info("Updating device is " + newDevice);
+        log.info("Updating device is " + newDevice);*/
         /* *************************************************** */
 
         Device updated = deviceRepo.findById(id)
@@ -169,8 +166,9 @@ public class DeviceRestController {
                 });
 
         log.info("Saved device is " + updated);
+        return updated;
         /* *********************** CONVERTING **************** */
-        GPIO g = updated.getGpio();
+        /*GPIO g = updated.getGpio();
         Output output = new Output(updated.getId(),
                 updated.getName(),
                 g.getGpio(),
@@ -179,12 +177,12 @@ public class DeviceRestController {
                 g.getType().toString().toLowerCase());
         log.info("Saved output is " + output);
 
-        return output;
+        return output;*/
     }
 
     @DeleteMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public ResponseEntity<?> delete(@PathVariable Integer id) {
-        log.info("************** DELETE method: /outputs/one/" + id + " ************************");
+        log.info("************** DELETE method: /devices/one/" + id + " ************************");
 
         manager.delete(deviceRepo.findById(id)
                 .orElseThrow(() -> {
