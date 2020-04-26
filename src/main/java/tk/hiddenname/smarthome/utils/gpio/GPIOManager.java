@@ -5,7 +5,7 @@ import com.pi4j.wiringpi.Gpio;
 import lombok.Getter;
 import lombok.Setter;
 import tk.hiddenname.smarthome.Application;
-import tk.hiddenname.smarthome.entity.SignalType;
+import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.TypeNotFoundException;

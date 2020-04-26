@@ -10,7 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tk.hiddenname.smarthome.entity.hardware.Device;
-import tk.hiddenname.smarthome.entity.SignalType;
+import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;

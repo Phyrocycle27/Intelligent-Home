@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entity.hardware.Device;
 import tk.hiddenname.smarthome.entity.GPIO;
-import tk.hiddenname.smarthome.entity.SignalType;
+import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.entity.hardware.Sensor;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;

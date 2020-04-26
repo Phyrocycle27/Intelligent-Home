@@ -1,6 +1,7 @@
 package tk.hiddenname.smarthome.entity;
 
 import lombok.*;
+import tk.hiddenname.smarthome.entity.signal.SignalType;
 
 import javax.persistence.*;
 
