@@ -5,7 +5,7 @@ import com.pi4j.wiringpi.Gpio;
 import lombok.Getter;
 import lombok.Setter;
 import tk.hiddenname.smarthome.Application;
-import tk.hiddenname.smarthome.entity.GPIOType;
+import tk.hiddenname.smarthome.entity.SignalType;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.TypeNotFoundException;
@@ -71,7 +71,7 @@ public class GPIOManager {
         usedGpios.remove(Integer.valueOf(Gpio.wpiPinToGpio(pin.getPin().getAddress())));
     }
 
-    public static void validate(Integer gpio, GPIOType type) throws PinSignalSupportException, TypeNotFoundException,
+    public static void validate(Integer gpio, SignalType type) throws PinSignalSupportException, TypeNotFoundException,
             GPIOBusyException {
 
         if (!isSupports(type, gpio)) {
@@ -82,7 +82,7 @@ public class GPIOManager {
             throw new GPIOBusyException(gpio);
     }
 
-    private static boolean isSupports(GPIOType type, Integer gpio) {
+    private static boolean isSupports(SignalType type, Integer gpio) {
         switch (type) {
             case DIGITAL:
                 return digitalGpios.contains(gpio);
@@ -163,7 +163,7 @@ public class GPIOManager {
     public static GpioPinDigitalOutput createDigitalOutput(Integer gpio, Boolean reverse)
             throws GPIOBusyException, PinSignalSupportException {
 
-        GPIOManager.validate(gpio, GPIOType.DIGITAL);
+        GPIOManager.validate(gpio, SignalType.DIGITAL);
 
         GpioPinDigitalOutput pin = Application.getGpioController()
                 .provisionDigitalOutputPin(getPinByGPIONumber(gpio), PinState.getState(reverse));
@@ -178,7 +178,7 @@ public class GPIOManager {
     public static GpioPinDigitalInput createDigitalInput(Integer gpio)
             throws GPIOBusyException, PinSignalSupportException {
 
-        GPIOManager.validate(gpio, GPIOType.DIGITAL);
+        GPIOManager.validate(gpio, SignalType.DIGITAL);
 
         GpioPinDigitalInput pin = Application.getGpioController()
                 .provisionDigitalInputPin(getPinByGPIONumber(gpio), PinPullResistance.PULL_DOWN);
@@ -192,7 +192,7 @@ public class GPIOManager {
 
     public static GpioPinPwmOutput createPwmOutput(Integer gpio, Boolean reverse)
             throws GPIOBusyException, PinSignalSupportException {
-        GPIOManager.validate(gpio, GPIOType.PWM);
+        GPIOManager.validate(gpio, SignalType.PWM);
 
         GpioPinPwmOutput pin = Application.getGpioController()
                 .provisionPwmOutputPin(getPinByGPIONumber(gpio), reverse ? pwmRange : 0);

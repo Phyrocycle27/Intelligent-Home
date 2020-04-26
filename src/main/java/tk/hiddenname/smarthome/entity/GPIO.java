@@ -23,7 +23,7 @@ public class GPIO {
 
     @NonNull
     @Column(nullable = false, updatable = false)
-    private GPIOType type;
+    private SignalType type;
 
     @NonNull
     @Column(nullable = false, updatable = false)

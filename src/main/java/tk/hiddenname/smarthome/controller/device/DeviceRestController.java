@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.controller;
+package tk.hiddenname.smarthome.controller.device;
 
 import lombok.AllArgsConstructor;
 import org.json.JSONArray;
@@ -9,8 +9,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tk.hiddenname.smarthome.entity.Device;
-import tk.hiddenname.smarthome.entity.GPIOType;
+import tk.hiddenname.smarthome.entity.hardware.Device;
+import tk.hiddenname.smarthome.entity.SignalType;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
@@ -40,7 +40,7 @@ public class DeviceRestController {
         List<Device> devices;
 
         try {
-            GPIOType type = GPIOType.valueOf(t.toUpperCase());
+            SignalType type = SignalType.valueOf(t.toUpperCase());
             devices = deviceRepo.findByGpioType(type);
         } catch (IllegalArgumentException e) {
             if (t.isEmpty()) {
@@ -128,7 +128,7 @@ public class DeviceRestController {
     @GetMapping(value = {"/available"}, produces = {"application/json"})
     public String getAvailableOutputs(@RequestParam(name = "type") String t) {
         try {
-            GPIOType type = GPIOType.valueOf(t.toUpperCase());
+            SignalType type = SignalType.valueOf(t.toUpperCase());
 
             JSONObject obj = new JSONObject();
             switch (type) {

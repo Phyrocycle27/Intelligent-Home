@@ -1,8 +1,8 @@
-package tk.hiddenname.smarthome.controller;
+package tk.hiddenname.smarthome.controller.device;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import tk.hiddenname.smarthome.entity.Device;
+import tk.hiddenname.smarthome.entity.hardware.Device;
 import tk.hiddenname.smarthome.entity.signal.DigitalState;
 import tk.hiddenname.smarthome.entity.signal.PwmSignal;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;

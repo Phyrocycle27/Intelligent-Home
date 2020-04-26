@@ -1,11 +1,11 @@
-package tk.hiddenname.smarthome.controller;
+package tk.hiddenname.smarthome.controller.sensor;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import tk.hiddenname.smarthome.entity.Sensor;
+import tk.hiddenname.smarthome.entity.hardware.Sensor;
 import tk.hiddenname.smarthome.entity.signal.DigitalState;
 import tk.hiddenname.smarthome.exception.SensorNotFoundException;
 import tk.hiddenname.smarthome.repository.SensorRepository;

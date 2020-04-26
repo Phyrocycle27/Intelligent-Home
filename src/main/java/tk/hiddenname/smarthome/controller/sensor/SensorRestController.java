@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.controller;
+package tk.hiddenname.smarthome.controller.sensor;
 
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -7,7 +7,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tk.hiddenname.smarthome.entity.Sensor;
+import tk.hiddenname.smarthome.entity.hardware.Sensor;
 import tk.hiddenname.smarthome.exception.SensorNotFoundException;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;

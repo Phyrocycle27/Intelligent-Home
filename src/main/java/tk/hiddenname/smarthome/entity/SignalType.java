@@ -1,6 +1,6 @@
 package tk.hiddenname.smarthome.entity;
 
-public enum GPIOType {
+public enum SignalType {
     DIGITAL,
     PWM
 }
