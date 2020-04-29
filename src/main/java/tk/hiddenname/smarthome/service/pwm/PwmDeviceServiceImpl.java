@@ -3,7 +3,6 @@ package tk.hiddenname.smarthome.service.pwm;
 import com.pi4j.io.gpio.GpioPinPwmOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tk.hiddenname.smarthome.entity.Task;
 import tk.hiddenname.smarthome.entity.signal.PwmSignal;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;

@@ -2,7 +2,6 @@ package tk.hiddenname.smarthome.entity.hardware;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import tk.hiddenname.smarthome.entity.GPIO;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

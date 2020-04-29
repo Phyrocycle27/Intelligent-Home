@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.entity;
+package tk.hiddenname.smarthome.entity.hardware;
 
 import lombok.*;
 import tk.hiddenname.smarthome.entity.signal.SignalType;
