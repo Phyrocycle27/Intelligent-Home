@@ -1,7 +1,9 @@
 package tk.hiddenname.smarthome.entity.task.trigger.objects;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import tk.hiddenname.smarthome.entity.signal.SignalType;
 
 import javax.persistence.Column;
@@ -10,8 +12,10 @@ import javax.persistence.Table;
 
 @Data
 @Entity
-@Table(name = "Trigger_SensorChangeSignal")
+@Table(name = "trigger_sensor_change_signal")
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class SensorChangeSignalObject extends TriggerObject {
 
     @Column(name = "sensor_id", nullable = false)

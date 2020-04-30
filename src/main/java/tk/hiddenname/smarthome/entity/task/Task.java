@@ -1,6 +1,5 @@
 package tk.hiddenname.smarthome.entity.task;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -15,10 +14,9 @@ import java.util.Map;
 
 @Data
 @Entity
-@Table(name = "Task")
+@Table(name = "task")
 @EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
-@AllArgsConstructor
 public class Task {
 
     @Id
@@ -29,25 +27,19 @@ public class Task {
     @Column(nullable = false)
     private String name;
 
-    @ManyToMany
-    @JoinTable(name = "Task_TriggerObjectGroup",
-            joinColumns = {
-                    @JoinColumn(name = "fk_task", referencedColumnName = "id")
-            },
-            inverseJoinColumns = {
-                    @JoinColumn(name = "fk_group", referencedColumnName = "id")
-            })
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "task_to_trigger_group",
+            joinColumns = @JoinColumn(name = "fk_task", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_group", referencedColumnName = "id"))
     @MapKey(name = "action")
     private Map<TriggerAction, TriggerObjectGroup> triggerObjectGroups = new HashMap<>();
 
-    @ManyToMany
-    @JoinTable(name = "Task_ProcessingObjectGroup",
-            joinColumns = {
-                    @JoinColumn(name = "fk_task", referencedColumnName = "id")
-            },
-            inverseJoinColumns = {
-                    @JoinColumn(name = "fk_group", referencedColumnName = "id")
-            })
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "task_to_processing_group",
+            joinColumns = @JoinColumn(name = "fk_task", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_group", referencedColumnName = "id"))
     @MapKey(name = "action")
-    private Map<ProcessingAction, ProcessingObjectGroup> processingObjectGroup = new HashMap<>();
+    private Map<ProcessingAction, ProcessingObjectGroup> processingObjectGroups = new HashMap<>();
 }

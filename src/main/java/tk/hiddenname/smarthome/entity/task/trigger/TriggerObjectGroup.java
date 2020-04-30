@@ -9,10 +9,10 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "TriggerObjectGroup")
+@Table(name = "trigger_group")
 @EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TriggerObjectGroup {
 
     @Id
@@ -20,11 +20,14 @@ public class TriggerObjectGroup {
     @Column(updatable = false, nullable = false)
     private Integer id;
 
-    @NonNull
     @Column(nullable = false)
     private TriggerAction action;
 
-    @NonNull
-    @OneToMany(mappedBy = "group")
+    @JoinTable(
+            name = "trigger_group_to_object",
+            joinColumns = @JoinColumn(name = "fk_group", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_object", referencedColumnName = "id")
+    )
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<TriggerObject> triggerObjects = new ArrayList<>();
 }

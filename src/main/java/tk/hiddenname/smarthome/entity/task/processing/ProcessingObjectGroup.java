@@ -1,6 +1,9 @@
 package tk.hiddenname.smarthome.entity.task.processing;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
 
 import javax.persistence.*;
@@ -9,10 +12,10 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "ProcessingObjectGroup")
+@Table(name = "processing_group")
 @EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ProcessingObjectGroup {
 
     @Id
@@ -20,11 +23,13 @@ public class ProcessingObjectGroup {
     @Column(updatable = false, nullable = false)
     private Integer id;
 
-    @NonNull
     @Column(nullable = false)
     private ProcessingAction action;
 
-    @NonNull
-    @OneToMany(mappedBy = "group")
+    @JoinTable(
+            name = "processing_group_to_object",
+            joinColumns = @JoinColumn(name = "fk_group", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_object", referencedColumnName = "id"))
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<ProcessingObject> processingObjects = new ArrayList<>();
 }
