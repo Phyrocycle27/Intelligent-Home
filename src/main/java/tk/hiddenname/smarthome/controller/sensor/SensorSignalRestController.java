@@ -26,6 +26,6 @@ public class SensorSignalRestController {
     public DigitalState getState(@RequestParam(name = "id") Integer id) {
         Sensor sensor = sensorRepo.findById(id).orElseThrow(() -> new SensorNotFoundException(id));
 
-        return digitalService.getState(sensor.getGpio().getId(), sensor.getReverse());
+        return digitalService.getState(sensor.getId(), sensor.getReverse());
     }
 }

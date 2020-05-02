@@ -1,32 +1,25 @@
 package tk.hiddenname.smarthome.entity.hardware;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import tk.hiddenname.smarthome.entity.signal.SignalType;
 
-import javax.persistence.*;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @Data
-@Entity
-@Table(name = "gpio")
-@EqualsAndHashCode(of = {"id"})
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
+@Embeddable
 public class GPIO {
 
-    @Id
-    @Column(name = "id", updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-
-    @NonNull
-    @Column(nullable = false, updatable = false)
     private Integer gpio;
 
-    @NonNull
-    @Column(nullable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
     private SignalType type;
 
-    @NonNull
-    @Column(nullable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
     private GPIOMode mode;
 }

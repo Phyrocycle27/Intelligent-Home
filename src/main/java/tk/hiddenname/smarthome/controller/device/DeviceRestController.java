@@ -16,9 +16,10 @@ import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.TypeNotFoundException;
 import tk.hiddenname.smarthome.repository.DeviceRepository;
-import tk.hiddenname.smarthome.service.DeviceManager;
+import tk.hiddenname.smarthome.service.manager.DeviceManager;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -78,8 +79,12 @@ public class DeviceRestController {
         log.info("Creating device is " + newDevice);
 
         GPIOManager.validate(newDevice.getGpio().getGpio(), newDevice.getGpio().getType());
+        newDevice.setCreationDate(LocalDateTime.now());
 
         newDevice = deviceRepo.save(newDevice);
+
+        log.info(newDevice.toString());
+
         manager.create(newDevice);
 
         log.info("Saved device is " + newDevice);

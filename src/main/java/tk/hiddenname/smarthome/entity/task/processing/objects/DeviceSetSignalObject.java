@@ -6,9 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import tk.hiddenname.smarthome.entity.signal.SignalType;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -22,6 +20,7 @@ public class DeviceSetSignalObject extends ProcessingObject {
     private Integer deviceId;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private SignalType type;
 
     @Column(name = "target_signal", nullable = false)

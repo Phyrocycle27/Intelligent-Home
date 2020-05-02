@@ -25,7 +25,7 @@ public class DeviceSignalRestController {
     public PwmSignal getPwmSignal(@RequestParam(name = "id") Integer id) {
         Device device = deviceRepo.findById(id).orElseThrow(() -> new DeviceNotFoundException(id));
 
-        return pwmService.getSignal(device.getGpio().getId(), device.getReverse());
+        return pwmService.getSignal(device.getId(), device.getReverse());
     }
 
     @PutMapping(value = {"/pwm"}, produces = {"application/json"})
@@ -33,7 +33,7 @@ public class DeviceSignalRestController {
         Device device = deviceRepo.findById(signal.getId())
                 .orElseThrow(() -> new DeviceNotFoundException(signal.getId()));
 
-        return pwmService.setSignal(device.getGpio().getId(),
+        return pwmService.setSignal(device.getId(),
                 device.getReverse(),
                 signal.getPwmSignal());
     }
@@ -44,7 +44,7 @@ public class DeviceSignalRestController {
     public DigitalState getState(@RequestParam(name = "id") Integer id) {
         Device device = deviceRepo.findById(id).orElseThrow(() -> new DeviceNotFoundException(id));
 
-        return digitalService.getState(device.getGpio().getId(), device.getReverse());
+        return digitalService.getState(device.getId(), device.getReverse());
     }
 
     @PutMapping(value = {"/digital"}, produces = {"application/hal+json"})
@@ -52,7 +52,7 @@ public class DeviceSignalRestController {
         Device device = deviceRepo.findById(state.getId())
                 .orElseThrow(() -> new DeviceNotFoundException(state.getId()));
 
-        return digitalService.setState(device.getGpio().getId(),
+        return digitalService.setState(device.getId(),
                 device.getReverse(),
                 state.getDigitalState()
         );

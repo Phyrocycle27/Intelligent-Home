@@ -16,14 +16,15 @@ import java.util.List;
 @EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProcessingObjectGroup {
+public class ProcessingGroup {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(updatable = false, nullable = false)
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
     private ProcessingAction action;
 
     @JoinTable(

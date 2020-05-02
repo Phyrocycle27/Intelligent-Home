@@ -1,6 +1,9 @@
 package tk.hiddenname.smarthome.entity.task.trigger;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 
 import javax.persistence.*;
@@ -13,14 +16,15 @@ import java.util.List;
 @EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
 @AllArgsConstructor
-public class TriggerObjectGroup {
+public class TriggerGroup {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(updatable = false, nullable = false)
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
     private TriggerAction action;
 
     @JoinTable(

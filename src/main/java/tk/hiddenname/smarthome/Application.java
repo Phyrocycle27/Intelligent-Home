@@ -15,8 +15,8 @@ import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.netty.Client;
 import tk.hiddenname.smarthome.repository.DeviceRepository;
 import tk.hiddenname.smarthome.repository.SensorRepository;
-import tk.hiddenname.smarthome.service.DeviceManager;
-import tk.hiddenname.smarthome.service.SensorManager;
+import tk.hiddenname.smarthome.service.manager.DeviceManager;
+import tk.hiddenname.smarthome.service.manager.SensorManager;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 
 @SpringBootApplication

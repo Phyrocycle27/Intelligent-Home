@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.entity.task.Task;
 import tk.hiddenname.smarthome.entity.task.processing.ProcessingAction;
-import tk.hiddenname.smarthome.entity.task.processing.ProcessingObjectGroup;
+import tk.hiddenname.smarthome.entity.task.processing.ProcessingGroup;
 import tk.hiddenname.smarthome.entity.task.processing.objects.DeviceSetSignalObject;
 import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
 import tk.hiddenname.smarthome.entity.task.trigger.TriggerAction;
-import tk.hiddenname.smarthome.entity.task.trigger.TriggerObjectGroup;
+import tk.hiddenname.smarthome.entity.task.trigger.TriggerGroup;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.SensorChangeSignalObject;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 import tk.hiddenname.smarthome.repository.TaskRepository;
@@ -39,10 +39,10 @@ public class TaskRestController {
 
         task.setName("test");
 
-        /* ProcessingObjectGroup */
-        Map<ProcessingAction, ProcessingObjectGroup> procGroup = new HashMap<>();
+        /* ProcessingGroup */
+        Map<ProcessingAction, ProcessingGroup> procGroup = new HashMap<>();
         {
-            ProcessingObjectGroup group = new ProcessingObjectGroup();
+            ProcessingGroup group = new ProcessingGroup();
             group.setAction(ProcessingAction.DEVICE_SET_SIGNAL);
 
             List<ProcessingObject> objects = new ArrayList<>();
@@ -51,10 +51,10 @@ public class TaskRestController {
             group.setProcessingObjects(objects);
             procGroup.put(group.getAction(), group);
         }
-        /* TriggerObjectGroup */
-        Map<TriggerAction, TriggerObjectGroup> trigGroup = new HashMap<>();
+        /* TriggerGroup */
+        Map<TriggerAction, TriggerGroup> trigGroup = new HashMap<>();
         {
-            TriggerObjectGroup group = new TriggerObjectGroup();
+            TriggerGroup group = new TriggerGroup();
             group.setAction(TriggerAction.SENSOR_CHANGE_SIGNAL);
 
             List<TriggerObject> objects = new ArrayList<>();
@@ -64,11 +64,13 @@ public class TaskRestController {
             trigGroup.put(group.getAction(), group);
         }
 
-        task.setTriggerObjectGroups(trigGroup);
-        task.setProcessingObjectGroups(procGroup);
+        task.setTriggerGroups(trigGroup);
+        task.setProcessingGroups(procGroup);
 
         task = repo.save(task);
 
         return task;
     }
+
+
 }

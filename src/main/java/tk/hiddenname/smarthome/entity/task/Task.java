@@ -4,9 +4,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import tk.hiddenname.smarthome.entity.task.processing.ProcessingAction;
-import tk.hiddenname.smarthome.entity.task.processing.ProcessingObjectGroup;
+import tk.hiddenname.smarthome.entity.task.processing.ProcessingGroup;
 import tk.hiddenname.smarthome.entity.task.trigger.TriggerAction;
-import tk.hiddenname.smarthome.entity.task.trigger.TriggerObjectGroup;
+import tk.hiddenname.smarthome.entity.task.trigger.TriggerGroup;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class Task {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(updatable = false, nullable = false)
     private Integer id;
 
@@ -33,7 +33,7 @@ public class Task {
             joinColumns = @JoinColumn(name = "fk_task", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "fk_group", referencedColumnName = "id"))
     @MapKey(name = "action")
-    private Map<TriggerAction, TriggerObjectGroup> triggerObjectGroups = new HashMap<>();
+    private Map<TriggerAction, TriggerGroup> triggerGroups = new HashMap<>();
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
@@ -41,5 +41,5 @@ public class Task {
             joinColumns = @JoinColumn(name = "fk_task", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "fk_group", referencedColumnName = "id"))
     @MapKey(name = "action")
-    private Map<ProcessingAction, ProcessingObjectGroup> processingObjectGroups = new HashMap<>();
+    private Map<ProcessingAction, ProcessingGroup> processingGroups = new HashMap<>();
 }
