@@ -44,6 +44,7 @@ public class Application {
         Runtime.getRuntime().addShutdownHook(new Thread(() ->
                 Application.getGpioController().shutdown()));
 
+
         // Run the Spring
         ApplicationContext ctx = SpringApplication.run(Application.class, args);
 

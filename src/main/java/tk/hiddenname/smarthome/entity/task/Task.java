@@ -3,14 +3,14 @@ package tk.hiddenname.smarthome.entity.task;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import tk.hiddenname.smarthome.entity.task.processing.ProcessingAction;
-import tk.hiddenname.smarthome.entity.task.processing.ProcessingGroup;
-import tk.hiddenname.smarthome.entity.task.trigger.TriggerAction;
-import tk.hiddenname.smarthome.entity.task.trigger.TriggerGroup;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
+import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -27,19 +27,20 @@ public class Task {
     @Column(nullable = false)
     private String name;
 
-    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-            name = "task_to_trigger_group",
+            name = "task_to_trigger_object",
             joinColumns = @JoinColumn(name = "fk_task", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "fk_group", referencedColumnName = "id"))
-    @MapKey(name = "action")
-    private Map<TriggerAction, TriggerGroup> triggerGroups = new HashMap<>();
+            inverseJoinColumns = @JoinColumn(name = "fk_object", referencedColumnName = "id")
+    )
+    @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Set<TriggerObject> triggerObjects = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-            name = "task_to_processing_group",
+            name = "task_to_processing_object",
             joinColumns = @JoinColumn(name = "fk_task", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "fk_group", referencedColumnName = "id"))
-    @MapKey(name = "action")
-    private Map<ProcessingAction, ProcessingGroup> processingGroups = new HashMap<>();
+            inverseJoinColumns = @JoinColumn(name = "fk_object", referencedColumnName = "id"))
+    @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Set<ProcessingObject> processingObjects = new HashSet<>();
 }

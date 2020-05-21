@@ -7,20 +7,16 @@ import org.springframework.web.bind.annotation.*;
 import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.entity.task.Task;
 import tk.hiddenname.smarthome.entity.task.processing.ProcessingAction;
-import tk.hiddenname.smarthome.entity.task.processing.ProcessingGroup;
 import tk.hiddenname.smarthome.entity.task.processing.objects.DeviceSetSignalObject;
 import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
 import tk.hiddenname.smarthome.entity.task.trigger.TriggerAction;
-import tk.hiddenname.smarthome.entity.task.trigger.TriggerGroup;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.SensorChangeSignalObject;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 import tk.hiddenname.smarthome.repository.TaskRepository;
 import tk.hiddenname.smarthome.service.TaskManager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = {"/tasks"})
@@ -40,32 +36,22 @@ public class TaskRestController {
         task.setName("test");
 
         /* ProcessingGroup */
-        Map<ProcessingAction, ProcessingGroup> procGroup = new HashMap<>();
+        Set<ProcessingObject> processingObjects = new HashSet<>();
         {
-            ProcessingGroup group = new ProcessingGroup();
-            group.setAction(ProcessingAction.DEVICE_SET_SIGNAL);
-
-            List<ProcessingObject> objects = new ArrayList<>();
-            DeviceSetSignalObject object = new DeviceSetSignalObject(0, SignalType.DIGITAL, Boolean.toString(true));
-            objects.add(object);
-            group.setProcessingObjects(objects);
-            procGroup.put(group.getAction(), group);
+            DeviceSetSignalObject object = new DeviceSetSignalObject(ProcessingAction.DEVICE_SET_SIGNAL, 0,
+                    SignalType.DIGITAL, Boolean.toString(true));
+            processingObjects.add(object);
         }
         /* TriggerGroup */
-        Map<TriggerAction, TriggerGroup> trigGroup = new HashMap<>();
+        Set<TriggerObject> triggerObjects = new HashSet<>();
         {
-            TriggerGroup group = new TriggerGroup();
-            group.setAction(TriggerAction.SENSOR_CHANGE_SIGNAL);
-
-            List<TriggerObject> objects = new ArrayList<>();
-            SensorChangeSignalObject object = new SensorChangeSignalObject(0, SignalType.DIGITAL, Boolean.toString(true));
-            objects.add(object);
-            group.setTriggerObjects(objects);
-            trigGroup.put(group.getAction(), group);
+            SensorChangeSignalObject object = new SensorChangeSignalObject(TriggerAction.SENSOR_CHANGE_SIGNAL, 0,
+                    SignalType.DIGITAL, Boolean.toString(true));
+            triggerObjects.add(object);
         }
 
-        task.setTriggerGroups(trigGroup);
-        task.setProcessingGroups(procGroup);
+        task.setProcessingObjects(processingObjects);
+        task.setTriggerObjects(triggerObjects);
 
         task = repo.save(task);
 

@@ -16,6 +16,7 @@ import tk.hiddenname.smarthome.repository.SensorRepository;
 import tk.hiddenname.smarthome.service.manager.SensorManager;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -63,6 +64,7 @@ public class SensorRestController {
         log.info("Creating sensor is " + newSensor);
 
         GPIOManager.validate(newSensor.getGpio().getGpio(), newSensor.getGpio().getType());
+        newSensor.setCreationDate(LocalDateTime.now());
 
         newSensor = sensorRepo.save(newSensor);
         manager.create(newSensor);

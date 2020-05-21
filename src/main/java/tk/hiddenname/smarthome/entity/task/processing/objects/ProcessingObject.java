@@ -1,9 +1,9 @@
 package tk.hiddenname.smarthome.entity.task.processing.objects;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
+import lombok.*;
+import tk.hiddenname.smarthome.entity.task.processing.ProcessingAction;
 
 import javax.persistence.*;
 
@@ -13,11 +13,18 @@ import javax.persistence.*;
 @Table(name = "processing_object")
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
+@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "action", visible = true)
+@JsonTypeIdResolver(ProcessingObjectTypeIdResolver.class)
 public abstract class ProcessingObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(updatable = false, nullable = false)
     private Integer id;
+
+    @NonNull
+    @Column(nullable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
+    private ProcessingAction action;
 }
