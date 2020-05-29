@@ -1,5 +1,8 @@
 package tk.hiddenname.smarthome.entity.task;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -16,7 +19,9 @@ import java.util.Set;
 @Entity
 @Table(name = "task")
 @EqualsAndHashCode(of = {"id"})
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @NoArgsConstructor
+@AllArgsConstructor
 public class Task {
 
     @Id

@@ -63,6 +63,8 @@ public class TaskRestController {
         log.info("************** POST method: /tasks/create ************************");
 
         task = repo.save(task);
+
+        log.info(task.toString());
         manager.add(task);
 
         return task;

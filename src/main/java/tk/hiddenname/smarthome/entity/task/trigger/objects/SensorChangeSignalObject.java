@@ -1,5 +1,7 @@
 package tk.hiddenname.smarthome.entity.task.trigger.objects;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,6 +14,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "trigger_sensor_change_signal")
 @EqualsAndHashCode(callSuper = true)
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @NoArgsConstructor
 public class SensorChangeSignalObject extends TriggerObject {
 

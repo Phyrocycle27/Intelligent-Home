@@ -1,5 +1,7 @@
 package tk.hiddenname.smarthome.entity.task.processing.objects;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,6 +14,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "processing_device_set_signal")
 @EqualsAndHashCode(callSuper = true)
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @NoArgsConstructor
 public class DeviceSetSignalObject extends ProcessingObject {
 
@@ -21,8 +24,6 @@ public class DeviceSetSignalObject extends ProcessingObject {
         this.signalType = signalType;
         this.targetSignal = targetSignal;
     }
-
-    public static String name = "HELLO";
 
     @Column(name = "device_id", nullable = false)
     private Integer deviceId;

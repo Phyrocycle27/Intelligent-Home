@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tk.hiddenname.smarthome.entity.task.processing.objects.DeviceSetSignalObject;
 import tk.hiddenname.smarthome.entity.task.trigger.TriggerAction;
 
 public class TriggerObjectTypeIdResolver extends TypeIdResolverBase {
@@ -40,6 +39,7 @@ public class TriggerObjectTypeIdResolver extends TypeIdResolverBase {
         TriggerAction action;
         Class<?> subType = null;
 
+
         try {
             action = TriggerAction.valueOf(id);
         } catch (IllegalArgumentException e) {
@@ -48,7 +48,7 @@ public class TriggerObjectTypeIdResolver extends TypeIdResolverBase {
 
         switch (action) {
             case SENSOR_CHANGE_SIGNAL:
-                subType = DeviceSetSignalObject.class;
+                subType = SensorChangeSignalObject.class;
                 break;
         }
 
