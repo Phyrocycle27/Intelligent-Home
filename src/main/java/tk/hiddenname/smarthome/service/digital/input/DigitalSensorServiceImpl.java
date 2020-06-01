@@ -59,9 +59,10 @@ public class DigitalSensorServiceImpl implements GPIOService, DigitalSensorServi
         }
 
         pin.addListener((GpioPinListenerDigital) event -> {
-                    log.info("Sensor triggered");
+                    log.info("Sensor with id " + sensorId + "triggered");
                     listener.update(triggerId, event.getState().isHigh() == targetSignal);
                 }
         );
+        log.info("* Listener added");
     }
 }

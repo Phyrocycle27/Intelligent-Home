@@ -1,7 +1,6 @@
 package tk.hiddenname.smarthome.service;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -11,13 +10,15 @@ import tk.hiddenname.smarthome.entity.task.processing.objects.DeviceSetSignalObj
 import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.SensorChangeSignalObject;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
+import tk.hiddenname.smarthome.repository.DeviceRepository;
 import tk.hiddenname.smarthome.service.digital.input.DigitalSensorServiceImpl;
+import tk.hiddenname.smarthome.service.digital.output.DigitalDeviceServiceImpl;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TaskManager {
 
     private final Logger log = LoggerFactory.getLogger(TaskManager.class);
@@ -25,8 +26,9 @@ public class TaskManager {
     private final Map<Integer, EventProcessor> processors = new HashMap<>();
     private final Map<Integer, EventListener> listeners = new HashMap<>();
 
-    @NonNull
     private final DigitalSensorServiceImpl digitalSensorService;
+    private final DigitalDeviceServiceImpl digitalDeviceService;
+    private final DeviceRepository deviceRepo;
 
     public EventProcessor getProcessor(Integer id) {
         return processors.getOrDefault(id, null);
@@ -37,7 +39,7 @@ public class TaskManager {
     }
 
     public void add(Task task) {
-        log.info("Created task" + task.toString());
+        log.info("******* Creating Task *********");
         // SET UP TRIGGERS
         EventListener listener = new EventListener(task.getId(), this);
 
@@ -48,13 +50,12 @@ public class TaskManager {
                     // затем проходимся по самим триггерам в зависимости от их типа и регистрируем их
                     SensorChangeSignalObject object = (SensorChangeSignalObject) source;
 
-                    log.info("Sensor change signal" + object.toString());
+                    log.info("IF: Sensor change signal (" + object.toString() + ")");
 
                     if (object.getSignalType() == SignalType.DIGITAL) {
                         boolean triggerSignal = Boolean.parseBoolean(object.getTriggerSignal());
                         digitalSensorService.addListener(object.getSensorId(), object.getId(), listener, triggerSignal);
                         listener.add(object.getId());
-                        log.info("Listener created");
                     }
 
                     break;
@@ -70,12 +71,13 @@ public class TaskManager {
                     // проходимся по обработчикам в зависимости от их типа и регистрируем их
                     DeviceSetSignalObject object = (DeviceSetSignalObject) source;
 
-                    log.info("Device set signal: " + object.toString());
+                    log.info("DO: Device set signal (" + object.toString() + ")");
 
                     if (object.getSignalType() == SignalType.DIGITAL) {
                         boolean targetSignal = Boolean.parseBoolean(object.getTargetSignal());
-                        processor.add(object.getId(), new SetDigitalSignalProcessor(object.getDeviceId(), targetSignal));
-                        log.info("Processor created");
+                        processor.add(object.getId(), new SetDigitalSignalProcessor(digitalDeviceService, deviceRepo,
+                                object.getDeviceId(), targetSignal));
+                        log.info("* Processor created");
                     }
 
                     break;
