@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.service.digital.output;
+package tk.hiddenname.smarthome.service.hardware.digital.output;
 
 import tk.hiddenname.smarthome.entity.signal.DigitalState;
 

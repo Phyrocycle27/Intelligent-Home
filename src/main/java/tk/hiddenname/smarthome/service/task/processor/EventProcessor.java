@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.service;
+package tk.hiddenname.smarthome.service.task.processor;
 
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;

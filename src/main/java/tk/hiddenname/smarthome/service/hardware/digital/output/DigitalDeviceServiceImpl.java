@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.service.digital.output;
+package tk.hiddenname.smarthome.service.hardware.digital.output;
 
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +7,7 @@ import tk.hiddenname.smarthome.entity.signal.DigitalState;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
-import tk.hiddenname.smarthome.service.GPIOService;
+import tk.hiddenname.smarthome.service.hardware.GPIOService;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 import tk.hiddenname.smarthome.utils.gpio.OutputSignalController;
 

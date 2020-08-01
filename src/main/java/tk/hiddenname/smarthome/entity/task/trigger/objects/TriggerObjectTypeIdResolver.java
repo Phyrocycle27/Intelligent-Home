@@ -39,7 +39,6 @@ public class TriggerObjectTypeIdResolver extends TypeIdResolverBase {
         TriggerAction action;
         Class<?> subType = null;
 
-
         try {
             action = TriggerAction.valueOf(id);
         } catch (IllegalArgumentException e) {

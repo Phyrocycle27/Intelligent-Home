@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.service.pwm;
+package tk.hiddenname.smarthome.service.hardware.pwm;
 
 import tk.hiddenname.smarthome.entity.signal.PwmSignal;
 

@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.service.pwm;
+package tk.hiddenname.smarthome.service.hardware.pwm;
 
 import com.pi4j.io.gpio.GpioPinPwmOutput;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +7,7 @@ import tk.hiddenname.smarthome.entity.signal.PwmSignal;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
-import tk.hiddenname.smarthome.service.GPIOService;
+import tk.hiddenname.smarthome.service.hardware.GPIOService;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 import tk.hiddenname.smarthome.utils.gpio.OutputSignalController;
 

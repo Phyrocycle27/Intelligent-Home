@@ -13,7 +13,7 @@ import tk.hiddenname.smarthome.entity.task.trigger.TriggerAction;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.SensorChangeSignalObject;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 import tk.hiddenname.smarthome.repository.TaskRepository;
-import tk.hiddenname.smarthome.service.TaskManager;
+import tk.hiddenname.smarthome.service.task.TaskManager;
 
 import java.util.HashSet;
 import java.util.Set;

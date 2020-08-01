@@ -1,7 +1,7 @@
-package tk.hiddenname.smarthome.service.digital.input;
+package tk.hiddenname.smarthome.service.hardware.digital.input;
 
 import tk.hiddenname.smarthome.entity.signal.DigitalState;
-import tk.hiddenname.smarthome.service.EventListener;
+import tk.hiddenname.smarthome.service.task.listener.EventListener;
 
 public interface DigitalSensorService {
 

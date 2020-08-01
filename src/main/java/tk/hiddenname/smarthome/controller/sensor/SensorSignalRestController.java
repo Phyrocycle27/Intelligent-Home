@@ -9,7 +9,7 @@ import tk.hiddenname.smarthome.entity.hardware.Sensor;
 import tk.hiddenname.smarthome.entity.signal.DigitalState;
 import tk.hiddenname.smarthome.exception.SensorNotFoundException;
 import tk.hiddenname.smarthome.repository.SensorRepository;
-import tk.hiddenname.smarthome.service.digital.input.DigitalSensorServiceImpl;
+import tk.hiddenname.smarthome.service.hardware.digital.input.DigitalSensorServiceImpl;
 
 @RestController
 @RequestMapping(value = {"/reading"})

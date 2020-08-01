@@ -12,11 +12,11 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "processing_device_set_signal")
 @EqualsAndHashCode(callSuper = true)
+@Table(name = "processing_device_set_signal")
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @NoArgsConstructor
-public class DeviceSetSignalObject extends ProcessingObject {
+public abstract class DeviceSetSignalObject extends ProcessingObject {
 
     public DeviceSetSignalObject(ProcessingAction action, Integer deviceId, SignalType signalType, String targetSignal) {
         super(action);
@@ -28,10 +28,13 @@ public class DeviceSetSignalObject extends ProcessingObject {
     @Column(name = "device_id", nullable = false)
     private Integer deviceId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 7)
     @Enumerated(EnumType.STRING)
     private SignalType signalType;
 
-    @Column(name = "target_signal", nullable = false)
+    @Column(name = "target_signal", nullable = false, length = 5)
     private String targetSignal;
+
+    @Column(nullable = false)
+    private Integer delay;
 }

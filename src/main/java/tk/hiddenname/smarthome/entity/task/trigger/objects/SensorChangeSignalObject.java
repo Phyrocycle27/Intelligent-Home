@@ -28,10 +28,10 @@ public class SensorChangeSignalObject extends TriggerObject {
     @Column(name = "sensor_id", nullable = false)
     private Integer sensorId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 7)
     @Enumerated(EnumType.STRING)
     private SignalType signalType;
 
-    @Column(name = "trigger_signal", nullable = false)
+    @Column(name = "trigger_signal", nullable = false, length = 5)
     private String triggerSignal;
 }

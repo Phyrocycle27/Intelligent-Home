@@ -11,8 +11,8 @@ import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.TypeNotFoundException;
-import tk.hiddenname.smarthome.service.GPIOService;
-import tk.hiddenname.smarthome.service.digital.input.DigitalSensorServiceImpl;
+import tk.hiddenname.smarthome.service.hardware.GPIOService;
+import tk.hiddenname.smarthome.service.hardware.digital.input.DigitalSensorServiceImpl;
 
 @Component
 @RequiredArgsConstructor
