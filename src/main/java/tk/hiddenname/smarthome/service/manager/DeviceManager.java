@@ -10,7 +10,7 @@ import tk.hiddenname.smarthome.entity.hardware.GPIO;
 import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
-import tk.hiddenname.smarthome.exception.TypeNotFoundException;
+import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
 import tk.hiddenname.smarthome.service.hardware.GPIOService;
 import tk.hiddenname.smarthome.service.hardware.digital.output.DigitalDeviceServiceImpl;
 import tk.hiddenname.smarthome.service.hardware.pwm.PwmDeviceServiceImpl;
@@ -61,7 +61,7 @@ public class DeviceManager {
             case PWM:
                 return pwmService;
             default:
-                TypeNotFoundException e = new TypeNotFoundException(type.toString());
+                SignalTypeNotFoundException e = new SignalTypeNotFoundException(type.toString());
                 log.warn(e.getMessage());
                 throw e;
         }

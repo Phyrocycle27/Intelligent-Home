@@ -9,7 +9,7 @@ import lombok.ToString;
 public class PwmSignal extends Signal {
 
     @Getter
-    private Integer pwmSignal;
+    private final int pwmSignal;
 
     public PwmSignal(Integer id, Integer pwmSignal) {
         super(id);

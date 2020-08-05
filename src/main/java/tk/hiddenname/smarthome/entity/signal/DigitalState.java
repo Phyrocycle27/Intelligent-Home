@@ -9,9 +9,9 @@ import lombok.ToString;
 public class DigitalState extends Signal {
 
     @Getter
-    private Boolean digitalState;
+    private final boolean digitalState;
 
-    public DigitalState(Integer id, Boolean digitalState) {
+    public DigitalState(Integer id, boolean digitalState) {
         super(id);
         this.digitalState = digitalState;
     }

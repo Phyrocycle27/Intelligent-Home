@@ -47,8 +47,8 @@ public class ProcessingObjectTypeIdResolver extends TypeIdResolverBase {
         }
 
         switch (action) {
-            case DEVICE_SET_SIGNAL:
-                subType = DeviceSetSignalObject.class;
+            case SET_SIGNAL:
+                subType = SetSignalObject.class;
                 break;
         }
 

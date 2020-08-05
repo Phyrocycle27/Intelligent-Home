@@ -6,17 +6,11 @@ import java.io.IOException;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.logging.Logger;
 
 public class Encryption {
 
-    private static final Logger LOGGER;
     private KeyPair clientKeyPair;
     private SecretKeySpec clientAesKey;
-
-    static {
-        LOGGER = Logger.getLogger(Encryption.class.getName());
-    }
 
     public boolean isKeySet() {
         return clientAesKey != null;

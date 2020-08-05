@@ -17,12 +17,8 @@ import tk.hiddenname.smarthome.netty.security.Encryption;
 
 public class ClientInitializer extends ChannelInitializer<SocketChannel> {
 
-    private final static Logger log;
+    private final static Logger log = LoggerFactory.getLogger(ClientInitializer.class.getName());
     private final Client client;
-
-    static {
-        log = LoggerFactory.getLogger(ClientInitializer.class.getName());
-    }
 
     private final SslContext sslCtx;
     private final String HOST;
@@ -33,7 +29,7 @@ public class ClientInitializer extends ChannelInitializer<SocketChannel> {
         this.client = client;
         HOST = host;
         PORT = port;
-        log.info(String.format("Serer's host is %s and port is %d", host, port));
+        log.info(String.format("Server's host is %s and port is %d", host, port));
     }
 
     @Override

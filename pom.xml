@@ -31,17 +31,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>2.1.5.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <version>2.1.5.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>2.1.5.RELEASE</version>
             <scope>test</scope>
         </dependency>
         <!-- ******* Other project dependencies ******* -->
@@ -69,7 +66,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.43.Final</version>
+            <version>4.1.45.Final</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.json/json -->
         <dependency>

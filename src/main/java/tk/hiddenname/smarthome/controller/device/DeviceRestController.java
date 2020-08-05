@@ -14,7 +14,7 @@ import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
-import tk.hiddenname.smarthome.exception.TypeNotFoundException;
+import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
 import tk.hiddenname.smarthome.repository.DeviceRepository;
 import tk.hiddenname.smarthome.service.manager.DeviceManager;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
@@ -35,7 +35,7 @@ public class DeviceRestController {
 
     @GetMapping(value = {"/all"}, produces = {"application/json"})
     public List<Device> getAll(@RequestParam(name = "type", defaultValue = "", required = false) String t)
-            throws TypeNotFoundException {
+            throws SignalTypeNotFoundException {
         log.info("************** GET method: /devices/all?type=" + t + "************************");
 
         List<Device> devices;
@@ -47,7 +47,7 @@ public class DeviceRestController {
             if (t.isEmpty()) {
                 devices = deviceRepo.findAll(Sort.by("id"));
             } else {
-                TypeNotFoundException ex = new TypeNotFoundException(t);
+                SignalTypeNotFoundException ex = new SignalTypeNotFoundException(t);
                 log.warn(ex.getMessage());
                 throw ex;
             }
@@ -74,7 +74,7 @@ public class DeviceRestController {
 
     @PostMapping(value = {"/create"}, produces = {"application/json"})
     public Device create(@RequestBody Device newDevice) throws GPIOBusyException,
-            PinSignalSupportException, TypeNotFoundException {
+            PinSignalSupportException, SignalTypeNotFoundException {
         log.info("************** POST method: /devices/create ************************");
         log.info("Creating device is " + newDevice);
 
@@ -138,16 +138,16 @@ public class DeviceRestController {
             JSONObject obj = new JSONObject();
             switch (type) {
                 case DIGITAL:
-                    return obj.put("available_gpios", new JSONArray(GPIOManager.getAvailableDigitalGpios())).toString();
+                    return obj.put("available_gpio", new JSONArray(GPIOManager.getAvailableDigitalGPIO())).toString();
                 case PWM:
-                    return obj.put("available_gpios", new JSONArray(GPIOManager.getAvailablePwmGpios())).toString();
+                    return obj.put("available_gpio", new JSONArray(GPIOManager.getAvailablePwmGPIO())).toString();
                 default:
-                    TypeNotFoundException e = new TypeNotFoundException(t);
+                    SignalTypeNotFoundException e = new SignalTypeNotFoundException(t);
                     log.warn(e.getMessage());
                     throw e;
             }
         } catch (IllegalArgumentException e) {
-            TypeNotFoundException ex = new TypeNotFoundException(t);
+            SignalTypeNotFoundException ex = new SignalTypeNotFoundException(t);
             log.warn(ex.getMessage());
             throw ex;
         }

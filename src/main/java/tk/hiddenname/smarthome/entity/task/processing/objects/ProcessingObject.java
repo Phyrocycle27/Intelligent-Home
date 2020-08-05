@@ -9,12 +9,13 @@ import javax.persistence.*;
 
 @Data
 @Entity
+@NoArgsConstructor
+@RequiredArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 @Table(name = "processing_object")
 @Inheritance(strategy = InheritanceType.JOINED)
-@NoArgsConstructor
-@RequiredArgsConstructor
-@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "action", visible = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.EXISTING_PROPERTY,
+        property = "action", visible = true)
 @JsonTypeIdResolver(ProcessingObjectTypeIdResolver.class)
 public abstract class ProcessingObject {
 

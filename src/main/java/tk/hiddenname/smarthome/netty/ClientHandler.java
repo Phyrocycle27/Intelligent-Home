@@ -22,15 +22,11 @@ import java.util.concurrent.TimeUnit;
 
 public class ClientHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger log;
+    private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
     private final Client client;
 
     public ClientHandler(Client client) {
         this.client = client;
-    }
-
-    static {
-        log = LoggerFactory.getLogger(ClientHandler.class);
     }
 
     @Override

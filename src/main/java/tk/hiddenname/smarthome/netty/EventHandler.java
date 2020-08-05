@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 public class EventHandler extends ChannelDuplexHandler {
 
-    private static Logger log = LoggerFactory.getLogger(EventHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(EventHandler.class);
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {

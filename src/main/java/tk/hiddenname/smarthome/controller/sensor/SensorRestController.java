@@ -11,7 +11,7 @@ import tk.hiddenname.smarthome.entity.hardware.Sensor;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.SensorNotFoundException;
-import tk.hiddenname.smarthome.exception.TypeNotFoundException;
+import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
 import tk.hiddenname.smarthome.repository.SensorRepository;
 import tk.hiddenname.smarthome.service.manager.SensorManager;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
@@ -32,7 +32,7 @@ public class SensorRestController {
 
     @GetMapping(value = {"/all"}, produces = {"application/json"})
     public List<Sensor> getAll()
-            throws TypeNotFoundException {
+            throws SignalTypeNotFoundException {
         log.info("************** GET method: /sensors/all");
         List<Sensor> sensors;
 
@@ -59,7 +59,7 @@ public class SensorRestController {
 
     @PostMapping(value = {"/create"}, produces = {"application/json"})
     public Sensor create(@RequestBody Sensor newSensor) throws GPIOBusyException, PinSignalSupportException,
-            TypeNotFoundException {
+            SignalTypeNotFoundException {
         log.info("************** POST method: /sensors/create ************************");
         log.info("Creating sensor is " + newSensor);
 

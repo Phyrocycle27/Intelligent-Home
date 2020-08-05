@@ -9,5 +9,5 @@ import lombok.Getter;
 abstract class Signal {
 
     @Getter
-    private Integer id;
+    private final Integer id;
 }

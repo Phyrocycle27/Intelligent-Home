@@ -4,19 +4,9 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
-import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.entity.task.Task;
-import tk.hiddenname.smarthome.entity.task.processing.ProcessingAction;
-import tk.hiddenname.smarthome.entity.task.processing.objects.DeviceSetSignalObject;
-import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
-import tk.hiddenname.smarthome.entity.task.trigger.TriggerAction;
-import tk.hiddenname.smarthome.entity.task.trigger.objects.SensorChangeSignalObject;
-import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 import tk.hiddenname.smarthome.repository.TaskRepository;
 import tk.hiddenname.smarthome.service.task.TaskManager;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @RestController
 @RequestMapping(value = {"/tasks"})
@@ -36,14 +26,14 @@ public class TaskRestController {
         task.setName("test");
 
         /* ProcessingGroup */
-        Set<ProcessingObject> processingObjects = new HashSet<>();
+        /*Set<ProcessingObject> processingObjects = new HashSet<>();
         {
-            DeviceSetSignalObject object = new DeviceSetSignalObject(ProcessingAction.DEVICE_SET_SIGNAL, 0,
+            SetSignalObject object = new SetSignalObject(ProcessingAction.SET_SIGNAL, 0,
                     SignalType.DIGITAL, Boolean.toString(true));
             processingObjects.add(object);
         }
         /* TriggerGroup */
-        Set<TriggerObject> triggerObjects = new HashSet<>();
+        /*Set<TriggerObject> triggerObjects = new HashSet<>();
         {
             SensorChangeSignalObject object = new SensorChangeSignalObject(TriggerAction.SENSOR_CHANGE_SIGNAL, 0,
                     SignalType.DIGITAL, Boolean.toString(true));
@@ -51,7 +41,7 @@ public class TaskRestController {
         }
 
         task.setProcessingObjects(processingObjects);
-        task.setTriggerObjects(triggerObjects);
+        task.setTriggerObjects(triggerObjects);*/
 
         task = repo.save(task);
 

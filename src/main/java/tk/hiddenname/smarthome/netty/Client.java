@@ -15,11 +15,7 @@ import javax.net.ssl.SSLException;
 
 public class Client implements Runnable {
 
-    private final static Logger log;
-
-    static {
-        log = LoggerFactory.getLogger(Client.class.getName());
-    }
+    private final static Logger log = LoggerFactory.getLogger(Client.class.getName());
 
     private final String HOST;
     private final int PORT;

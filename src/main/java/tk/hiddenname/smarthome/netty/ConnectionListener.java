@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class ConnectionListener implements ChannelFutureListener {
 
     private static final Logger log = LoggerFactory.getLogger(ConnectionListener.class);
-    private Client client;
+    private final Client client;
 
     public ConnectionListener(Client client) {
         this.client = client;

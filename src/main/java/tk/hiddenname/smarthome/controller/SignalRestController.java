@@ -60,7 +60,7 @@ public class SignalRestController {
 
         return digitalDeviceService.setState(device.getId(),
                 device.getReverse(),
-                state.getDigitalState()
+                state.isDigitalState()
         );
     }
 

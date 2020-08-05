@@ -8,7 +8,7 @@ import tk.hiddenname.smarthome.Application;
 import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
-import tk.hiddenname.smarthome.exception.TypeNotFoundException;
+import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,17 +17,17 @@ import java.util.Set;
 
 public class GPIOManager {
 
-    private static final Set<Integer> digitalGpios;
-    private static final Set<Integer> pwmGpios;
-    private static final List<Integer> usedGpios;
+    private static final Set<Integer> digitalGPIO;
+    private static final Set<Integer> pwmGPIO;
+    private static final List<Integer> usedGPIO;
 
     @Getter
     @Setter
-    private static Integer pwmRange;
+    private static int pwmRange;
 
     static {
-        usedGpios = new ArrayList<>();
-        digitalGpios = new HashSet<Integer>() {{
+        usedGPIO = new ArrayList<>();
+        digitalGPIO = new HashSet<Integer>() {{
             add(2);
             add(3);
             add(17);
@@ -57,7 +57,7 @@ public class GPIOManager {
             add(26);
         }};
 
-        pwmGpios = new HashSet<Integer>() {{
+        pwmGPIO = new HashSet<Integer>() {{
             add(13);
             add(19);
             add(18);
@@ -68,10 +68,10 @@ public class GPIOManager {
 
     public static void deletePin(GpioPin pin) {
         Application.getGpioController().unprovisionPin(pin);
-        usedGpios.remove(Integer.valueOf(Gpio.wpiPinToGpio(pin.getPin().getAddress())));
+        usedGPIO.remove(Integer.valueOf(Gpio.wpiPinToGpio(pin.getPin().getAddress())));
     }
 
-    public static void validate(Integer gpio, SignalType type) throws PinSignalSupportException, TypeNotFoundException,
+    public static void validate(Integer gpio, SignalType type) throws PinSignalSupportException, SignalTypeNotFoundException,
             GPIOBusyException {
 
         if (!isSupports(type, gpio)) {
@@ -85,16 +85,16 @@ public class GPIOManager {
     private static boolean isSupports(SignalType type, Integer gpio) {
         switch (type) {
             case DIGITAL:
-                return digitalGpios.contains(gpio);
+                return digitalGPIO.contains(gpio);
             case PWM:
-                return pwmGpios.contains(gpio);
+                return pwmGPIO.contains(gpio);
             default:
                 return false;
         }
     }
 
     private static boolean isExists(Integer gpio) {
-        return usedGpios.contains(gpio);
+        return usedGPIO.contains(gpio);
     }
 
     private static Pin getPinByGPIONumber(int gpioNumber) {
@@ -170,7 +170,7 @@ public class GPIOManager {
 
         pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF, PinMode.DIGITAL_OUTPUT);
 
-        usedGpios.add(gpio);
+        usedGPIO.add(gpio);
 
         return pin;
     }
@@ -185,7 +185,7 @@ public class GPIOManager {
 
         pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF, PinMode.DIGITAL_INPUT);
 
-        usedGpios.add(gpio);
+        usedGPIO.add(gpio);
 
         return pin;
     }
@@ -200,26 +200,26 @@ public class GPIOManager {
         pin.setPwmRange(pwmRange);
         pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
 
-        usedGpios.add(gpio);
+        usedGPIO.add(gpio);
 
         return pin;
     }
 
-    public static Set<Integer> getAvailableDigitalGpios() {
+    public static Set<Integer> getAvailableDigitalGPIO() {
         Set<Integer> available = new HashSet<>();
 
-        for (Integer gpio : digitalGpios) {
-            if (usedGpios.contains(gpio)) continue;
+        for (Integer gpio : digitalGPIO) {
+            if (usedGPIO.contains(gpio)) continue;
             available.add(gpio);
         }
         return available;
     }
 
-    public static Set<Integer> getAvailablePwmGpios() {
+    public static Set<Integer> getAvailablePwmGPIO() {
         Set<Integer> available = new HashSet<>();
 
-        for (Integer gpio : pwmGpios) {
-            if (usedGpios.contains(gpio)) continue;
+        for (Integer gpio : pwmGPIO) {
+            if (usedGPIO.contains(gpio)) continue;
             available.add(gpio);
         }
         return available;
