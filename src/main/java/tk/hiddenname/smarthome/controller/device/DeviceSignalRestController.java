@@ -47,14 +47,14 @@ public class DeviceSignalRestController {
         return digitalService.getState(device.getId(), device.getReverse());
     }
 
-    @PutMapping(value = {"/digital"}, produces = {"application/hal+json"})
+    @PutMapping(value = {"/digital"}, produces = {"application/json"})
     public DigitalState setState(@RequestBody DigitalState state) {
         Device device = deviceRepo.findById(state.getId())
                 .orElseThrow(() -> new DeviceNotFoundException(state.getId()));
 
         return digitalService.setState(device.getId(),
                 device.getReverse(),
-                state.getDigitalState()
+                state.isDigitalState()
         );
     }
 }

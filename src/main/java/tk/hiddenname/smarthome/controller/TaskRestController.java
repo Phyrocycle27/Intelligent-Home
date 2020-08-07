@@ -35,7 +35,7 @@ public class TaskRestController {
         /* TriggerGroup */
         /*Set<TriggerObject> triggerObjects = new HashSet<>();
         {
-            SensorChangeSignalObject object = new SensorChangeSignalObject(TriggerAction.SENSOR_CHANGE_SIGNAL, 0,
+            SensorChangeSignalObject object = new SensorChangeSignalObject(TriggerAction.CHANGE_SIGNAL, 0,
                     SignalType.DIGITAL, Boolean.toString(true));
             triggerObjects.add(object);
         }

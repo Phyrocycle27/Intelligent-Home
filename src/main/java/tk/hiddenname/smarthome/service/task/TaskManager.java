@@ -6,9 +6,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entity.task.Task;
 import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
+import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
+import tk.hiddenname.smarthome.exception.NoSuchListenerException;
 import tk.hiddenname.smarthome.exception.NoSuchProcessorException;
 import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
 import tk.hiddenname.smarthome.service.task.listener.EventListener;
+import tk.hiddenname.smarthome.service.task.listener.ListenerFactory;
 import tk.hiddenname.smarthome.service.task.processor.EventProcessor;
 import tk.hiddenname.smarthome.service.task.processor.ProcessorFactory;
 
@@ -24,6 +27,7 @@ public class TaskManager {
     private final Map<Integer, EventProcessor> processors = new HashMap<>();
     private final Map<Integer, EventListener> listeners = new HashMap<>();
     private final ProcessorFactory processorFactory;
+    private final ListenerFactory listenerFactory;
 
     public EventProcessor getProcessor(Integer id) {
         return processors.getOrDefault(id, null);
@@ -34,21 +38,30 @@ public class TaskManager {
     }
 
     public void add(Task task) {
+        // Processors are registering
         EventProcessor processor = new EventProcessor(task.getId());
-        EventListener listener = new EventListener(task.getId(), processor);
 
         for (ProcessingObject obj: task.getProcessingObjects()) {
             try {
-                processorFactory.create(obj);
+                processor.add(obj.getId(), processorFactory.create(obj));
             } catch (NoSuchProcessorException | UnsupportedObjectTypeException e) {
+                log.error(e.getMessage());
+            }
+        }
+
+        // Listeners are registering
+        EventListener listener = new EventListener(task.getId(), processor);
+
+        for (TriggerObject obj: task.getTriggerObjects()) {
+            try {
+                listenerFactory.create(obj);
+                listener.add(obj.getId());
+            } catch (NoSuchListenerException | UnsupportedObjectTypeException e) {
                 log.error(e.getMessage());
             }
         }
 
         processors.put(task.getId(), processor);
         listeners.put(task.getId(), listener);
-    }
-
-    public void loadTasks() {
     }
 }

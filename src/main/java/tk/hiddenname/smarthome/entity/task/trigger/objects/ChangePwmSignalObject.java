@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.entity.task.processing.objects;
+package tk.hiddenname.smarthome.entity.task.trigger.objects;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -14,10 +14,10 @@ import javax.persistence.Table;
 @Entity
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "processing_set_digital_signal")
+@Table(name = "trigger_change_pwm_signal")
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class SetDigitalSignalObject extends SetSignalObject {
+public class ChangePwmSignalObject extends ChangeSignalObject {
 
     @Column(nullable = false)
-    private boolean targetState;
+    private int targetSignal;
 }

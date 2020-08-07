@@ -138,9 +138,9 @@ public class DeviceRestController {
             JSONObject obj = new JSONObject();
             switch (type) {
                 case DIGITAL:
-                    return obj.put("available_gpio", new JSONArray(GPIOManager.getAvailableDigitalGPIO())).toString();
+                    return obj.put("available_gpios", new JSONArray(GPIOManager.getAvailableDigitalGPIO())).toString();
                 case PWM:
-                    return obj.put("available_gpio", new JSONArray(GPIOManager.getAvailablePwmGPIO())).toString();
+                    return obj.put("available_gpios", new JSONArray(GPIOManager.getAvailablePwmGPIO())).toString();
                 default:
                     SignalTypeNotFoundException e = new SignalTypeNotFoundException(t);
                     log.warn(e.getMessage());

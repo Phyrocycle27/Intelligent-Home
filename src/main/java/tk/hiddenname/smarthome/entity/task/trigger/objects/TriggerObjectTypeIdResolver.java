@@ -4,13 +4,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tk.hiddenname.smarthome.entity.task.trigger.TriggerAction;
 
 public class TriggerObjectTypeIdResolver extends TypeIdResolverBase {
-
-    private static final Logger log = LoggerFactory.getLogger(TriggerObjectTypeIdResolver.class);
 
     private JavaType superType;
 
@@ -46,8 +42,8 @@ public class TriggerObjectTypeIdResolver extends TypeIdResolverBase {
         }
 
         switch (action) {
-            case SENSOR_CHANGE_SIGNAL:
-                subType = SensorChangeSignalObject.class;
+            case CHANGE_SIGNAL:
+                subType = ChangeSignalObject.class;
                 break;
         }
 

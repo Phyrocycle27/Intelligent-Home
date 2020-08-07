@@ -9,11 +9,10 @@ import javax.persistence.*;
 
 @Data
 @Entity
+@NoArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 @Table(name = "trigger_object")
 @Inheritance(strategy = InheritanceType.JOINED)
-@NoArgsConstructor
-@RequiredArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "action", visible = true)
 @JsonTypeIdResolver(TriggerObjectTypeIdResolver.class)
 public abstract class TriggerObject {

@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.entity.task.processing.objects;
+package tk.hiddenname.smarthome.entity.task.trigger.objects;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -15,18 +15,17 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "processing_set_signal")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Table(name = "trigger_change_signal")
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "signalType", visible = true)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = SetDigitalSignalObject.class, name = "DIGITAL"),
-        @JsonSubTypes.Type(value = SetPwmSignalObject.class, name = "PWM")
+        @JsonSubTypes.Type(value = ChangeDigitalSignalObject.class, name = "DIGITAL"),
+        @JsonSubTypes.Type(value = ChangePwmSignalObject.class, name = "PWM")
 })
-public abstract class SetSignalObject extends ProcessingObject {
+public abstract class ChangeSignalObject extends TriggerObject {
 
-    @Column(name = "device_id", nullable = false)
-    private Integer deviceId;
+    @Column(name = "sensor_id", nullable = false)
+    private Integer sensorId;
 
     @Column(name = "signal_type", nullable = false, length = 7)
     @Enumerated(EnumType.STRING)

@@ -43,7 +43,7 @@ public class DigitalDeviceServiceImpl implements GPIOService, DigitalDeviceServi
 
     @Override
     public void update(Integer id, Boolean reverse) {
-        setState(id, reverse, getState(id, reverse).getDigitalState());
+        setState(id, reverse, getState(id, reverse).isDigitalState());
     }
 
     @Override
