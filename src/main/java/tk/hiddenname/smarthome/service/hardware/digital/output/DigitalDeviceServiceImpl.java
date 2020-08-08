@@ -7,7 +7,6 @@ import tk.hiddenname.smarthome.entity.signal.DigitalState;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
-import tk.hiddenname.smarthome.service.hardware.GPIOService;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 import tk.hiddenname.smarthome.utils.gpio.OutputSignalController;
 
@@ -15,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class DigitalDeviceServiceImpl implements GPIOService, DigitalDeviceService {
+public class DigitalDeviceServiceImpl implements DigitalDeviceService {
 
     private final Map<Integer, GpioPinDigitalOutput> map;
 

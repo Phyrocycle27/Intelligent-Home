@@ -18,10 +18,7 @@ import javax.persistence.*;
 @Table(name = "trigger_change_signal")
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "signalType", visible = true)
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = ChangeDigitalSignalObject.class, name = "DIGITAL"),
-        @JsonSubTypes.Type(value = ChangePwmSignalObject.class, name = "PWM")
-})
+@JsonSubTypes({@JsonSubTypes.Type(value = ChangeDigitalSignalObject.class, name = "DIGITAL")})
 public abstract class ChangeSignalObject extends TriggerObject {
 
     @Column(name = "sensor_id", nullable = false)

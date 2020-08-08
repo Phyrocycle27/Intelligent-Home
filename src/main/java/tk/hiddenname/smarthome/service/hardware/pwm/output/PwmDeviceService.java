@@ -1,8 +1,9 @@
-package tk.hiddenname.smarthome.service.hardware.pwm;
+package tk.hiddenname.smarthome.service.hardware.pwm.output;
 
 import tk.hiddenname.smarthome.entity.signal.PwmSignal;
+import tk.hiddenname.smarthome.service.hardware.GPIOService;
 
-public interface PwmDeviceService {
+public interface PwmDeviceService extends GPIOService {
 
     PwmSignal getSignal(Integer id, Boolean reverse);
 

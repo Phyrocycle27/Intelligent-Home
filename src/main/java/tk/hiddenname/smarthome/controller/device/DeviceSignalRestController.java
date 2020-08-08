@@ -8,7 +8,7 @@ import tk.hiddenname.smarthome.entity.signal.PwmSignal;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
 import tk.hiddenname.smarthome.repository.DeviceRepository;
 import tk.hiddenname.smarthome.service.hardware.digital.output.DigitalDeviceServiceImpl;
-import tk.hiddenname.smarthome.service.hardware.pwm.PwmDeviceServiceImpl;
+import tk.hiddenname.smarthome.service.hardware.pwm.output.PwmDeviceServiceImpl;
 
 @RestController
 @RequestMapping(value = {"/control"})

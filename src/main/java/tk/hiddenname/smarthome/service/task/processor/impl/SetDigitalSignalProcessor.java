@@ -15,8 +15,8 @@ import tk.hiddenname.smarthome.service.hardware.digital.output.DigitalDeviceServ
 import tk.hiddenname.smarthome.service.task.processor.Processor;
 
 @Component
-@Scope(scopeName = "prototype")
 @AllArgsConstructor
+@Scope(scopeName = "prototype")
 public class SetDigitalSignalProcessor implements Processor {
 
     private static final Logger log = LoggerFactory.getLogger(SetDigitalSignalProcessor.class);

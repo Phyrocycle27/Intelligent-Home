@@ -11,12 +11,12 @@ import tk.hiddenname.smarthome.entity.task.processing.objects.SetPwmSignalObject
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
 import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
 import tk.hiddenname.smarthome.repository.DeviceRepository;
-import tk.hiddenname.smarthome.service.hardware.pwm.PwmDeviceService;
+import tk.hiddenname.smarthome.service.hardware.pwm.output.PwmDeviceService;
 import tk.hiddenname.smarthome.service.task.processor.Processor;
 
 @Component
-@Scope(scopeName = "prototype")
 @AllArgsConstructor
+@Scope(scopeName = "prototype")
 public class SetPwmSignalProcessor implements Processor {
 
     private static final Logger log = LoggerFactory.getLogger(SetPwmSignalProcessor.class);

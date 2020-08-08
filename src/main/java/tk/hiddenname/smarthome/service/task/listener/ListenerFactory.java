@@ -9,7 +9,6 @@ import tk.hiddenname.smarthome.exception.NoSuchListenerException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
 import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
 import tk.hiddenname.smarthome.service.task.listener.impl.ChangeDigitalSignalListener;
-import tk.hiddenname.smarthome.service.task.listener.impl.ChangePwmSignalListener;
 
 @Component
 @AllArgsConstructor
@@ -24,8 +23,7 @@ public class ListenerFactory {
             case CHANGE_SIGNAL:
                 switch (((ChangeSignalObject) object).getSignalType()) {
                     case PWM:
-                        listener = ctx.getBean(ChangePwmSignalListener.class);
-                        break;
+                        throw new NoSuchListenerException();
                     case DIGITAL:
                         listener = ctx.getBean(ChangeDigitalSignalListener.class);
                         break;

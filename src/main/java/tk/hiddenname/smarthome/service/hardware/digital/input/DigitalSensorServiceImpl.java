@@ -9,18 +9,16 @@ import tk.hiddenname.smarthome.entity.signal.DigitalState;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.SensorNotFoundException;
-import tk.hiddenname.smarthome.service.hardware.GPIOService;
-import tk.hiddenname.smarthome.service.hardware.digital.output.DigitalDeviceServiceImpl;
-import tk.hiddenname.smarthome.service.task.listener.EventListener;
+import tk.hiddenname.smarthome.service.task.listener.impl.ChangeDigitalSignalListener;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class DigitalSensorServiceImpl implements GPIOService, DigitalSensorService {
+public class DigitalSensorServiceImpl implements DigitalSensorService {
 
-    private static final Logger log = LoggerFactory.getLogger(DigitalDeviceServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(DigitalSensorServiceImpl.class);
     private final Map<Integer, GpioPinDigitalInput> map = new HashMap<>();
 
     @Override
@@ -50,19 +48,29 @@ public class DigitalSensorServiceImpl implements GPIOService, DigitalSensorServi
         return new DigitalState(id, reverse ^ pin.isHigh());
     }
 
+
     @Override
-    public void addListener(Integer sensorId, Integer triggerId, EventListener listener, boolean targetSignal) {
+    public GpioPinListenerDigital addListener(ChangeDigitalSignalListener listener, Integer sensorId, boolean targetSignal, boolean reverse) {
         GpioPinDigitalInput pin = map.getOrDefault(sensorId, null);
 
-        if (pin == null) {
+        if (pin != null) {
+            return event -> {
+                log.info("Sensor with id " + sensorId + "triggered");
+                listener.update((event.getState().isHigh() ^ reverse) == targetSignal);
+            };
+        } else {
             throw new SensorNotFoundException(sensorId);
         }
+    }
 
-        pin.addListener((GpioPinListenerDigital) event -> {
-                    log.info("Sensor with id " + sensorId + "triggered");
-                    listener.update(triggerId, event.getState().isHigh() == targetSignal);
-                }
-        );
-        log.info("* Listener added");
+    @Override
+    public void removeListener(GpioPinListenerDigital listener, Integer sensorId) {
+        GpioPinDigitalInput pin = map.getOrDefault(sensorId, null);
+
+        if (pin != null) {
+            pin.removeListener(listener);
+        } else {
+            throw new SensorNotFoundException(sensorId);
+        }
     }
 }

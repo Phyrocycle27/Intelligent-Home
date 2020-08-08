@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.service.hardware.pwm;
+package tk.hiddenname.smarthome.service.hardware.pwm.output;
 
 import com.pi4j.io.gpio.GpioPinPwmOutput;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +7,6 @@ import tk.hiddenname.smarthome.entity.signal.PwmSignal;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
-import tk.hiddenname.smarthome.service.hardware.GPIOService;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 import tk.hiddenname.smarthome.utils.gpio.OutputSignalController;
 
@@ -15,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class PwmDeviceServiceImpl implements GPIOService, PwmDeviceService {
+public class PwmDeviceServiceImpl implements PwmDeviceService {
 
     private static Map<Integer, GpioPinPwmOutput> map;
     private final OutputSignalController controller;

@@ -13,7 +13,7 @@ import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
 import tk.hiddenname.smarthome.service.hardware.GPIOService;
 import tk.hiddenname.smarthome.service.hardware.digital.output.DigitalDeviceServiceImpl;
-import tk.hiddenname.smarthome.service.hardware.pwm.PwmDeviceServiceImpl;
+import tk.hiddenname.smarthome.service.hardware.pwm.output.PwmDeviceServiceImpl;
 
 @Component
 @RequiredArgsConstructor
