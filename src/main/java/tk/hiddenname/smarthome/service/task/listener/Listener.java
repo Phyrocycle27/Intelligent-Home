@@ -5,7 +5,8 @@ import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
 
 public interface Listener {
 
-    void update(boolean flag);
     void register(TriggerObject object) throws UnsupportedObjectTypeException;
+    void update(TriggerObject object) throws UnsupportedObjectTypeException;
     void unregister();
+    void trigger(boolean flag);
 }

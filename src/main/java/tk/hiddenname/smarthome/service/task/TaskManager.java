@@ -39,7 +39,7 @@ public class TaskManager {
 
     public void add(Task task) {
         // Processors are registering
-        EventProcessor processor = new EventProcessor(task.getId());
+        EventProcessor processor = new EventProcessor();
 
         for (ProcessingObject obj: task.getProcessingObjects()) {
             try {

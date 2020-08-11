@@ -1,6 +1,7 @@
 package tk.hiddenname.smarthome.service.task.listener;
 
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.ChangeSignalObject;
@@ -16,7 +17,7 @@ public class ListenerFactory {
 
     private final ApplicationContext ctx;
 
-    public Listener create(TriggerObject object) throws NoSuchListenerException, UnsupportedObjectTypeException {
+    public Listener create(@NonNull TriggerObject object) throws NoSuchListenerException, UnsupportedObjectTypeException {
         Listener listener;
 
         switch (object.getAction()) {

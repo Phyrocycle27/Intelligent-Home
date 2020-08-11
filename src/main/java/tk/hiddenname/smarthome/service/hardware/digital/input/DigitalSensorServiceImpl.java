@@ -56,7 +56,7 @@ public class DigitalSensorServiceImpl implements DigitalSensorService {
         if (pin != null) {
             return event -> {
                 log.info("Sensor with id " + sensorId + "triggered");
-                listener.update((event.getState().isHigh() ^ reverse) == targetSignal);
+                listener.trigger((event.getState().isHigh() ^ reverse) == targetSignal);
             };
         } else {
             throw new SensorNotFoundException(sensorId);

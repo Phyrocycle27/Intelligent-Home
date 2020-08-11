@@ -28,11 +28,6 @@ public class ChangeDigitalSignalListener implements Listener {
     private GpioPinListenerDigital listener;
 
     @Override
-    public void update(boolean flag) {
-
-    }
-
-    @Override
     public void register(TriggerObject object) throws UnsupportedObjectTypeException {
         if (object instanceof ChangeDigitalSignalObject) {
             this.object = (ChangeDigitalSignalObject) object;
@@ -45,7 +40,18 @@ public class ChangeDigitalSignalListener implements Listener {
     }
 
     @Override
+    public void update(TriggerObject object) throws UnsupportedObjectTypeException {
+        unregister();
+        register(object);
+    }
+
+    @Override
     public void unregister() {
         service.removeListener(listener, object.getSensorId());
+    }
+
+    @Override
+    public void trigger(boolean flag) {
+
     }
 }
