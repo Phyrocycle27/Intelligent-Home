@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import tk.hiddenname.smarthome.entity.signal.SignalType;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
@@ -21,13 +22,15 @@ import javax.persistence.*;
 @JsonSubTypes({@JsonSubTypes.Type(value = ChangeDigitalSignalObject.class, name = "DIGITAL")})
 public abstract class ChangeSignalObject extends TriggerObject {
 
+    @NotNull
     @Column(name = "sensor_id", nullable = false)
     private Integer sensorId;
 
+    @NotNull
     @Column(name = "signal_type", nullable = false, length = 7)
     @Enumerated(EnumType.STRING)
     private SignalType signalType;
 
     @Column(nullable = false)
-    private int delay;
+    private int delay = 0;
 }

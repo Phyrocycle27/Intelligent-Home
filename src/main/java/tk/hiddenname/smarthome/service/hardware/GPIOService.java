@@ -7,8 +7,8 @@ public interface GPIOService {
 
     void delete(Integer id);
 
-    void save(Integer id, Integer gpio, Boolean reverse) throws GPIOBusyException,
+    void save(Integer id, Integer gpio, boolean reverse) throws GPIOBusyException,
             PinSignalSupportException;
 
-    void update(Integer id, Boolean reverse);
+    void update(Integer id, boolean reverse);
 }

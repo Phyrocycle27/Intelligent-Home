@@ -12,6 +12,7 @@ import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,6 +33,7 @@ public class Task {
     @Column(nullable = false)
     private String name;
 
+    @NotNull
     @JoinTable(
             name = "task_to_trigger_object",
             joinColumns = @JoinColumn(name = "fk_task", referencedColumnName = "id"),
@@ -41,6 +43,7 @@ public class Task {
     @LazyCollection(LazyCollectionOption.FALSE)
     private Set<TriggerObject> triggerObjects = new HashSet<>();
 
+    @NotNull
     @JoinTable(
             name = "task_to_processing_object",
             joinColumns = @JoinColumn(name = "fk_task", referencedColumnName = "id"),

@@ -2,10 +2,13 @@ package tk.hiddenname.smarthome.entity.task.processing.objects;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import tk.hiddenname.smarthome.entity.task.processing.ProcessingAction;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
@@ -22,7 +25,7 @@ public abstract class ProcessingObject {
     @Column(updatable = false, nullable = false)
     private Integer id;
 
-    @NonNull
+    @NotNull
     @Column(nullable = false, updatable = false)
     @Enumerated(EnumType.STRING)
     private ProcessingAction action;

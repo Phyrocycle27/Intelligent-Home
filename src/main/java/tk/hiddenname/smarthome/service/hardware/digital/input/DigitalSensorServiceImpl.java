@@ -28,14 +28,14 @@ public class DigitalSensorServiceImpl implements DigitalSensorService {
     }
 
     @Override
-    public void save(Integer id, Integer gpio, Boolean reverse)
+    public void save(Integer id, Integer gpio, boolean reverse)
             throws GPIOBusyException, PinSignalSupportException {
 
         map.put(id, GPIOManager.createDigitalInput(gpio));
     }
 
     @Override
-    public void update(Integer id, Boolean reverse) {
+    public void update(Integer id, boolean reverse) {
     }
 
     @Override

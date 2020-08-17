@@ -6,5 +6,6 @@ import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
 public interface Processor {
 
     void process();
+
     void register(ProcessingObject object) throws UnsupportedObjectTypeException;
 }

@@ -19,6 +19,7 @@ import tk.hiddenname.smarthome.repository.DeviceRepository;
 import tk.hiddenname.smarthome.service.manager.DeviceManager;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class DeviceRestController {
     }
 
     @PostMapping(value = {"/create"}, produces = {"application/json"})
-    public Device create(@RequestBody Device newDevice) throws GPIOBusyException,
+    public Device create(@Valid @RequestBody Device newDevice) throws GPIOBusyException,
             PinSignalSupportException, SignalTypeNotFoundException {
         log.info("************** POST method: /devices/create ************************");
         log.info("Creating device is " + newDevice);
@@ -93,13 +94,13 @@ public class DeviceRestController {
     }
 
     @PutMapping(value = {"/one/{id}"}, produces = {"application/json"})
-    public Device update(@RequestBody Device newDevice, @PathVariable Integer id) {
+    public Device update(@Valid @RequestBody Device newDevice, @PathVariable Integer id) {
         log.info("************** PUT method: /devices/one/" + id + " ************************");
         log.info("Updating device is " + newDevice);
 
         Device updated = deviceRepo.findById(id)
                 .map(device -> {
-                    if (device.getReverse() != newDevice.getReverse()) {
+                    if (device.isReverse() != newDevice.isReverse()) {
                         manager.update(device);
                     }
                     BeanUtils.copyProperties(newDevice, device, "id", "creationDate", "gpio");

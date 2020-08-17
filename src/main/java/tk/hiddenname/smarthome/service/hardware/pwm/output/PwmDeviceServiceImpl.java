@@ -33,13 +33,13 @@ public class PwmDeviceServiceImpl implements PwmDeviceService {
     }
 
     @Override
-    public void save(Integer id, Integer gpio, Boolean reverse)
+    public void save(Integer id, Integer gpio, boolean reverse)
             throws GPIOBusyException, PinSignalSupportException {
         map.put(id, GPIOManager.createPwmOutput(gpio, reverse));
     }
 
     @Override
-    public void update(Integer id, Boolean reverse) {
+    public void update(Integer id, boolean reverse) {
         setSignal(id, reverse, getSignal(id, reverse).getPwmSignal());
     }
 

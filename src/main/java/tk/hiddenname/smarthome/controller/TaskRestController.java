@@ -3,10 +3,15 @@ package tk.hiddenname.smarthome.controller;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import tk.hiddenname.smarthome.entity.task.Task;
 import tk.hiddenname.smarthome.repository.TaskRepository;
 import tk.hiddenname.smarthome.service.task.TaskManager;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = {"/tasks"})
@@ -18,38 +23,8 @@ public class TaskRestController {
     private final TaskRepository repo;
     private final TaskManager manager;
 
-    @GetMapping(value = {"/one/test"}, produces = {"application/json"})
-    public Task getOne() {
-        log.info("************** GET method: /tasks/one/test ************************");
-        Task task = new Task();
-
-        task.setName("test");
-
-        /* ProcessingGroup */
-        /*Set<ProcessingObject> processingObjects = new HashSet<>();
-        {
-            SetSignalObject object = new SetSignalObject(ProcessingAction.SET_SIGNAL, 0,
-                    SignalType.DIGITAL, Boolean.toString(true));
-            processingObjects.add(object);
-        }
-        /* TriggerGroup */
-        /*Set<TriggerObject> triggerObjects = new HashSet<>();
-        {
-            SensorChangeSignalObject object = new SensorChangeSignalObject(TriggerAction.CHANGE_SIGNAL, 0,
-                    SignalType.DIGITAL, Boolean.toString(true));
-            triggerObjects.add(object);
-        }
-
-        task.setProcessingObjects(processingObjects);
-        task.setTriggerObjects(triggerObjects);*/
-
-        task = repo.save(task);
-
-        return task;
-    }
-
     @PostMapping(value = {"/create"}, produces = {"application/json"})
-    public Task create(@RequestBody Task task) {
+    public Task create(@Valid @RequestBody Task task) {
         log.info("************** POST method: /tasks/create ************************");
 
         task = repo.save(task);

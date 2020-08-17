@@ -11,6 +11,8 @@ import tk.hiddenname.smarthome.exception.SensorNotFoundException;
 import tk.hiddenname.smarthome.repository.SensorRepository;
 import tk.hiddenname.smarthome.service.hardware.digital.input.DigitalSensorServiceImpl;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = {"/reading"})
 @AllArgsConstructor
@@ -23,7 +25,7 @@ public class SensorSignalRestController {
     // ***************************** DIGITAL **************************************************
 
     @GetMapping(value = {"/digital"}, produces = {"application/json"})
-    public DigitalState getState(@RequestParam(name = "id") Integer id) {
+    public DigitalState getState(@Valid @RequestParam(name = "id") Integer id) {
         Sensor sensor = sensorRepo.findById(id).orElseThrow(() -> new SensorNotFoundException(id));
 
         return digitalService.getState(sensor.getId(), sensor.getReverse());

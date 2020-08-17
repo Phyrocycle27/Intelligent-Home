@@ -34,12 +34,12 @@ public class SetPwmSignalProcessor implements Processor {
                 return e;
             });
 
-            int currSignal = service.getSignal(device.getId(), device.getReverse()).getPwmSignal();
+            int currSignal = service.getSignal(device.getId(), device.isReverse()).getPwmSignal();
             if (currSignal != object.getTargetSignal()) {
                 log.info(String.format(" * Pwm signal (%d) will be set to device with id (%d) on GPIO " +
                                 "(%d) for (%d) seconds",
                         object.getTargetSignal(), device.getId(), device.getGpio().getGpio(), object.getDelay()));
-                service.setSignal(device.getId(), device.getReverse(), object.getTargetSignal());
+                service.setSignal(device.getId(), device.isReverse(), object.getTargetSignal());
 
                 if (object.getDelay() > 0) {
                     try {
@@ -47,7 +47,7 @@ public class SetPwmSignalProcessor implements Processor {
                     } catch (InterruptedException e) {
                         log.error(e.getMessage());
                     }
-                    service.setSignal(device.getId(), device.getReverse(), currSignal);
+                    service.setSignal(device.getId(), device.isReverse(), currSignal);
                     log.info(String.format("* Processing complete! Pwm signal (%d) will be set to device " +
                                     "with id (%d) on GPIO (%d)",
                             currSignal, device.getId(), device.getGpio().getGpio()));

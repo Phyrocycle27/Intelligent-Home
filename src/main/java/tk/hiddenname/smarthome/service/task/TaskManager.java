@@ -41,7 +41,7 @@ public class TaskManager {
         // Processors are registering
         EventProcessor processor = new EventProcessor();
 
-        for (ProcessingObject obj: task.getProcessingObjects()) {
+        for (ProcessingObject obj : task.getProcessingObjects()) {
             try {
                 processor.add(obj.getId(), processorFactory.create(obj));
             } catch (NoSuchProcessorException | UnsupportedObjectTypeException e) {
@@ -52,7 +52,7 @@ public class TaskManager {
         // Listeners are registering
         EventListener listener = new EventListener(task.getId(), processor);
 
-        for (TriggerObject obj: task.getTriggerObjects()) {
+        for (TriggerObject obj : task.getTriggerObjects()) {
             try {
                 listener.add(obj.getId(), listenerFactory.create(obj, listener));
             } catch (NoSuchListenerException | UnsupportedObjectTypeException e) {

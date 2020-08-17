@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import tk.hiddenname.smarthome.entity.signal.SignalType;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
@@ -25,13 +26,15 @@ import javax.persistence.*;
 })
 public abstract class SetSignalObject extends ProcessingObject {
 
+    @NotNull
     @Column(name = "device_id", nullable = false)
     private Integer deviceId;
 
+    @NotNull
     @Column(name = "signal_type", nullable = false, length = 7)
     @Enumerated(EnumType.STRING)
     private SignalType signalType;
 
     @Column(nullable = false)
-    private int delay;
+    private int delay = 0;
 }

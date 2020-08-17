@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
@@ -18,6 +19,7 @@ import javax.persistence.Table;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class SetPwmSignalObject extends SetSignalObject {
 
+    @NotNull
     @Column(nullable = false)
     private int targetSignal;
 }

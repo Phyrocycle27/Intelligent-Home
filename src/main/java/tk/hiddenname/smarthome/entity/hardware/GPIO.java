@@ -8,6 +8,7 @@ import tk.hiddenname.smarthome.entity.signal.SignalType;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
@@ -15,11 +16,13 @@ import javax.persistence.Enumerated;
 @Embeddable
 public class GPIO {
 
+    @NotNull
     private Integer gpio;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private SignalType type;
 
     @Enumerated(EnumType.STRING)
-    private GPIOMode mode;
+    private GPIOMode mode = GPIOMode.OUTPUT;
 }

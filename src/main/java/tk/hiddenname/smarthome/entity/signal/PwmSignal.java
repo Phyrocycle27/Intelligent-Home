@@ -4,10 +4,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotNull;
+
 @EqualsAndHashCode(callSuper = true)
 @ToString(of = {"pwmSignal"}, callSuper = true)
 public class PwmSignal extends Signal {
 
+    @NotNull
     @Getter
     private final int pwmSignal;
 

@@ -16,6 +16,7 @@ import tk.hiddenname.smarthome.repository.SensorRepository;
 import tk.hiddenname.smarthome.service.manager.SensorManager;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class SensorRestController {
     }
 
     @PostMapping(value = {"/create"}, produces = {"application/json"})
-    public Sensor create(@RequestBody Sensor newSensor) throws GPIOBusyException, PinSignalSupportException,
+    public Sensor create(@Valid @RequestBody Sensor newSensor) throws GPIOBusyException, PinSignalSupportException,
             SignalTypeNotFoundException {
         log.info("************** POST method: /sensors/create ************************");
         log.info("Creating sensor is " + newSensor);
@@ -75,7 +76,7 @@ public class SensorRestController {
     }
 
     @PutMapping(value = {"/one/{id}"}, produces = {"application/json"})
-    public Sensor update(@RequestBody Sensor newSensor, @PathVariable Integer id) {
+    public Sensor update(@Valid @RequestBody Sensor newSensor, @PathVariable Integer id) {
         log.info("************** PUT method: /sensors/one/" + id + " ************************");
         log.info("Updating sensor is " + newSensor);
 

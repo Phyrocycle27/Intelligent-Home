@@ -1,7 +1,6 @@
 package tk.hiddenname.smarthome.service.task.listener;
 
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.ChangeSignalObject;
@@ -11,13 +10,15 @@ import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
 import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
 import tk.hiddenname.smarthome.service.task.listener.impl.ChangeDigitalSignalListener;
 
+import javax.validation.constraints.NotNull;
+
 @Component
 @AllArgsConstructor
 public class ListenerFactory {
 
     private final ApplicationContext ctx;
 
-    public Listener create(@NonNull TriggerObject object, EventListener eventListener) throws NoSuchListenerException, UnsupportedObjectTypeException {
+    public Listener create(@NotNull TriggerObject object, EventListener eventListener) throws NoSuchListenerException, UnsupportedObjectTypeException {
         Listener listener;
 
         switch (object.getAction()) {

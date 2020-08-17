@@ -10,6 +10,8 @@ import tk.hiddenname.smarthome.repository.DeviceRepository;
 import tk.hiddenname.smarthome.service.hardware.digital.output.DigitalDeviceServiceImpl;
 import tk.hiddenname.smarthome.service.hardware.pwm.output.PwmDeviceServiceImpl;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = {"/control"})
 @AllArgsConstructor
@@ -25,16 +27,16 @@ public class DeviceSignalRestController {
     public PwmSignal getPwmSignal(@RequestParam(name = "id") Integer id) {
         Device device = deviceRepo.findById(id).orElseThrow(() -> new DeviceNotFoundException(id));
 
-        return pwmService.getSignal(device.getId(), device.getReverse());
+        return pwmService.getSignal(device.getId(), device.isReverse());
     }
 
     @PutMapping(value = {"/pwm"}, produces = {"application/json"})
-    public PwmSignal setPwmSignal(@RequestBody PwmSignal signal) {
+    public PwmSignal setPwmSignal(@Valid @RequestBody PwmSignal signal) {
         Device device = deviceRepo.findById(signal.getId())
                 .orElseThrow(() -> new DeviceNotFoundException(signal.getId()));
 
         return pwmService.setSignal(device.getId(),
-                device.getReverse(),
+                device.isReverse(),
                 signal.getPwmSignal());
     }
 
@@ -44,16 +46,16 @@ public class DeviceSignalRestController {
     public DigitalState getState(@RequestParam(name = "id") Integer id) {
         Device device = deviceRepo.findById(id).orElseThrow(() -> new DeviceNotFoundException(id));
 
-        return digitalService.getState(device.getId(), device.getReverse());
+        return digitalService.getState(device.getId(), device.isReverse());
     }
 
     @PutMapping(value = {"/digital"}, produces = {"application/json"})
-    public DigitalState setState(@RequestBody DigitalState state) {
+    public DigitalState setState(@Valid @RequestBody DigitalState state) {
         Device device = deviceRepo.findById(state.getId())
                 .orElseThrow(() -> new DeviceNotFoundException(state.getId()));
 
         return digitalService.setState(device.getId(),
-                device.getReverse(),
+                device.isReverse(),
                 state.isDigitalState()
         );
     }

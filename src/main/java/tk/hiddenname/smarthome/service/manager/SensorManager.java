@@ -1,6 +1,5 @@
 package tk.hiddenname.smarthome.service.manager;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,13 +13,15 @@ import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
 import tk.hiddenname.smarthome.service.hardware.GPIOService;
 import tk.hiddenname.smarthome.service.hardware.digital.input.DigitalSensorServiceImpl;
 
+import javax.validation.constraints.NotNull;
+
 @Component
 @RequiredArgsConstructor
 public class SensorManager {
 
     private final Logger log = LoggerFactory.getLogger(SensorManager.class);
 
-    @NonNull
+    @NotNull
     private final DigitalSensorServiceImpl digitalService;
 
     public void create(Sensor sensor) throws PinSignalSupportException, GPIOBusyException {

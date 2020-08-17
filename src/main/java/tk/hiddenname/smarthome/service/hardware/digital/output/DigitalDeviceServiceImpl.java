@@ -34,14 +34,14 @@ public class DigitalDeviceServiceImpl implements DigitalDeviceService {
     }
 
     @Override
-    public void save(Integer id, Integer gpio, Boolean reverse)
+    public void save(Integer id, Integer gpio, boolean reverse)
             throws GPIOBusyException, PinSignalSupportException {
 
         map.put(id, GPIOManager.createDigitalOutput(gpio, reverse));
     }
 
     @Override
-    public void update(Integer id, Boolean reverse) {
+    public void update(Integer id, boolean reverse) {
         setState(id, reverse, getState(id, reverse).isDigitalState());
     }
 

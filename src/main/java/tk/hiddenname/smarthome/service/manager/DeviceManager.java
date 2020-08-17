@@ -1,6 +1,5 @@
 package tk.hiddenname.smarthome.service.manager;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,16 +14,18 @@ import tk.hiddenname.smarthome.service.hardware.GPIOService;
 import tk.hiddenname.smarthome.service.hardware.digital.output.DigitalDeviceServiceImpl;
 import tk.hiddenname.smarthome.service.hardware.pwm.output.PwmDeviceServiceImpl;
 
+import javax.validation.constraints.NotNull;
+
 @Component
 @RequiredArgsConstructor
 public class DeviceManager {
 
     private final Logger log = LoggerFactory.getLogger(DeviceManager.class);
 
-    @NonNull
+    @NotNull
     private final DigitalDeviceServiceImpl digitalService;
 
-    @NonNull
+    @NotNull
     private final PwmDeviceServiceImpl pwmService;
 
     public void create(Device device) throws PinSignalSupportException, GPIOBusyException {
@@ -33,7 +34,7 @@ public class DeviceManager {
         getService(gpio.getType()).save(
                 device.getId(),
                 gpio.getGpio(),
-                device.getReverse()
+                device.isReverse()
         );
     }
 
@@ -42,7 +43,7 @@ public class DeviceManager {
         GPIO gpio = device.getGpio();
         getService(gpio.getType()).update(
                 device.getId(),
-                device.getReverse()
+                device.isReverse()
         );
     }
 
