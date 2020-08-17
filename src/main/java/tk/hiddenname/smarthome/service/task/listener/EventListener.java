@@ -13,30 +13,34 @@ import java.util.Map;
 @AllArgsConstructor
 public class EventListener {
 
-    private final Map<Integer, Boolean> triggers = new HashMap<>();
+    private final Map<Integer, Boolean> flags = new HashMap<>();
+    private final Map<Integer, Listener> listeners = new HashMap<>();
 
     private final Integer taskId;
     private final EventProcessor processor;
 
-    public void add(Integer id) throws TriggerExistsException {
-        if (!triggers.containsKey(id)) {
-            triggers.put(id, false);
+    public void add(Integer id, Listener listener) throws TriggerExistsException {
+        if (!listeners.containsKey(id)) {
+            listeners.put(id, listener);
+            flags.put(id, false);
         } else {
             throw new TriggerExistsException(id);
         }
     }
 
-    public void delete(Integer id) throws TriggerNotFoundException {
-        if (triggers.containsKey(id)) {
-            triggers.remove(id);
+    public void remove(Integer id) throws TriggerNotFoundException {
+        if (listeners.containsKey(id)) {
+            listeners.get(id).unregister();
+            listeners.remove(id);
+            flags.remove(id);
         } else {
             throw new TriggerNotFoundException(id);
         }
     }
 
-    public void update(Integer id, boolean status) throws TriggerNotFoundException {
-        if (triggers.containsKey(id)) {
-            triggers.replace(id, status);
+    public void updateFlag(Integer id, Boolean flag) {
+        if (listeners.containsKey(id)) {
+            flags.put(id, flag);
             if (check()) {
                 processor.process();
             }
@@ -46,6 +50,6 @@ public class EventListener {
     }
 
     private boolean check() {
-        return !triggers.containsValue(false);
+        return !flags.containsValue(false);
     }
 }

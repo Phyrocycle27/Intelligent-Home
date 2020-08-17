@@ -54,8 +54,7 @@ public class TaskManager {
 
         for (TriggerObject obj: task.getTriggerObjects()) {
             try {
-                listenerFactory.create(obj);
-                listener.add(obj.getId());
+                listener.add(obj.getId(), listenerFactory.create(obj, listener));
             } catch (NoSuchListenerException | UnsupportedObjectTypeException e) {
                 log.error(e.getMessage());
             }

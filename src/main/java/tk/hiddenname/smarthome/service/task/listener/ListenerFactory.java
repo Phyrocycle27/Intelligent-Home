@@ -17,7 +17,7 @@ public class ListenerFactory {
 
     private final ApplicationContext ctx;
 
-    public Listener create(@NonNull TriggerObject object) throws NoSuchListenerException, UnsupportedObjectTypeException {
+    public Listener create(@NonNull TriggerObject object, EventListener eventListener) throws NoSuchListenerException, UnsupportedObjectTypeException {
         Listener listener;
 
         switch (object.getAction()) {
@@ -26,7 +26,7 @@ public class ListenerFactory {
                     case PWM:
                         throw new NoSuchListenerException();
                     case DIGITAL:
-                        listener = ctx.getBean(ChangeDigitalSignalListener.class);
+                        listener = ctx.getBean(ChangeDigitalSignalListener.class, eventListener);
                         break;
                     default:
                         throw new SignalTypeNotFoundException(((ChangeSignalObject) object).getSignalType().name());

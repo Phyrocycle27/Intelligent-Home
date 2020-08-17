@@ -13,6 +13,7 @@ import tk.hiddenname.smarthome.exception.SensorNotFoundException;
 import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
 import tk.hiddenname.smarthome.repository.SensorRepository;
 import tk.hiddenname.smarthome.service.hardware.digital.input.DigitalSensorService;
+import tk.hiddenname.smarthome.service.task.listener.EventListener;
 import tk.hiddenname.smarthome.service.task.listener.Listener;
 
 @Component
@@ -23,9 +24,10 @@ public class ChangeDigitalSignalListener implements Listener {
     private static final Logger log = LoggerFactory.getLogger(ChangeDigitalSignalListener.class);
     private final DigitalSensorService service;
     private final SensorRepository repository;
+    private final EventListener listener;
 
     private ChangeDigitalSignalObject object;
-    private GpioPinListenerDigital listener;
+    private GpioPinListenerDigital gpioListener;
 
     @Override
     public void register(TriggerObject object) throws UnsupportedObjectTypeException {
@@ -33,7 +35,7 @@ public class ChangeDigitalSignalListener implements Listener {
             this.object = (ChangeDigitalSignalObject) object;
             Sensor sensor = repository.findById(object.getId())
                     .orElseThrow(() -> new SensorNotFoundException(object.getId()));
-            listener = service.addListener(this, sensor.getId(), this.object.isTargetState(), sensor.getReverse());
+            gpioListener = service.addListener(this, sensor.getId(), this.object.isTargetState(), sensor.getReverse());
         } else {
             throw new UnsupportedObjectTypeException();
         }
@@ -47,11 +49,11 @@ public class ChangeDigitalSignalListener implements Listener {
 
     @Override
     public void unregister() {
-        service.removeListener(listener, object.getSensorId());
+        service.removeListener(gpioListener, object.getSensorId());
     }
 
     @Override
     public void trigger(boolean flag) {
-
+        listener.updateFlag(object.getId(), flag);
     }
 }
