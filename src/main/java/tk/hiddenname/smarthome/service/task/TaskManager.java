@@ -3,6 +3,7 @@ package tk.hiddenname.smarthome.service.task;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entity.task.Task;
 import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
@@ -17,6 +18,7 @@ import tk.hiddenname.smarthome.service.task.processor.ProcessorFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 @AllArgsConstructor
@@ -26,8 +28,10 @@ public class TaskManager {
 
     private final Map<Integer, EventProcessor> processors = new HashMap<>();
     private final Map<Integer, EventListener> listeners = new HashMap<>();
+
     private final ProcessorFactory processorFactory;
     private final ListenerFactory listenerFactory;
+    private final ApplicationContext ctx;
 
     public EventProcessor getProcessor(Integer id) {
         return processors.getOrDefault(id, null);
@@ -38,21 +42,14 @@ public class TaskManager {
     }
 
     public void add(Task task) {
-        // Processors are registering
-        EventProcessor processor = new EventProcessor();
+        processors.put(task.getId(), getEventProcessor(task.getId(), task.getProcessingObjects()));
+        listeners.put(task.getId(), getEventListener(task.getId(), task.getTriggerObjects()));
+    }
 
-        for (ProcessingObject obj : task.getProcessingObjects()) {
-            try {
-                processor.add(obj.getId(), processorFactory.create(obj));
-            } catch (NoSuchProcessorException | UnsupportedObjectTypeException e) {
-                log.error(e.getMessage());
-            }
-        }
+    private EventListener getEventListener(Integer taskId, Set<TriggerObject> triggerObjects) {
+        EventListener listener = ctx.getBean(EventListener.class, taskId);
 
-        // Listeners are registering
-        EventListener listener = new EventListener(task.getId(), processor);
-
-        for (TriggerObject obj : task.getTriggerObjects()) {
+        for (TriggerObject obj : triggerObjects) {
             try {
                 listener.add(obj.getId(), listenerFactory.create(obj, listener));
             } catch (NoSuchListenerException | UnsupportedObjectTypeException e) {
@@ -60,7 +57,20 @@ public class TaskManager {
             }
         }
 
-        processors.put(task.getId(), processor);
-        listeners.put(task.getId(), listener);
+        return listener;
+    }
+
+    private EventProcessor getEventProcessor(Integer taskId, Set<ProcessingObject> processingObjects) {
+        EventProcessor processor = ctx.getBean(EventProcessor.class);
+
+        for (ProcessingObject obj : processingObjects) {
+            try {
+                processor.add(obj.getId(), processorFactory.create(obj));
+            } catch (NoSuchProcessorException | UnsupportedObjectTypeException e) {
+                log.error(e.getMessage());
+            }
+        }
+
+        return processor;
     }
 }

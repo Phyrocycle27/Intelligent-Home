@@ -1,13 +1,17 @@
 package tk.hiddenname.smarthome.service.task.processor;
 
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.exception.ProcessorExistsException;
 import tk.hiddenname.smarthome.exception.ProcessorNotFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@RequiredArgsConstructor
+@Component
+@Scope(scopeName = "prototype")
+@NoArgsConstructor
 public class EventProcessor {
 
     private final Map<Integer, Processor> processors = new HashMap<>();

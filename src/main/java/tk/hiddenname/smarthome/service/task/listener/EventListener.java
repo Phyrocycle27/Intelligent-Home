@@ -2,22 +2,26 @@ package tk.hiddenname.smarthome.service.task.listener;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.exception.TriggerExistsException;
 import tk.hiddenname.smarthome.exception.TriggerNotFoundException;
-import tk.hiddenname.smarthome.service.task.processor.EventProcessor;
+import tk.hiddenname.smarthome.service.task.TaskManager;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@EqualsAndHashCode(of = {"taskId"})
+@Component
+@Scope(scopeName = "prototype")
 @AllArgsConstructor
+@EqualsAndHashCode(of = {"taskId"})
 public class EventListener {
 
     private final Map<Integer, Boolean> flags = new HashMap<>();
     private final Map<Integer, Listener> listeners = new HashMap<>();
 
+    private final TaskManager taskManager;
     private final Integer taskId;
-    private final EventProcessor processor;
 
     public void add(Integer id, Listener listener) throws TriggerExistsException {
         if (!listeners.containsKey(id)) {
@@ -42,7 +46,7 @@ public class EventListener {
         if (listeners.containsKey(id)) {
             flags.put(id, flag);
             if (check()) {
-                processor.process();
+                taskManager.getProcessor(taskId).process();
             }
         } else {
             throw new TriggerNotFoundException(id);
