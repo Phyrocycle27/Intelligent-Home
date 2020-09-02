@@ -25,12 +25,10 @@ public class TaskRestController {
 
     @PostMapping(value = {"/create"}, produces = {"application/json"})
     public Task create(@Valid @RequestBody Task task) {
-        log.info("************** POST method: /tasks/create ************************");
-
         task = repo.save(task);
 
         log.info(task.toString());
-        manager.add(task);
+        manager.addTask(task);
 
         return task;
     }

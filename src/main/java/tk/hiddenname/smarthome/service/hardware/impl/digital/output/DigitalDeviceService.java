@@ -1,7 +1,7 @@
-package tk.hiddenname.smarthome.service.hardware.digital.output;
+package tk.hiddenname.smarthome.service.hardware.impl.digital.output;
 
 import tk.hiddenname.smarthome.entity.signal.DigitalState;
-import tk.hiddenname.smarthome.service.hardware.GPIOService;
+import tk.hiddenname.smarthome.service.hardware.impl.GPIOService;
 
 public interface DigitalDeviceService extends GPIOService {
 

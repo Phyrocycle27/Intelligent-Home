@@ -1,23 +1,20 @@
-package tk.hiddenname.smarthome.service.task.listener;
+package tk.hiddenname.smarthome.service.task.impl.listener;
 
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import tk.hiddenname.smarthome.exception.TriggerExistsException;
 import tk.hiddenname.smarthome.exception.TriggerNotFoundException;
-import tk.hiddenname.smarthome.service.task.processor.EventProcessor;
+import tk.hiddenname.smarthome.service.task.impl.TaskObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@EqualsAndHashCode(of = {"taskId"})
 @AllArgsConstructor
 public class EventListener {
 
     private final Map<Integer, Boolean> flags = new HashMap<>();
     private final Map<Integer, Listener> listeners = new HashMap<>();
 
-    private final Integer taskId;
-    private final EventProcessor processor;
+    private final TaskObject taskObject;
 
     public void add(Integer id, Listener listener) throws TriggerExistsException {
         if (!listeners.containsKey(id)) {
@@ -42,7 +39,7 @@ public class EventListener {
         if (listeners.containsKey(id)) {
             flags.put(id, flag);
             if (check()) {
-                processor.process();
+                taskObject.getProcessor().process();
             }
         } else {
             throw new TriggerNotFoundException(id);

@@ -13,7 +13,7 @@ import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.SensorNotFoundException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
 import tk.hiddenname.smarthome.repository.SensorRepository;
-import tk.hiddenname.smarthome.service.manager.SensorManager;
+import tk.hiddenname.smarthome.service.hardware.manager.SensorManager;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 
 import javax.validation.Valid;
@@ -34,35 +34,21 @@ public class SensorRestController {
     @GetMapping(value = {"/all"}, produces = {"application/json"})
     public List<Sensor> getAll()
             throws SignalTypeNotFoundException {
-        log.info("************** GET method: /sensors/all");
-        List<Sensor> sensors;
-
-        sensors = sensorRepo.findAll(Sort.by("id"));
-
-        log.info("Sensor list is " + sensors);
-        return sensors;
+        return sensorRepo.findAll(Sort.by("id"));
     }
 
     @GetMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public Sensor getOne(@PathVariable Integer id) {
-        log.info("************** GET method: /sensors/one/" + id + "************************");
-
-        Sensor device = sensorRepo.findById(id).orElseThrow(() -> {
+        return sensorRepo.findById(id).orElseThrow(() -> {
             SensorNotFoundException e = new SensorNotFoundException(id);
             log.warn(e.getMessage());
             return e;
         });
-
-        log.info("Sensor is " + device);
-
-        return device;
     }
 
     @PostMapping(value = {"/create"}, produces = {"application/json"})
     public Sensor create(@Valid @RequestBody Sensor newSensor) throws GPIOBusyException, PinSignalSupportException,
             SignalTypeNotFoundException {
-        log.info("************** POST method: /sensors/create ************************");
-        log.info("Creating sensor is " + newSensor);
 
         GPIOManager.validate(newSensor.getGpio().getGpio(), newSensor.getGpio().getType());
         newSensor.setCreationDate(LocalDateTime.now());
@@ -70,17 +56,12 @@ public class SensorRestController {
         newSensor = sensorRepo.save(newSensor);
         manager.create(newSensor);
 
-        log.info("Saved sensor is " + newSensor);
-
         return newSensor;
     }
 
     @PutMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public Sensor update(@Valid @RequestBody Sensor newSensor, @PathVariable Integer id) {
-        log.info("************** PUT method: /sensors/one/" + id + " ************************");
-        log.info("Updating sensor is " + newSensor);
-
-        Sensor updated = sensorRepo.findById(id)
+        return sensorRepo.findById(id)
                 .map(sensor -> {
                     BeanUtils.copyProperties(newSensor, sensor, "id", "creationDate", "gpio");
                     return sensorRepo.save(sensor);
@@ -89,15 +70,10 @@ public class SensorRestController {
                     log.warn(e.getMessage());
                     return e;
                 });
-
-        log.info("Saved sensor is " + updated);
-        return updated;
     }
 
     @DeleteMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public ResponseEntity<?> delete(@PathVariable Integer id) {
-        log.info("************** DELETE method: /sensors/one/" + id + " ************************");
-
         manager.delete(sensorRepo.findById(id)
                 .orElseThrow(() -> {
                     SensorNotFoundException e = new SensorNotFoundException(id);

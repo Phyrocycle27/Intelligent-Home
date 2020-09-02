@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.service.task.listener.impl;
+package tk.hiddenname.smarthome.service.task.impl.listener.impl;
 
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import lombok.AllArgsConstructor;
@@ -12,9 +12,9 @@ import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 import tk.hiddenname.smarthome.exception.SensorNotFoundException;
 import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
 import tk.hiddenname.smarthome.repository.SensorRepository;
-import tk.hiddenname.smarthome.service.hardware.digital.input.DigitalSensorService;
-import tk.hiddenname.smarthome.service.task.listener.EventListener;
-import tk.hiddenname.smarthome.service.task.listener.Listener;
+import tk.hiddenname.smarthome.service.hardware.impl.digital.input.DigitalSensorService;
+import tk.hiddenname.smarthome.service.task.impl.listener.EventListener;
+import tk.hiddenname.smarthome.service.task.impl.listener.Listener;
 
 @Component
 @AllArgsConstructor

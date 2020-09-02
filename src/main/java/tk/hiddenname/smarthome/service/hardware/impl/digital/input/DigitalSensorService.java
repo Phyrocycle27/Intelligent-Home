@@ -1,9 +1,9 @@
-package tk.hiddenname.smarthome.service.hardware.digital.input;
+package tk.hiddenname.smarthome.service.hardware.impl.digital.input;
 
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import tk.hiddenname.smarthome.entity.signal.DigitalState;
-import tk.hiddenname.smarthome.service.hardware.GPIOService;
-import tk.hiddenname.smarthome.service.task.listener.impl.ChangeDigitalSignalListener;
+import tk.hiddenname.smarthome.service.hardware.impl.GPIOService;
+import tk.hiddenname.smarthome.service.task.impl.listener.impl.ChangeDigitalSignalListener;
 
 public interface DigitalSensorService extends GPIOService {
 

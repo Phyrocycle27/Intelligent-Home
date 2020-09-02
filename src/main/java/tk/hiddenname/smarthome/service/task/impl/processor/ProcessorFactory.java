@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.service.task.processor;
+package tk.hiddenname.smarthome.service.task.impl.processor;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationContext;
@@ -8,8 +8,8 @@ import tk.hiddenname.smarthome.entity.task.processing.objects.SetSignalObject;
 import tk.hiddenname.smarthome.exception.NoSuchProcessorException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
 import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
-import tk.hiddenname.smarthome.service.task.processor.impl.SetDigitalSignalProcessor;
-import tk.hiddenname.smarthome.service.task.processor.impl.SetPwmSignalProcessor;
+import tk.hiddenname.smarthome.service.task.impl.processor.impl.SetDigitalSignalProcessor;
+import tk.hiddenname.smarthome.service.task.impl.processor.impl.SetPwmSignalProcessor;
 
 @Component
 @AllArgsConstructor

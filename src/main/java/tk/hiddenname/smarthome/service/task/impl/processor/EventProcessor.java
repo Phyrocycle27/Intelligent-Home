@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.service.task.processor;
+package tk.hiddenname.smarthome.service.task.impl.processor;
 
 import lombok.RequiredArgsConstructor;
 import tk.hiddenname.smarthome.exception.ProcessorExistsException;

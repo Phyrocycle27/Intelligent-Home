@@ -25,37 +25,34 @@ public class Client implements Runnable {
         this.PORT = port;
         new Thread(this, "Netty thread").start();
         log.info("Netty thread created");
-        System.out.println("Netty thread created");
     }
 
     @Override
     public void run() {
         log.info("Netty Thread is just running");
         EventLoopGroup group = new NioEventLoopGroup();
-        Bootstrap bootstrap = new Bootstrap();
 
-        createBootstrap(group, bootstrap);
+        createBootstrap(group);
     }
 
-    public void createBootstrap(EventLoopGroup group, Bootstrap bootstrap) {
-        if (bootstrap != null) {
-            log.info("Creating bootstrap");
-            SslContext sslCtx;
-            try {
-                sslCtx = SslContextBuilder.forClient()
-                        .trustManager(InsecureTrustManagerFactory.INSTANCE).build();
+    public void createBootstrap(EventLoopGroup group) {
+        Bootstrap bootstrap = new Bootstrap();
+        log.info("Creating bootstrap");
+        SslContext sslCtx;
+        try {
+            sslCtx = SslContextBuilder.forClient()
+                    .trustManager(InsecureTrustManagerFactory.INSTANCE).build();
 
-                bootstrap.group(group)
-                        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
-                        .option(ChannelOption.SO_KEEPALIVE, true)
-                        .channel(NioSocketChannel.class)
-                        .handler(new ClientInitializer(sslCtx, HOST, PORT, this));
+            bootstrap.group(group)
+                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
+                    .option(ChannelOption.SO_KEEPALIVE, true)
+                    .channel(NioSocketChannel.class)
+                    .handler(new ClientInitializer(sslCtx, HOST, PORT, this));
 
-                bootstrap.connect(HOST, PORT).addListener(new ConnectionListener(this));
+            bootstrap.connect(HOST, PORT).addListener(new ConnectionListener(this));
 
-            } catch (SSLException e) {
-                e.printStackTrace();
-            }
+        } catch (SSLException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.service.task.processor.impl;
+package tk.hiddenname.smarthome.service.task.impl.processor.impl;
 
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -11,8 +11,8 @@ import tk.hiddenname.smarthome.entity.task.processing.objects.SetPwmSignalObject
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
 import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
 import tk.hiddenname.smarthome.repository.DeviceRepository;
-import tk.hiddenname.smarthome.service.hardware.pwm.output.PwmDeviceService;
-import tk.hiddenname.smarthome.service.task.processor.Processor;
+import tk.hiddenname.smarthome.service.hardware.impl.pwm.output.PwmDeviceService;
+import tk.hiddenname.smarthome.service.task.impl.processor.Processor;
 
 @Component
 @AllArgsConstructor

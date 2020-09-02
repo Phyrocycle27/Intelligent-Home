@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.service.task.listener;
+package tk.hiddenname.smarthome.service.task.impl.listener;
 
 import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;

@@ -16,7 +16,7 @@ import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
 import tk.hiddenname.smarthome.repository.DeviceRepository;
-import tk.hiddenname.smarthome.service.manager.DeviceManager;
+import tk.hiddenname.smarthome.service.hardware.manager.DeviceManager;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 
 import javax.validation.Valid;
@@ -37,7 +37,6 @@ public class DeviceRestController {
     @GetMapping(value = {"/all"}, produces = {"application/json"})
     public List<Device> getAll(@RequestParam(name = "type", defaultValue = "", required = false) String t)
             throws SignalTypeNotFoundException {
-        log.info("************** GET method: /devices/all?type=" + t + "************************");
 
         List<Device> devices;
 
@@ -54,51 +53,34 @@ public class DeviceRestController {
             }
         }
 
-        log.info("Device list is " + devices);
         return devices;
     }
 
     @GetMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public Device getOne(@PathVariable Integer id) {
-        log.info("************** GET method: /devices/one/" + id + "************************");
-
-        Device device = deviceRepo.findById(id).orElseThrow(() -> {
+        return deviceRepo.findById(id).orElseThrow(() -> {
             DeviceNotFoundException e = new DeviceNotFoundException(id);
             log.warn(e.getMessage());
             return e;
         });
-
-        log.info("Device is " + device);
-
-        return device;
     }
 
     @PostMapping(value = {"/create"}, produces = {"application/json"})
     public Device create(@Valid @RequestBody Device newDevice) throws GPIOBusyException,
             PinSignalSupportException, SignalTypeNotFoundException {
-        log.info("************** POST method: /devices/create ************************");
-        log.info("Creating device is " + newDevice);
 
         GPIOManager.validate(newDevice.getGpio().getGpio(), newDevice.getGpio().getType());
         newDevice.setCreationDate(LocalDateTime.now());
 
         newDevice = deviceRepo.save(newDevice);
-
-        log.info(newDevice.toString());
-
         manager.create(newDevice);
-
-        log.info("Saved device is " + newDevice);
 
         return newDevice;
     }
 
     @PutMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public Device update(@Valid @RequestBody Device newDevice, @PathVariable Integer id) {
-        log.info("************** PUT method: /devices/one/" + id + " ************************");
-        log.info("Updating device is " + newDevice);
-
-        Device updated = deviceRepo.findById(id)
+        return deviceRepo.findById(id)
                 .map(device -> {
                     if (device.isReverse() != newDevice.isReverse()) {
                         manager.update(device);
@@ -110,15 +92,10 @@ public class DeviceRestController {
                     log.warn(e.getMessage());
                     return e;
                 });
-
-        log.info("Saved device is " + updated);
-        return updated;
     }
 
     @DeleteMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public ResponseEntity<?> delete(@PathVariable Integer id) {
-        log.info("************** DELETE method: /devices/one/" + id + " ************************");
-
         manager.delete(deviceRepo.findById(id)
                 .orElseThrow(() -> {
                     DeviceNotFoundException e = new DeviceNotFoundException(id);

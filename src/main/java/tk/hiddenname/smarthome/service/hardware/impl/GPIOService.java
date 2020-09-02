@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.service.hardware;
+package tk.hiddenname.smarthome.service.hardware.impl;
 
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;

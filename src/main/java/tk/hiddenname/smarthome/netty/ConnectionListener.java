@@ -24,7 +24,7 @@ public class ConnectionListener implements ChannelFutureListener {
             log.info("Reconnect");
             final EventLoop loop = channelFuture.channel().eventLoop();
             loop.schedule(() ->
-                    client.createBootstrap(loop, new Bootstrap()), 10L, TimeUnit.SECONDS);
+                    client.createBootstrap(loop), 10L, TimeUnit.SECONDS);
         }
     }
 }

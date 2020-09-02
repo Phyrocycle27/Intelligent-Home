@@ -1,7 +1,7 @@
-package tk.hiddenname.smarthome.service.hardware.pwm.output;
+package tk.hiddenname.smarthome.service.hardware.impl.pwm.output;
 
 import tk.hiddenname.smarthome.entity.signal.PwmSignal;
-import tk.hiddenname.smarthome.service.hardware.GPIOService;
+import tk.hiddenname.smarthome.service.hardware.impl.GPIOService;
 
 public interface PwmDeviceService extends GPIOService {
 

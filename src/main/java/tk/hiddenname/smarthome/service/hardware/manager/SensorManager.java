@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.service.manager;
+package tk.hiddenname.smarthome.service.hardware.manager;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -10,8 +10,8 @@ import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
-import tk.hiddenname.smarthome.service.hardware.GPIOService;
-import tk.hiddenname.smarthome.service.hardware.digital.input.DigitalSensorServiceImpl;
+import tk.hiddenname.smarthome.service.hardware.impl.GPIOService;
+import tk.hiddenname.smarthome.service.hardware.impl.digital.input.DigitalSensorServiceImpl;
 
 import javax.validation.constraints.NotNull;
 

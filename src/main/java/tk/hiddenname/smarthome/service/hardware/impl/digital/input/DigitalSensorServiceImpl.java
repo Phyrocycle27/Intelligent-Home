@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.service.hardware.digital.input;
+package tk.hiddenname.smarthome.service.hardware.impl.digital.input;
 
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
@@ -9,7 +9,7 @@ import tk.hiddenname.smarthome.entity.signal.DigitalState;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.SensorNotFoundException;
-import tk.hiddenname.smarthome.service.task.listener.impl.ChangeDigitalSignalListener;
+import tk.hiddenname.smarthome.service.task.impl.listener.impl.ChangeDigitalSignalListener;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 
 import java.util.HashMap;
