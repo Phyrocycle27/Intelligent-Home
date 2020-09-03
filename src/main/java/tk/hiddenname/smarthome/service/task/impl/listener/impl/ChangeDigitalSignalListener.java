@@ -10,6 +10,7 @@ import tk.hiddenname.smarthome.entity.hardware.Sensor;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.ChangeDigitalSignalObject;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 import tk.hiddenname.smarthome.exception.SensorNotFoundException;
+import tk.hiddenname.smarthome.exception.TriggerNotFoundException;
 import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
 import tk.hiddenname.smarthome.repository.SensorRepository;
 import tk.hiddenname.smarthome.service.hardware.impl.digital.input.DigitalSensorService;
@@ -22,6 +23,7 @@ import tk.hiddenname.smarthome.service.task.impl.listener.Listener;
 public class ChangeDigitalSignalListener implements Listener {
 
     private static final Logger log = LoggerFactory.getLogger(ChangeDigitalSignalListener.class);
+
     private final DigitalSensorService service;
     private final SensorRepository repository;
     private final EventListener listener;
@@ -54,6 +56,11 @@ public class ChangeDigitalSignalListener implements Listener {
 
     @Override
     public void trigger(boolean flag) {
-        listener.updateFlag(object.getId(), flag);
+        try {
+            listener.updateFlag(object.getId(), flag);
+        } catch (TriggerNotFoundException e) {
+            log.error(e.getMessage());
+            unregister();
+        }
     }
 }

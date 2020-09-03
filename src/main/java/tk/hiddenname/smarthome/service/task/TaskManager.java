@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entity.task.Task;
+import tk.hiddenname.smarthome.exception.*;
 import tk.hiddenname.smarthome.service.task.impl.TaskObject;
 
 import java.util.HashMap;
@@ -17,7 +18,9 @@ public class TaskManager {
 
     private final ApplicationContext context;
 
-    public void addTask(Task task) {
+    public void addTask(Task task) throws TriggerExistsException, UnsupportedObjectTypeException, NoSuchListenerException,
+            NoSuchProcessorException, ProcessorExistsException {
+
         TaskObject taskObject = context.getBean(TaskObject.class);
         tasks.put(task.getId(), taskObject.register(task));
     }

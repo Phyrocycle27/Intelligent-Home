@@ -3,16 +3,14 @@ package tk.hiddenname.smarthome.service.task.impl;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entity.task.Task;
 import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
-import tk.hiddenname.smarthome.exception.NoSuchListenerException;
-import tk.hiddenname.smarthome.exception.NoSuchProcessorException;
-import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
+import tk.hiddenname.smarthome.exception.*;
 import tk.hiddenname.smarthome.service.task.impl.listener.EventListener;
-import tk.hiddenname.smarthome.service.task.impl.listener.ListenerFactory;
 import tk.hiddenname.smarthome.service.task.impl.processor.EventProcessor;
 import tk.hiddenname.smarthome.service.task.impl.processor.ProcessorFactory;
 
@@ -25,39 +23,65 @@ public class TaskObject {
 
     private static final Logger log = LoggerFactory.getLogger(TaskObject.class);
 
-    private final EventListener listener = new EventListener(this);
-    private final EventProcessor processor = new EventProcessor();
-
     private final ProcessorFactory processorFactory;
-    private final ListenerFactory listenerFactory;
+    private final ApplicationContext context;
+
+    private EventListener listener;
+    private EventProcessor processor;
 
     public EventProcessor getProcessor() {
         return processor;
     }
 
-    public TaskObject register(Task task) {
+    public TaskObject register(Task task) throws TriggerExistsException, UnsupportedObjectTypeException,
+            NoSuchListenerException, NoSuchProcessorException, ProcessorExistsException {
+
+        listener = context.getBean(EventListener.class, this);
+        processor = context.getBean(EventProcessor.class);
+
         registerListeners(task.getTriggerObjects());
         registerProcessors(task.getProcessingObjects());
+
         return this;
     }
 
-    private void registerListeners(Set<TriggerObject> triggerObjects) {
-        for (TriggerObject obj : triggerObjects) {
-            try {
-                listener.add(obj.getId(), listenerFactory.create(obj, listener));
-            } catch (NoSuchListenerException | UnsupportedObjectTypeException e) {
-                log.error(e.getMessage());
-            }
-        }
+    public void registerListeners(Set<TriggerObject> triggerObjects) throws TriggerExistsException,
+            UnsupportedObjectTypeException, NoSuchListenerException {
+
+        listener.registerListeners(triggerObjects);
     }
 
-    private void registerProcessors(Set<ProcessingObject> processingObjects) {
-        for (ProcessingObject obj : processingObjects) {
-            try {
-                processor.add(obj.getId(), processorFactory.create(obj));
-            } catch (NoSuchProcessorException | UnsupportedObjectTypeException e) {
-                log.error(e.getMessage());
-            }
-        }
+    public void registerListener(TriggerObject triggerObject) throws TriggerExistsException,
+            UnsupportedObjectTypeException, NoSuchListenerException {
+
+        listener.registerListener(triggerObject);
+    }
+
+    public void unregisterListeners() {
+        listener.unregisterListeners();
+    }
+
+    public void unregisterListener(Integer id) throws TriggerNotFoundException {
+        listener.unregisterListener(id);
+    }
+
+    public void registerProcessors(Set<ProcessingObject> processingObjects) throws NoSuchProcessorException,
+            UnsupportedObjectTypeException, ProcessorExistsException {
+
+        processor.registerProcessors(processingObjects);
+    }
+
+    public void registerProcessor(ProcessingObject object) throws NoSuchProcessorException,
+            UnsupportedObjectTypeException, ProcessorExistsException {
+
+        processor.registerProcessor(object);
+    }
+
+    public void unregisterProcessors() {
+        processor.unregisterProcessors();
+    }
+
+    public void unregisterProcessor(Integer id) throws ProcessorNotFoundException {
+        processor.unregisterProcessor(id);
     }
 }
