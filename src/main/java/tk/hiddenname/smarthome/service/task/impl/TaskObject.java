@@ -33,8 +33,8 @@ public class TaskObject {
         return processor;
     }
 
-    public TaskObject register(Task task) throws TriggerExistsException, UnsupportedObjectTypeException,
-            NoSuchListenerException, NoSuchProcessorException, ProcessorExistsException {
+    public TaskObject register(Task task) throws TriggerExistsException, UnsupportedTriggerObjectTypeException,
+            NoSuchListenerException, NoSuchProcessorException, ProcessorExistsException, UnsupportedProcessingObjectTypeException {
 
         listener = context.getBean(EventListener.class, this);
         processor = context.getBean(EventProcessor.class);
@@ -46,13 +46,13 @@ public class TaskObject {
     }
 
     public void registerListeners(Set<TriggerObject> triggerObjects) throws TriggerExistsException,
-            UnsupportedObjectTypeException, NoSuchListenerException {
+            UnsupportedTriggerObjectTypeException, NoSuchListenerException {
 
         listener.registerListeners(triggerObjects);
     }
 
     public void registerListener(TriggerObject triggerObject) throws TriggerExistsException,
-            UnsupportedObjectTypeException, NoSuchListenerException {
+            UnsupportedTriggerObjectTypeException, NoSuchListenerException {
 
         listener.registerListener(triggerObject);
     }
@@ -66,13 +66,13 @@ public class TaskObject {
     }
 
     public void registerProcessors(Set<ProcessingObject> processingObjects) throws NoSuchProcessorException,
-            UnsupportedObjectTypeException, ProcessorExistsException {
+            UnsupportedTriggerObjectTypeException, ProcessorExistsException, UnsupportedProcessingObjectTypeException {
 
         processor.registerProcessors(processingObjects);
     }
 
     public void registerProcessor(ProcessingObject object) throws NoSuchProcessorException,
-            UnsupportedObjectTypeException, ProcessorExistsException {
+            UnsupportedTriggerObjectTypeException, ProcessorExistsException, UnsupportedProcessingObjectTypeException {
 
         processor.registerProcessor(object);
     }

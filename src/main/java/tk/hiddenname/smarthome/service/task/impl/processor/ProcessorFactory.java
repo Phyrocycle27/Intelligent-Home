@@ -7,7 +7,8 @@ import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
 import tk.hiddenname.smarthome.entity.task.processing.objects.SetSignalObject;
 import tk.hiddenname.smarthome.exception.NoSuchProcessorException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
-import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
+import tk.hiddenname.smarthome.exception.UnsupportedProcessingObjectTypeException;
+import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException;
 import tk.hiddenname.smarthome.service.task.impl.processor.impl.SetDigitalSignalProcessor;
 import tk.hiddenname.smarthome.service.task.impl.processor.impl.SetPwmSignalProcessor;
 
@@ -17,7 +18,9 @@ public class ProcessorFactory {
 
     private final ApplicationContext ctx;
 
-    public Processor create(ProcessingObject object) throws NoSuchProcessorException, UnsupportedObjectTypeException {
+    public Processor create(ProcessingObject object) throws NoSuchProcessorException,
+            UnsupportedTriggerObjectTypeException, UnsupportedProcessingObjectTypeException {
+
         Processor processor;
 
         switch (object.getAction()) {

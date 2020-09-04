@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class GPIOBusyException extends Exception {
 
     public GPIOBusyException(int gpio) {
-        super(String.format("GPIO '%d' have already busied", gpio));
+        super(String.format("The GPIO '%d' has been already busied", gpio));
     }
 }

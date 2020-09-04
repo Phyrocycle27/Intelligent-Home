@@ -11,7 +11,7 @@ import tk.hiddenname.smarthome.entity.task.trigger.objects.ChangeDigitalSignalOb
 import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 import tk.hiddenname.smarthome.exception.SensorNotFoundException;
 import tk.hiddenname.smarthome.exception.TriggerNotFoundException;
-import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
+import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException;
 import tk.hiddenname.smarthome.repository.SensorRepository;
 import tk.hiddenname.smarthome.service.hardware.impl.digital.input.DigitalSensorService;
 import tk.hiddenname.smarthome.service.task.impl.listener.EventListener;
@@ -32,19 +32,19 @@ public class ChangeDigitalSignalListener implements Listener {
     private GpioPinListenerDigital gpioListener;
 
     @Override
-    public void register(TriggerObject object) throws UnsupportedObjectTypeException {
+    public void register(TriggerObject object) throws UnsupportedTriggerObjectTypeException {
         if (object instanceof ChangeDigitalSignalObject) {
             this.object = (ChangeDigitalSignalObject) object;
             Sensor sensor = repository.findById(object.getId())
                     .orElseThrow(() -> new SensorNotFoundException(object.getId()));
             gpioListener = service.addListener(this, sensor.getId(), this.object.isTargetState(), sensor.getReverse());
         } else {
-            throw new UnsupportedObjectTypeException();
+            throw new UnsupportedTriggerObjectTypeException(object.getClass().getSimpleName());
         }
     }
 
     @Override
-    public void update(TriggerObject object) throws UnsupportedObjectTypeException {
+    public void update(TriggerObject object) throws UnsupportedTriggerObjectTypeException {
         unregister();
         register(object);
     }

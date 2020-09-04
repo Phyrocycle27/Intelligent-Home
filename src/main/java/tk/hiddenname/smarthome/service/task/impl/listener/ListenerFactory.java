@@ -7,7 +7,7 @@ import tk.hiddenname.smarthome.entity.task.trigger.objects.ChangeSignalObject;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 import tk.hiddenname.smarthome.exception.NoSuchListenerException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
-import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
+import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException;
 import tk.hiddenname.smarthome.service.task.impl.listener.impl.ChangeDigitalSignalListener;
 
 import javax.validation.constraints.NotNull;
@@ -18,7 +18,7 @@ public class ListenerFactory {
 
     private final ApplicationContext ctx;
 
-    public Listener create(@NotNull TriggerObject object, EventListener eventListener) throws NoSuchListenerException, UnsupportedObjectTypeException {
+    public Listener create(@NotNull TriggerObject object, EventListener eventListener) throws NoSuchListenerException, UnsupportedTriggerObjectTypeException {
         Listener listener;
 
         switch (object.getAction()) {

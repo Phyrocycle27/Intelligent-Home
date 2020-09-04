@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tk.hiddenname.smarthome.entity.task.Task;
+import tk.hiddenname.smarthome.exception.*;
 import tk.hiddenname.smarthome.repository.TaskRepository;
 import tk.hiddenname.smarthome.service.task.TaskManager;
 
@@ -24,7 +25,9 @@ public class TaskRestController {
     private final TaskManager manager;
 
     @PostMapping(value = {"/create"}, produces = {"application/json"})
-    public Task create(@Valid @RequestBody Task task) {
+    public Task create(@Valid @RequestBody Task task) throws NoSuchProcessorException, UnsupportedTriggerObjectTypeException,
+            NoSuchListenerException, TriggerExistsException, ProcessorExistsException, UnsupportedProcessingObjectTypeException {
+
         task = repo.save(task);
 
         log.info(task.toString());

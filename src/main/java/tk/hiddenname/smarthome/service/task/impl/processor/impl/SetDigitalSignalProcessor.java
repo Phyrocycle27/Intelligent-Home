@@ -9,7 +9,7 @@ import tk.hiddenname.smarthome.entity.hardware.Device;
 import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
 import tk.hiddenname.smarthome.entity.task.processing.objects.SetDigitalSignalObject;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
-import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
+import tk.hiddenname.smarthome.exception.UnsupportedProcessingObjectTypeException;
 import tk.hiddenname.smarthome.repository.DeviceRepository;
 import tk.hiddenname.smarthome.service.hardware.impl.digital.output.DigitalDeviceService;
 import tk.hiddenname.smarthome.service.task.impl.processor.Processor;
@@ -61,11 +61,11 @@ public class SetDigitalSignalProcessor implements Processor {
     }
 
     @Override
-    public void register(ProcessingObject object) throws UnsupportedObjectTypeException {
+    public void register(ProcessingObject object) throws UnsupportedProcessingObjectTypeException {
         if (object instanceof SetDigitalSignalObject) {
             this.object = (SetDigitalSignalObject) object;
         } else {
-            throw new UnsupportedObjectTypeException();
+            throw new UnsupportedProcessingObjectTypeException(object.getClass().getSimpleName());
         }
     }
 }

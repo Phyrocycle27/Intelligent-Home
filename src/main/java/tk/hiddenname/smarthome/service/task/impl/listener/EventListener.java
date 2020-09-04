@@ -9,7 +9,7 @@ import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 import tk.hiddenname.smarthome.exception.NoSuchListenerException;
 import tk.hiddenname.smarthome.exception.TriggerExistsException;
 import tk.hiddenname.smarthome.exception.TriggerNotFoundException;
-import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
+import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException;
 import tk.hiddenname.smarthome.service.task.impl.TaskObject;
 
 import java.util.HashMap;
@@ -29,13 +29,13 @@ public class EventListener {
     private final ListenerFactory listenerFactory;
 
     public void registerListeners(Set<TriggerObject> objects) throws TriggerExistsException,
-            UnsupportedObjectTypeException, NoSuchListenerException {
+            UnsupportedTriggerObjectTypeException, NoSuchListenerException {
         for (TriggerObject object : objects) {
             registerListener(object);
         }
     }
 
-    public void registerListener(TriggerObject object) throws TriggerExistsException, UnsupportedObjectTypeException,
+    public void registerListener(TriggerObject object) throws TriggerExistsException, UnsupportedTriggerObjectTypeException,
             NoSuchListenerException {
         if (!listeners.containsKey(object.getId())) {
             listeners.put(object.getId(), listenerFactory.create(object, this));

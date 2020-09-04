@@ -9,7 +9,7 @@ import tk.hiddenname.smarthome.entity.hardware.Device;
 import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
 import tk.hiddenname.smarthome.entity.task.processing.objects.SetPwmSignalObject;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
-import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
+import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException;
 import tk.hiddenname.smarthome.repository.DeviceRepository;
 import tk.hiddenname.smarthome.service.hardware.impl.pwm.output.PwmDeviceService;
 import tk.hiddenname.smarthome.service.task.impl.processor.Processor;
@@ -61,11 +61,11 @@ public class SetPwmSignalProcessor implements Processor {
     }
 
     @Override
-    public void register(ProcessingObject object) throws UnsupportedObjectTypeException {
+    public void register(ProcessingObject object) throws UnsupportedTriggerObjectTypeException {
         if (object instanceof SetPwmSignalObject) {
             this.object = (SetPwmSignalObject) object;
         } else {
-            throw new UnsupportedObjectTypeException();
+            throw new UnsupportedTriggerObjectTypeException(object.getClass().getSimpleName());
         }
     }
 }

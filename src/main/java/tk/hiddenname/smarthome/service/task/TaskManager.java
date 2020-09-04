@@ -18,8 +18,8 @@ public class TaskManager {
 
     private final ApplicationContext context;
 
-    public void addTask(Task task) throws TriggerExistsException, UnsupportedObjectTypeException, NoSuchListenerException,
-            NoSuchProcessorException, ProcessorExistsException {
+    public void addTask(Task task) throws TriggerExistsException, UnsupportedTriggerObjectTypeException, NoSuchListenerException,
+            NoSuchProcessorException, ProcessorExistsException, UnsupportedProcessingObjectTypeException {
 
         TaskObject taskObject = context.getBean(TaskObject.class);
         tasks.put(task.getId(), taskObject.register(task));

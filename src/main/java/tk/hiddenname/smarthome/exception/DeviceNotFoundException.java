@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class DeviceNotFoundException extends RuntimeException {
 
     public DeviceNotFoundException(int id) {
-        super(String.format("Not found device with id '%d'", id));
+        super(String.format("The device with id '%d' not found", id));
     }
 }
