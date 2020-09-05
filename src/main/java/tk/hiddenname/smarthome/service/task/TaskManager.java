@@ -24,4 +24,12 @@ public class TaskManager {
         TaskObject taskObject = context.getBean(TaskObject.class);
         tasks.put(task.getId(), taskObject.register(task));
     }
+
+    public void removeTask(Integer taskId) throws TaskNotFoundException {
+        if (tasks.containsKey(taskId)) {
+            tasks.get(taskId).unregister();
+        } else {
+            throw new TaskNotFoundException(taskId);
+        }
+    }
 }

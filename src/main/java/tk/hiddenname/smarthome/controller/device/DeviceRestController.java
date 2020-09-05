@@ -30,7 +30,7 @@ public class DeviceRestController {
 
     private static final Logger log = LoggerFactory.getLogger(DeviceRestController.class);
 
-    private final DeviceRepository deviceRepo;
+    private final DeviceRepository repo;
     // Gpio creator
     private final DeviceManager manager;
 
@@ -42,10 +42,10 @@ public class DeviceRestController {
 
         try {
             SignalType type = SignalType.valueOf(t.toUpperCase());
-            devices = deviceRepo.findByGpioType(type);
+            devices = repo.findByGpioType(type);
         } catch (IllegalArgumentException e) {
             if (t.isEmpty()) {
-                devices = deviceRepo.findAll(Sort.by("id"));
+                devices = repo.findAll(Sort.by("id"));
             } else {
                 SignalTypeNotFoundException ex = new SignalTypeNotFoundException(t);
                 log.warn(ex.getMessage());
@@ -58,7 +58,7 @@ public class DeviceRestController {
 
     @GetMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public Device getOne(@PathVariable Integer id) {
-        return deviceRepo.findById(id).orElseThrow(() -> {
+        return repo.findById(id).orElseThrow(() -> {
             DeviceNotFoundException e = new DeviceNotFoundException(id);
             log.warn(e.getMessage());
             return e;
@@ -72,7 +72,7 @@ public class DeviceRestController {
         GPIOManager.validate(newDevice.getGpio().getGpio(), newDevice.getGpio().getType());
         newDevice.setCreationDate(LocalDateTime.now());
 
-        newDevice = deviceRepo.save(newDevice);
+        newDevice = repo.save(newDevice);
         manager.create(newDevice);
 
         return newDevice;
@@ -80,13 +80,13 @@ public class DeviceRestController {
 
     @PutMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public Device update(@Valid @RequestBody Device newDevice, @PathVariable Integer id) {
-        return deviceRepo.findById(id)
+        return repo.findById(id)
                 .map(device -> {
                     if (device.isReverse() != newDevice.isReverse()) {
                         manager.update(device);
                     }
                     BeanUtils.copyProperties(newDevice, device, "id", "creationDate", "gpio");
-                    return deviceRepo.save(device);
+                    return repo.save(device);
                 }).orElseThrow(() -> {
                     DeviceNotFoundException e = new DeviceNotFoundException(id);
                     log.warn(e.getMessage());
@@ -96,14 +96,14 @@ public class DeviceRestController {
 
     @DeleteMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public ResponseEntity<?> delete(@PathVariable Integer id) {
-        manager.delete(deviceRepo.findById(id)
+        manager.delete(repo.findById(id)
                 .orElseThrow(() -> {
                     DeviceNotFoundException e = new DeviceNotFoundException(id);
                     log.warn(e.getMessage());
                     return e;
                 }));
 
-        deviceRepo.deleteById(id);
+        repo.deleteById(id);
 
         return ResponseEntity.noContent().build();
     }

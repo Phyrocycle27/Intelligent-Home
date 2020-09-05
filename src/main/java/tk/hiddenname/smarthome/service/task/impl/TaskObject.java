@@ -45,6 +45,11 @@ public class TaskObject {
         return this;
     }
 
+    public void unregister() {
+        unregisterListeners();
+        unregisterProcessors();
+    }
+
     public void registerListeners(Set<TriggerObject> triggerObjects) throws TriggerExistsException,
             UnsupportedTriggerObjectTypeException, NoSuchListenerException {
 
