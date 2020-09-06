@@ -1,6 +1,7 @@
 package tk.hiddenname.smarthome.service.task.impl.processor.impl;
 
-import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -15,12 +16,15 @@ import tk.hiddenname.smarthome.service.hardware.impl.pwm.output.PwmDeviceService
 import tk.hiddenname.smarthome.service.task.impl.processor.Processor;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Scope(scopeName = "prototype")
 public class SetPwmSignalProcessor implements Processor {
 
     private static final Logger log = LoggerFactory.getLogger(SetPwmSignalProcessor.class);
+
+    @NonNull
     private final PwmDeviceService service;
+    @NonNull
     private final DeviceRepository repository;
 
     private SetPwmSignalObject object;

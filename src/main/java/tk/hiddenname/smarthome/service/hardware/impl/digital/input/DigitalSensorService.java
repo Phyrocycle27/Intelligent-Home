@@ -9,7 +9,8 @@ public interface DigitalSensorService extends GPIOService {
 
     DigitalState getState(Integer id, Boolean reverse);
 
-    GpioPinListenerDigital addListener(ChangeDigitalSignalListener listener, Integer sensorId, boolean targetSignal, boolean reverse);
+    GpioPinListenerDigital addListener(ChangeDigitalSignalListener listener, Integer sensorId, boolean targetSignal,
+                                       boolean reverse);
 
     void removeListener(GpioPinListenerDigital listener, Integer sensorId);
 }

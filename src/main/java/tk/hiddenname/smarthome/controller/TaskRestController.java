@@ -11,6 +11,7 @@ import tk.hiddenname.smarthome.repository.TaskRepository;
 import tk.hiddenname.smarthome.service.task.TaskManager;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = {"/tasks"})
@@ -22,19 +23,21 @@ public class TaskRestController {
     private final TaskRepository repo;
     private final TaskManager manager;
 
+    @GetMapping(value = {"/all"}, produces = {"application/json"})
+    public List<Task> getAll() {
+        return repo.findAll();
+    }
+
     @PostMapping(value = {"/create"}, produces = {"application/json"})
     public Task create(@Valid @RequestBody Task task) throws NoSuchProcessorException, UnsupportedTriggerObjectTypeException,
             NoSuchListenerException, TriggerExistsException, ProcessorExistsException, UnsupportedProcessingObjectTypeException {
-
         task = repo.save(task);
-
-        log.info(task.toString());
         manager.addTask(task);
 
         return task;
     }
 
-    @DeleteMapping(value = {"/delete/{id}"}, produces = {"application/json"})
+    @DeleteMapping(value = {"/one/delete/{id}"}, produces = {"application/json"})
     public ResponseEntity<?> delete(@PathVariable Integer id) throws TaskNotFoundException {
         manager.removeTask(id);
         repo.deleteById(id);

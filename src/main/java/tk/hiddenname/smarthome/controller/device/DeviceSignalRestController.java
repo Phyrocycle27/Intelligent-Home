@@ -13,7 +13,7 @@ import tk.hiddenname.smarthome.service.hardware.impl.pwm.output.PwmDeviceService
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = {"/control"})
+@RequestMapping(value = {"/devices/control"})
 @AllArgsConstructor
 public class DeviceSignalRestController {
 

@@ -4,9 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
-import tk.hiddenname.smarthome.entity.task.processing.objects.SetSignalObject;
 import tk.hiddenname.smarthome.exception.NoSuchProcessorException;
-import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
 import tk.hiddenname.smarthome.exception.UnsupportedProcessingObjectTypeException;
 import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException;
 import tk.hiddenname.smarthome.service.task.impl.processor.impl.SetDigitalSignalProcessor;
@@ -24,17 +22,11 @@ public class ProcessorFactory {
         Processor processor;
 
         switch (object.getAction()) {
-            case SET_SIGNAL:
-                switch (((SetSignalObject) object).getSignalType()) {
-                    case PWM:
-                        processor = ctx.getBean(SetPwmSignalProcessor.class);
-                        break;
-                    case DIGITAL:
-                        processor = ctx.getBean(SetDigitalSignalProcessor.class);
-                        break;
-                    default:
-                        throw new SignalTypeNotFoundException(((SetSignalObject) object).getSignalType().name());
-                }
+            case SET_DIGITAL_SIGNAL:
+                processor = ctx.getBean(SetDigitalSignalProcessor.class);
+                break;
+            case SET_PWM_SIGNAL:
+                processor = ctx.getBean(SetPwmSignalProcessor.class);
                 break;
             default:
                 throw new NoSuchProcessorException();

@@ -1,6 +1,7 @@
 package tk.hiddenname.smarthome.service.task.impl;
 
-import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -18,13 +19,16 @@ import java.util.Set;
 
 @Component
 @Scope("prototype")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TaskObject {
 
     private static final Logger log = LoggerFactory.getLogger(TaskObject.class);
 
+    @NonNull
     private final ProcessorFactory processorFactory;
+    @NonNull
     private final ApplicationContext context;
+
 
     private EventListener listener;
     private EventProcessor processor;

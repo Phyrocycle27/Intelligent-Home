@@ -1,6 +1,8 @@
 package tk.hiddenname.smarthome.service.hardware.impl.digital.input;
 
 import com.pi4j.io.gpio.GpioPinDigitalInput;
+import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
+import com.pi4j.io.gpio.event.GpioPinListener;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,14 +52,16 @@ public class DigitalSensorServiceImpl implements DigitalSensorService {
 
 
     @Override
-    public GpioPinListenerDigital addListener(ChangeDigitalSignalListener listener, Integer sensorId, boolean targetSignal, boolean reverse) {
+    public GpioPinListenerDigital addListener(ChangeDigitalSignalListener listener, Integer sensorId,
+                                              boolean targetSignal, boolean reverse) {
+
         GpioPinDigitalInput pin = map.getOrDefault(sensorId, null);
 
         if (pin != null) {
-            return event -> {
-                log.info("Sensor with id " + sensorId + "triggered");
-                listener.trigger((event.getState().isHigh() ^ reverse) == targetSignal);
-            };
+            GpioPinListenerDigital pinListener = event ->
+                    listener.trigger((event.getState().isHigh() ^ reverse) == targetSignal);
+            pin.addListener(pinListener);
+            return pinListener;
         } else {
             throw new SensorNotFoundException(sensorId);
         }

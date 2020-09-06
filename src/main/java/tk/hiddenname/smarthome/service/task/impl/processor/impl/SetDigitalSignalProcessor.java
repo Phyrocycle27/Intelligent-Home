@@ -1,6 +1,7 @@
 package tk.hiddenname.smarthome.service.task.impl.processor.impl;
 
-import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -15,12 +16,15 @@ import tk.hiddenname.smarthome.service.hardware.impl.digital.output.DigitalDevic
 import tk.hiddenname.smarthome.service.task.impl.processor.Processor;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Scope(scopeName = "prototype")
 public class SetDigitalSignalProcessor implements Processor {
 
     private static final Logger log = LoggerFactory.getLogger(SetDigitalSignalProcessor.class);
+
+    @NonNull
     private final DigitalDeviceService service;
+    @NonNull
     private final DeviceRepository repository;
 
     private SetDigitalSignalObject object;
@@ -36,10 +40,10 @@ public class SetDigitalSignalProcessor implements Processor {
 
             boolean currState = service.getState(device.getId(), device.isReverse()).isDigitalState();
             if (currState != object.isTargetState()) {
+                service.setState(device.getId(), device.isReverse(), object.isTargetState());
                 log.info(String.format(" * Digital state (%b) will be set to device with id (%d) on GPIO " +
                                 "(%d) for (%d) seconds",
                         object.isTargetState(), device.getId(), device.getGpio().getGpio(), object.getDelay()));
-                service.setState(device.getId(), device.isReverse(), object.isTargetState());
 
                 if (object.getDelay() > 0) {
                     try {

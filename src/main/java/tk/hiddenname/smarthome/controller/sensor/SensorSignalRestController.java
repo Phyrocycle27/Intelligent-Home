@@ -14,7 +14,7 @@ import tk.hiddenname.smarthome.service.hardware.impl.digital.input.DigitalSensor
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = {"/reading"})
+@RequestMapping(value = {"/sensors/reading"})
 @AllArgsConstructor
 public class SensorSignalRestController {
 

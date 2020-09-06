@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import tk.hiddenname.smarthome.entity.task.processing.ProcessingAction;
 
 import javax.persistence.*;
@@ -12,7 +11,6 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
-@NoArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 @Table(name = "processing_object")
 @Inheritance(strategy = InheritanceType.JOINED)

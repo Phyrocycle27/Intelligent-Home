@@ -1,8 +1,10 @@
 package tk.hiddenname.smarthome.service.task.impl.listener;
 
-import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
@@ -18,15 +20,21 @@ import java.util.Set;
 
 @Component
 @Scope("prototype")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class EventListener {
 
     private static final Logger log = LoggerFactory.getLogger(EventListener.class);
     private final Map<Integer, Boolean> flags = new HashMap<>();
     private final Map<Integer, Listener> listeners = new HashMap<>();
 
+    @NonNull
     private final TaskObject taskObject;
-    private final ListenerFactory listenerFactory;
+    private ListenerFactory listenerFactory;
+
+    @Autowired
+    public void setListenerFactory(ListenerFactory listenerFactory) {
+        this.listenerFactory = listenerFactory;
+    }
 
     public void registerListeners(Set<TriggerObject> objects) throws TriggerExistsException,
             UnsupportedTriggerObjectTypeException, NoSuchListenerException {
