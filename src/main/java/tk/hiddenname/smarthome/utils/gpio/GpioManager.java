@@ -3,8 +3,7 @@ package tk.hiddenname.smarthome.utils.gpio;
 import com.pi4j.io.gpio.*;
 import com.pi4j.wiringpi.Gpio;
 import lombok.Getter;
-import lombok.Setter;
-import tk.hiddenname.smarthome.Application;
+import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
@@ -15,18 +14,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GPIOManager {
+@Component
+public class GpioManager {
 
+    private static final GpioController controller = GpioFactory.getInstance();
     private static final Set<Integer> digitalGPIO;
     private static final Set<Integer> pwmGPIO;
-    private static final List<Integer> usedGPIO;
-
-    @Getter
-    @Setter
-    private static int pwmRange;
 
     static {
-        usedGPIO = new ArrayList<>();
         digitalGPIO = new HashSet<Integer>() {{
             add(2);
             add(3);
@@ -63,16 +58,19 @@ public class GPIOManager {
             add(18);
             add(12);
         }};
-
     }
 
-    public static void deletePin(GpioPin pin) {
-        Application.getGpioController().unprovisionPin(pin);
+    @Getter
+    private final int pwmRange = 1024;
+    private final List<Integer> usedGPIO = new ArrayList<>();
+
+    public void deletePin(GpioPin pin) {
+        controller.unprovisionPin(pin);
         usedGPIO.remove(Integer.valueOf(Gpio.wpiPinToGpio(pin.getPin().getAddress())));
         pin.removeAllListeners();
     }
 
-    public static void validate(Integer gpio, SignalType type) throws PinSignalSupportException, SignalTypeNotFoundException,
+    public void validate(Integer gpio, SignalType type) throws PinSignalSupportException, SignalTypeNotFoundException,
             GPIOBusyException {
 
         if (!isSupports(type, gpio)) {
@@ -83,7 +81,7 @@ public class GPIOManager {
             throw new GPIOBusyException(gpio);
     }
 
-    private static boolean isSupports(SignalType type, Integer gpio) {
+    private boolean isSupports(SignalType type, Integer gpio) {
         switch (type) {
             case DIGITAL:
                 return digitalGPIO.contains(gpio);
@@ -94,11 +92,11 @@ public class GPIOManager {
         }
     }
 
-    private static boolean isExists(Integer gpio) {
+    private boolean isExists(Integer gpio) {
         return usedGPIO.contains(gpio);
     }
 
-    private static Pin getPinByGPIONumber(int gpioNumber) {
+    private Pin getPinByGPIONumber(int gpioNumber) {
         switch (gpioNumber) {
             case 2:
                 return RaspiPin.GPIO_08;
@@ -161,13 +159,13 @@ public class GPIOManager {
         }
     }
 
-    public static GpioPinDigitalOutput createDigitalOutput(Integer gpio, Boolean reverse)
+    public GpioPinDigitalOutput createDigitalOutput(Integer gpio, Boolean reverse)
             throws GPIOBusyException, PinSignalSupportException {
 
-        GPIOManager.validate(gpio, SignalType.DIGITAL);
+        validate(gpio, SignalType.DIGITAL);
 
-        GpioPinDigitalOutput pin = Application.getGpioController()
-                .provisionDigitalOutputPin(getPinByGPIONumber(gpio), PinState.getState(reverse));
+        GpioPinDigitalOutput pin = controller.provisionDigitalOutputPin(
+                getPinByGPIONumber(gpio), PinState.getState(reverse));
 
         pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF, PinMode.DIGITAL_OUTPUT);
 
@@ -176,13 +174,13 @@ public class GPIOManager {
         return pin;
     }
 
-    public static GpioPinDigitalInput createDigitalInput(Integer gpio)
+    public GpioPinDigitalInput createDigitalInput(Integer gpio)
             throws GPIOBusyException, PinSignalSupportException {
 
-        GPIOManager.validate(gpio, SignalType.DIGITAL);
+        validate(gpio, SignalType.DIGITAL);
 
-        GpioPinDigitalInput pin = Application.getGpioController()
-                .provisionDigitalInputPin(getPinByGPIONumber(gpio), PinPullResistance.PULL_DOWN);
+        GpioPinDigitalInput pin = controller.provisionDigitalInputPin(
+                getPinByGPIONumber(gpio), PinPullResistance.PULL_DOWN);
 
         pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF, PinMode.DIGITAL_INPUT);
 
@@ -191,12 +189,12 @@ public class GPIOManager {
         return pin;
     }
 
-    public static GpioPinPwmOutput createPwmOutput(Integer gpio, Boolean reverse)
+    public GpioPinPwmOutput createPwmOutput(Integer gpio, Boolean reverse)
             throws GPIOBusyException, PinSignalSupportException {
-        GPIOManager.validate(gpio, SignalType.PWM);
+        validate(gpio, SignalType.PWM);
 
-        GpioPinPwmOutput pin = Application.getGpioController()
-                .provisionPwmOutputPin(getPinByGPIONumber(gpio), reverse ? pwmRange : 0);
+        GpioPinPwmOutput pin = controller.provisionPwmOutputPin(
+                getPinByGPIONumber(gpio), reverse ? pwmRange : 0);
 
         pin.setPwmRange(pwmRange);
         pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
@@ -206,7 +204,7 @@ public class GPIOManager {
         return pin;
     }
 
-    public static Set<Integer> getAvailableDigitalGPIO() {
+    public Set<Integer> getAvailableDigitalGPIO() {
         Set<Integer> available = new HashSet<>();
 
         for (Integer gpio : digitalGPIO) {
@@ -216,7 +214,7 @@ public class GPIOManager {
         return available;
     }
 
-    public static Set<Integer> getAvailablePwmGPIO() {
+    public Set<Integer> getAvailablePwmGPIO() {
         Set<Integer> available = new HashSet<>();
 
         for (Integer gpio : pwmGPIO) {
@@ -224,5 +222,9 @@ public class GPIOManager {
             available.add(gpio);
         }
         return available;
+    }
+
+    public void shutdown() {
+        controller.shutdown();
     }
 }

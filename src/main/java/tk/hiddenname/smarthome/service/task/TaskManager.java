@@ -40,7 +40,7 @@ public class TaskManager {
     }
 
     public void loadTasks() {
-        for (Task task: repo.findAll()) {
+        for (Task task : repo.findAll()) {
             try {
                 addTask(task);
             } catch (TriggerExistsException | UnsupportedTriggerObjectTypeException | NoSuchListenerException

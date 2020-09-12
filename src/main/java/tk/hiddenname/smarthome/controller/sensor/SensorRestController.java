@@ -3,18 +3,15 @@ package tk.hiddenname.smarthome.controller.sensor;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tk.hiddenname.smarthome.entity.hardware.Sensor;
+import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
-import tk.hiddenname.smarthome.exception.SensorNotFoundException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
-import tk.hiddenname.smarthome.repository.SensorRepository;
+import tk.hiddenname.smarthome.service.database.SensorDatabaseService;
 import tk.hiddenname.smarthome.service.hardware.manager.SensorManager;
-import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -27,33 +24,38 @@ public class SensorRestController {
 
     private static final Logger log = LoggerFactory.getLogger(SensorRestController.class);
 
-    private final SensorRepository sensorRepo;
+    private final SensorDatabaseService dbService;
     // Gpio creator
     private final SensorManager manager;
 
     @GetMapping(value = {"/all"}, produces = {"application/json"})
-    public List<Sensor> getAll()
+    public List<Sensor> getAll(@RequestParam(name = "type", defaultValue = "", required = false) String t)
             throws SignalTypeNotFoundException {
-        return sensorRepo.findAll(Sort.by("id"));
+        if (t.isEmpty()) {
+            return dbService.getAll();
+        } else {
+            try {
+                SignalType type = SignalType.valueOf(t.toUpperCase());
+                return dbService.getAllBySignalType(type);
+            } catch (IllegalArgumentException e) {
+                SignalTypeNotFoundException ex = new SignalTypeNotFoundException(t);
+                log.warn(ex.getMessage());
+                throw ex;
+            }
+        }
     }
 
     @GetMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public Sensor getOne(@PathVariable Integer id) {
-        return sensorRepo.findById(id).orElseThrow(() -> {
-            SensorNotFoundException e = new SensorNotFoundException(id);
-            log.warn(e.getMessage());
-            return e;
-        });
+        return dbService.getOne(id);
     }
 
     @PostMapping(value = {"/create"}, produces = {"application/json"})
     public Sensor create(@Valid @RequestBody Sensor newSensor) throws GPIOBusyException, PinSignalSupportException,
             SignalTypeNotFoundException {
 
-        GPIOManager.validate(newSensor.getGpio().getGpio(), newSensor.getGpio().getType());
         newSensor.setCreationDate(LocalDateTime.now());
-
-        newSensor = sensorRepo.save(newSensor);
+        newSensor = dbService.create(newSensor);
         manager.create(newSensor);
 
         return newSensor;
@@ -61,27 +63,14 @@ public class SensorRestController {
 
     @PutMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public Sensor update(@Valid @RequestBody Sensor newSensor, @PathVariable Integer id) {
-        return sensorRepo.findById(id)
-                .map(sensor -> {
-                    BeanUtils.copyProperties(newSensor, sensor, "id", "creationDate", "gpio");
-                    return sensorRepo.save(sensor);
-                }).orElseThrow(() -> {
-                    SensorNotFoundException e = new SensorNotFoundException(id);
-                    log.warn(e.getMessage());
-                    return e;
-                });
+        return dbService.update(id, newSensor);
     }
 
     @DeleteMapping(value = {"/one/{id}"}, produces = {"application/json"})
     public ResponseEntity<?> delete(@PathVariable Integer id) {
-        manager.delete(sensorRepo.findById(id)
-                .orElseThrow(() -> {
-                    SensorNotFoundException e = new SensorNotFoundException(id);
-                    log.warn(e.getMessage());
-                    return e;
-                }));
-
-        sensorRepo.deleteById(id);
+        Sensor sensor = dbService.getOne(id);
+        manager.delete(sensor);
+        dbService.delete(id);
 
         return ResponseEntity.noContent().build();
     }
