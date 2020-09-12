@@ -7,13 +7,13 @@ import tk.hiddenname.smarthome.entity.signal.DigitalState;
 import tk.hiddenname.smarthome.entity.signal.PwmSignal;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
 import tk.hiddenname.smarthome.repository.DeviceRepository;
-import tk.hiddenname.smarthome.service.hardware.digital.output.DigitalDeviceServiceImpl;
-import tk.hiddenname.smarthome.service.hardware.pwm.output.PwmDeviceServiceImpl;
+import tk.hiddenname.smarthome.service.hardware.impl.digital.output.DigitalDeviceServiceImpl;
+import tk.hiddenname.smarthome.service.hardware.impl.pwm.output.PwmDeviceServiceImpl;
 
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = {"/control"})
+@RequestMapping(value = {"/devices/control"})
 @AllArgsConstructor
 public class DeviceSignalRestController {
 

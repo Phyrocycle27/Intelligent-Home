@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import tk.hiddenname.smarthome.entity.task.processing.ProcessingAction;
+import tk.hiddenname.smarthome.exception.InvalidProcessingObjectTypeException;
 
 public class ProcessingObjectTypeIdResolver extends TypeIdResolverBase {
 
@@ -38,12 +39,15 @@ public class ProcessingObjectTypeIdResolver extends TypeIdResolverBase {
         try {
             action = ProcessingAction.valueOf(id);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid ProcessingObject type");
+            throw new InvalidProcessingObjectTypeException();
         }
 
         switch (action) {
-            case SET_SIGNAL:
-                subType = SetSignalObject.class;
+            case SET_PWM_SIGNAL:
+                subType = SetPwmSignalObject.class;
+                break;
+            case SET_DIGITAL_SIGNAL:
+                subType = SetDigitalSignalObject.class;
                 break;
         }
 

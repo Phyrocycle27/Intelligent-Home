@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import tk.hiddenname.smarthome.entity.task.trigger.TriggerAction;
+import tk.hiddenname.smarthome.exception.InvalidTriggerObjectTypeException;
 
 public class TriggerObjectTypeIdResolver extends TypeIdResolverBase {
 
@@ -38,12 +39,12 @@ public class TriggerObjectTypeIdResolver extends TypeIdResolverBase {
         try {
             action = TriggerAction.valueOf(id);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid TriggerObject type");
+            throw new InvalidTriggerObjectTypeException();
         }
 
         switch (action) {
-            case CHANGE_SIGNAL:
-                subType = ChangeSignalObject.class;
+            case CHANGE_DIGITAL_SIGNAL:
+                subType = ChangeDigitalSignalObject.class;
                 break;
         }
 

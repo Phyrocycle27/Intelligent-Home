@@ -6,19 +6,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entity.task.Task;
-import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
-import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
-import tk.hiddenname.smarthome.exception.NoSuchListenerException;
-import tk.hiddenname.smarthome.exception.NoSuchProcessorException;
-import tk.hiddenname.smarthome.exception.UnsupportedObjectTypeException;
-import tk.hiddenname.smarthome.service.task.listener.EventListener;
-import tk.hiddenname.smarthome.service.task.listener.ListenerFactory;
-import tk.hiddenname.smarthome.service.task.processor.EventProcessor;
-import tk.hiddenname.smarthome.service.task.processor.ProcessorFactory;
+import tk.hiddenname.smarthome.exception.*;
+import tk.hiddenname.smarthome.repository.TaskRepository;
+import tk.hiddenname.smarthome.service.task.impl.TaskObject;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 @Component
 @AllArgsConstructor
@@ -26,51 +19,34 @@ public class TaskManager {
 
     private static final Logger log = LoggerFactory.getLogger(TaskManager.class);
 
-    private final Map<Integer, EventProcessor> processors = new HashMap<>();
-    private final Map<Integer, EventListener> listeners = new HashMap<>();
+    private final Map<Integer, TaskObject> tasks = new HashMap<>();
 
-    private final ProcessorFactory processorFactory;
-    private final ListenerFactory listenerFactory;
-    private final ApplicationContext ctx;
+    private final ApplicationContext context;
+    private final TaskRepository repo;
 
-    public EventProcessor getProcessor(Integer id) {
-        return processors.getOrDefault(id, null);
+    public void addTask(Task task) throws TriggerExistsException, UnsupportedTriggerObjectTypeException, NoSuchListenerException,
+            NoSuchProcessorException, ProcessorExistsException, UnsupportedProcessingObjectTypeException {
+
+        TaskObject taskObject = context.getBean(TaskObject.class);
+        tasks.put(task.getId(), taskObject.register(task));
     }
 
-    public EventListener getListener(Integer id) {
-        return listeners.getOrDefault(id, null);
+    public void removeTask(Integer taskId) throws TaskNotFoundException {
+        if (tasks.containsKey(taskId)) {
+            tasks.get(taskId).unregister();
+        } else {
+            throw new TaskNotFoundException(taskId);
+        }
     }
 
-    public void add(Task task) {
-        processors.put(task.getId(), getEventProcessor(task.getId(), task.getProcessingObjects()));
-        listeners.put(task.getId(), getEventListener(task.getId(), task.getTriggerObjects()));
-    }
-
-    private EventListener getEventListener(Integer taskId, Set<TriggerObject> triggerObjects) {
-        EventListener listener = ctx.getBean(EventListener.class, taskId);
-
-        for (TriggerObject obj : triggerObjects) {
+    public void loadTasks() {
+        for (Task task: repo.findAll()) {
             try {
-                listener.add(obj.getId(), listenerFactory.create(obj, listener));
-            } catch (NoSuchListenerException | UnsupportedObjectTypeException e) {
+                addTask(task);
+            } catch (TriggerExistsException | UnsupportedTriggerObjectTypeException | NoSuchListenerException
+                    | NoSuchProcessorException | ProcessorExistsException | UnsupportedProcessingObjectTypeException e) {
                 log.error(e.getMessage());
             }
         }
-
-        return listener;
-    }
-
-    private EventProcessor getEventProcessor(Integer taskId, Set<ProcessingObject> processingObjects) {
-        EventProcessor processor = ctx.getBean(EventProcessor.class);
-
-        for (ProcessingObject obj : processingObjects) {
-            try {
-                processor.add(obj.getId(), processorFactory.create(obj));
-            } catch (NoSuchProcessorException | UnsupportedObjectTypeException e) {
-                log.error(e.getMessage());
-            }
-        }
-
-        return processor;
     }
 }

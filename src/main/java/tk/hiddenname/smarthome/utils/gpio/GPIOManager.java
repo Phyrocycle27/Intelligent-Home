@@ -69,6 +69,7 @@ public class GPIOManager {
     public static void deletePin(GpioPin pin) {
         Application.getGpioController().unprovisionPin(pin);
         usedGPIO.remove(Integer.valueOf(Gpio.wpiPinToGpio(pin.getPin().getAddress())));
+        pin.removeAllListeners();
     }
 
     public static void validate(Integer gpio, SignalType type) throws PinSignalSupportException, SignalTypeNotFoundException,

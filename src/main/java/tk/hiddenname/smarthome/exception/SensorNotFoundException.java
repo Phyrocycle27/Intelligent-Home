@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class SensorNotFoundException extends RuntimeException {
 
     public SensorNotFoundException(int id) {
-        super(String.format("Not found sensor with id '%d'", id));
+        super(String.format("The sensor with id '%d' not found", id));
     }
 }

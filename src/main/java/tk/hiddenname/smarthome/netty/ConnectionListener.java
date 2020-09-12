@@ -1,6 +1,5 @@
 package tk.hiddenname.smarthome.netty;
 
-import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoop;
@@ -24,7 +23,7 @@ public class ConnectionListener implements ChannelFutureListener {
             log.info("Reconnect");
             final EventLoop loop = channelFuture.channel().eventLoop();
             loop.schedule(() ->
-                    client.createBootstrap(loop, new Bootstrap()), 10L, TimeUnit.SECONDS);
+                    client.createBootstrap(loop), 10L, TimeUnit.SECONDS);
         }
     }
 }

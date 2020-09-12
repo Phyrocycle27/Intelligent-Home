@@ -17,7 +17,14 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "trigger_change_digital_signal")
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class ChangeDigitalSignalObject extends ChangeSignalObject {
+public class ChangeDigitalSignalObject extends TriggerObject {
+
+    @NotNull
+    @Column(name = "sensor_id", nullable = false)
+    private Integer sensorId;
+
+    @Column(nullable = false)
+    private int delay = 0;
 
     @NotNull
     @Column(nullable = false)

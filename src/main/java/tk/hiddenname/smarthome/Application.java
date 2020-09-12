@@ -8,15 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import tk.hiddenname.smarthome.entity.hardware.Device;
-import tk.hiddenname.smarthome.entity.hardware.Sensor;
-import tk.hiddenname.smarthome.exception.GPIOBusyException;
-import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.netty.Client;
-import tk.hiddenname.smarthome.repository.DeviceRepository;
-import tk.hiddenname.smarthome.repository.SensorRepository;
-import tk.hiddenname.smarthome.service.manager.DeviceManager;
-import tk.hiddenname.smarthome.service.manager.SensorManager;
+import tk.hiddenname.smarthome.service.hardware.manager.DeviceManager;
+import tk.hiddenname.smarthome.service.hardware.manager.SensorManager;
+import tk.hiddenname.smarthome.service.task.TaskManager;
 import tk.hiddenname.smarthome.utils.gpio.GPIOManager;
 
 @SpringBootApplication
@@ -44,35 +39,16 @@ public class Application {
         Runtime.getRuntime().addShutdownHook(new Thread(() ->
                 Application.getGpioController().shutdown()));
 
-
         // Run the Spring
-        ApplicationContext ctx = SpringApplication.run(Application.class, args);
+        ApplicationContext ctx = SpringApplication.run(Application.class);
 
         // Run the Netty
         if (allowConnectionToServer)
             new Client(HOST, PORT);
 
-        // Creating outputs which exited in DB
-        DeviceRepository deviceRepo = ctx.getBean(DeviceRepository.class);
-        DeviceManager deviceManager = ctx.getBean(DeviceManager.class);
+        ctx.getBean(DeviceManager.class).loadDevices();
+        ctx.getBean(SensorManager.class).loadSensors();
 
-        for (Device device : deviceRepo.findAll()) {
-            try {
-                deviceManager.create(device);
-            } catch (PinSignalSupportException | GPIOBusyException e) {
-                log.warn(e.getMessage());
-            }
-        }
-
-        SensorRepository sensorRepo = ctx.getBean(SensorRepository.class);
-        SensorManager sensorManager = ctx.getBean(SensorManager.class);
-
-        for (Sensor sensor : sensorRepo.findAll()) {
-            try {
-                sensorManager.create(sensor);
-            } catch (PinSignalSupportException | GPIOBusyException e) {
-                log.warn(e.getMessage());
-            }
-        }
+        ctx.getBean(TaskManager.class).loadTasks();
     }
 }

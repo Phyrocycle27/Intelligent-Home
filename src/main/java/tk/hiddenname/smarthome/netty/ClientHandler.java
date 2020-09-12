@@ -1,6 +1,5 @@
 package tk.hiddenname.smarthome.netty;
 
-import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -121,6 +120,6 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     private void reconnect(ChannelHandlerContext ctx) {
         final EventLoop eventLoop = ctx.channel().eventLoop();
         eventLoop.schedule(() ->
-                client.createBootstrap(eventLoop, new Bootstrap()), 10L, TimeUnit.SECONDS);
+                client.createBootstrap(eventLoop), 10L, TimeUnit.SECONDS);
     }
 }
