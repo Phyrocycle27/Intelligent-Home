@@ -1,6 +1,6 @@
 package tk.hiddenname.smarthome.service.hardware.manager;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -10,23 +10,20 @@ import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
+import tk.hiddenname.smarthome.repository.DeviceRepository;
 import tk.hiddenname.smarthome.service.hardware.impl.GPIOService;
 import tk.hiddenname.smarthome.service.hardware.impl.digital.output.DigitalDeviceServiceImpl;
 import tk.hiddenname.smarthome.service.hardware.impl.pwm.output.PwmDeviceServiceImpl;
 
-import javax.validation.constraints.NotNull;
-
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class DeviceManager {
 
-    private final Logger log = LoggerFactory.getLogger(DeviceManager.class);
+    private static final Logger log = LoggerFactory.getLogger(DeviceManager.class);
 
-    @NotNull
     private final DigitalDeviceServiceImpl digitalService;
-
-    @NotNull
     private final PwmDeviceServiceImpl pwmService;
+    private final DeviceRepository deviceRepo;
 
     public void create(Device device) throws PinSignalSupportException, GPIOBusyException {
         log.debug("Creating device " + device.toString());
@@ -53,6 +50,16 @@ public class DeviceManager {
         getService(gpio.getType()).delete(
                 device.getId()
         );
+    }
+
+    public void loadDevices() {
+        for (Device device : deviceRepo.findAll()) {
+            try {
+                create(device);
+            } catch (PinSignalSupportException | GPIOBusyException e) {
+                log.warn(e.getMessage());
+            }
+        }
     }
 
     private GPIOService getService(SignalType type) {

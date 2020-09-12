@@ -1,8 +1,6 @@
 package tk.hiddenname.smarthome.service.hardware.impl.digital.input;
 
 import com.pi4j.io.gpio.GpioPinDigitalInput;
-import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
-import com.pi4j.io.gpio.event.GpioPinListener;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

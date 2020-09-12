@@ -40,13 +40,13 @@ public class DeviceRestController {
 
         List<Device> devices;
 
-        try {
-            SignalType type = SignalType.valueOf(t.toUpperCase());
-            devices = repo.findByGpioType(type);
-        } catch (IllegalArgumentException e) {
-            if (t.isEmpty()) {
-                devices = repo.findAll(Sort.by("id"));
-            } else {
+        if (t.isEmpty()) {
+            devices = repo.findAll(Sort.by("id"));
+        } else {
+            try {
+                SignalType type = SignalType.valueOf(t.toUpperCase());
+                devices = repo.findByGpioType(type);
+            } catch (IllegalArgumentException e) {
                 SignalTypeNotFoundException ex = new SignalTypeNotFoundException(t);
                 log.warn(ex.getMessage());
                 throw ex;
@@ -116,9 +116,9 @@ public class DeviceRestController {
             JSONObject obj = new JSONObject();
             switch (type) {
                 case DIGITAL:
-                    return obj.put("available_gpios", new JSONArray(GPIOManager.getAvailableDigitalGPIO())).toString();
+                    return obj.put("available_gpio_pins", new JSONArray(GPIOManager.getAvailableDigitalGPIO())).toString();
                 case PWM:
-                    return obj.put("available_gpios", new JSONArray(GPIOManager.getAvailablePwmGPIO())).toString();
+                    return obj.put("available_gpio_pins", new JSONArray(GPIOManager.getAvailablePwmGPIO())).toString();
                 default:
                     SignalTypeNotFoundException e = new SignalTypeNotFoundException(t);
                     log.warn(e.getMessage());
