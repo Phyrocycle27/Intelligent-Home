@@ -41,24 +41,23 @@ public class PwmDeviceServiceImpl implements PwmDeviceService {
 
     @Override
     public PwmSignal getSignal(Integer id, Boolean reverse) {
-        GpioPinPwmOutput pin = map.getOrDefault(id, null);
-
-        if (pin == null) {
-            throw new DeviceNotFoundException(id);
-        }
-        int signal = pin.getPwm();
+        int signal = getPin(id).getPwm();
         return new PwmSignal(id, reverse ? gpioManager.getPwmRange() - signal : signal);
     }
 
     @Override
     public PwmSignal setSignal(Integer id, Boolean reverse, Integer newSignal) {
+        int currSignal = controller.setSignal(getPin(id), reverse ? gpioManager.getPwmRange() - newSignal : newSignal);
+        return new PwmSignal(id, reverse ? gpioManager.getPwmRange() - currSignal : currSignal);
+    }
+
+    private GpioPinPwmOutput getPin(Integer id) {
         GpioPinPwmOutput pin = map.getOrDefault(id, null);
 
         if (pin == null) {
             throw new DeviceNotFoundException(id);
         }
 
-        int currSignal = controller.setSignal(pin, reverse ? gpioManager.getPwmRange() - newSignal : newSignal);
-        return new PwmSignal(id, reverse ? gpioManager.getPwmRange() - currSignal : currSignal);
+        return pin;
     }
 }

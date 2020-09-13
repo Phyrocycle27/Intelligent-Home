@@ -30,11 +30,7 @@ public class SensorDatabaseService {
     }
 
     public Sensor getOne(Integer id) throws SensorNotFoundException {
-        return repo.findById(id).orElseThrow(() -> {
-            SensorNotFoundException e = new SensorNotFoundException(id);
-            log.warn(e.getMessage());
-            return e;
-        });
+        return repo.findById(id).orElseThrow(() -> new SensorNotFoundException(id));
     }
 
     public Sensor create(Sensor newDevice) {
@@ -46,11 +42,7 @@ public class SensorDatabaseService {
                 .map(sensor -> {
                     BeanUtils.copyProperties(newSensor, sensor, "id", "creationDate", "gpio");
                     return repo.save(sensor);
-                }).orElseThrow(() -> {
-                    SensorNotFoundException e = new SensorNotFoundException(id);
-                    log.warn(e.getMessage());
-                    return e;
-                });
+                }).orElseThrow(() -> new SensorNotFoundException(id));
     }
 
     public void delete(Integer id) {

@@ -30,11 +30,7 @@ public class DeviceDatabaseService {
     }
 
     public Device getOne(Integer id) throws DeviceNotFoundException {
-        return repo.findById(id).orElseThrow(() -> {
-            DeviceNotFoundException e = new DeviceNotFoundException(id);
-            log.warn(e.getMessage());
-            return e;
-        });
+        return repo.findById(id).orElseThrow(() -> new DeviceNotFoundException(id));
     }
 
     public Device create(Device newDevice) {
@@ -46,11 +42,7 @@ public class DeviceDatabaseService {
                 .map(device -> {
                     BeanUtils.copyProperties(newDevice, device, "id", "creationDate", "gpio");
                     return repo.save(device);
-                }).orElseThrow(() -> {
-                    DeviceNotFoundException e = new DeviceNotFoundException(id);
-                    log.warn(e.getMessage());
-                    return e;
-                });
+                }).orElseThrow(() -> new DeviceNotFoundException(id));
     }
 
     public void delete(Integer id) {

@@ -43,21 +43,21 @@ public class DigitalDeviceServiceImpl implements DigitalDeviceService {
 
     @Override
     public DigitalState getState(Integer id, Boolean reverse) {
-        GpioPinDigitalOutput pin = map.getOrDefault(id, null);
-
-        if (pin == null) {
-            throw new DeviceNotFoundException(id);
-        }
-        return new DigitalState(id, reverse ^ pin.isHigh());
+        return new DigitalState(id, reverse ^ getPin(id).isHigh());
     }
 
     @Override
     public DigitalState setState(Integer id, Boolean reverse, Boolean newState) {
+        return new DigitalState(id, reverse ^ controller.setState(getPin(id), reverse ^ newState));
+    }
+
+    private GpioPinDigitalOutput getPin(Integer id) {
         GpioPinDigitalOutput pin = map.getOrDefault(id, null);
 
         if (pin == null) {
             throw new DeviceNotFoundException(id);
         }
-        return new DigitalState(id, reverse ^ controller.setState(pin, reverse ^ newState));
+
+        return pin;
     }
 }

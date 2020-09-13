@@ -28,24 +28,16 @@ public class GpioHelperRestController {
             SignalType type = SignalType.valueOf(t.toUpperCase());
             return getJsonWithAvailableGpioPins(type);
         } catch (IllegalArgumentException e) {
-            SignalTypeNotFoundException ex = new SignalTypeNotFoundException(t);
-            log.warn(ex.getMessage());
-            throw ex;
+            throw new SignalTypeNotFoundException(t);
         }
     }
 
     private String getJsonWithAvailableGpioPins(SignalType type) {
-        JSONObject obj = new JSONObject();
-
-        switch (type) {
-            case DIGITAL:
-                return new JSONObject().put("available_gpio_pins",
-                        new JSONArray(gpioManager.getAvailableDigitalGPIO())).toString();
-            case PWM:
-                return new JSONObject().put("available_gpio_pins",
-                        new JSONArray(gpioManager.getAvailablePwmGPIO())).toString();
-            default:
-                return null;
+        if (type == SignalType.DIGITAL || type == SignalType.PWM) {
+            return new JSONObject().put("available_gpio_pins",
+                    new JSONArray(gpioManager.getAvailableGpioPins(type))).toString();
+        } else {
+            return null;
         }
     }
 }

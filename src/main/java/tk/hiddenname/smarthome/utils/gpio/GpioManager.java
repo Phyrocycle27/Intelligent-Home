@@ -22,7 +22,7 @@ public class GpioManager {
     private static final Set<Integer> pwmGPIO;
 
     static {
-        digitalGPIO = new HashSet<Integer>() {{
+        digitalGPIO = new HashSet<>() {{
             add(2);
             add(3);
             add(17);
@@ -52,7 +52,7 @@ public class GpioManager {
             add(26);
         }};
 
-        pwmGPIO = new HashSet<Integer>() {{
+        pwmGPIO = new HashSet<>() {{
             add(13);
             add(19);
             add(18);
@@ -204,22 +204,21 @@ public class GpioManager {
         return pin;
     }
 
-    public Set<Integer> getAvailableDigitalGPIO() {
+    public Set<Integer> getAvailableGpioPins(SignalType type) {
         Set<Integer> available = new HashSet<>();
+        Set<Integer> busy;
 
-        for (Integer gpio : digitalGPIO) {
-            if (usedGPIO.contains(gpio)) continue;
-            available.add(gpio);
+        if (type == SignalType.DIGITAL) {
+            busy = digitalGPIO;
+        } else if (type == SignalType.PWM) {
+            busy = pwmGPIO;
+        } else {
+            throw new SignalTypeNotFoundException(type.name());
         }
-        return available;
-    }
 
-    public Set<Integer> getAvailablePwmGPIO() {
-        Set<Integer> available = new HashSet<>();
-
-        for (Integer gpio : pwmGPIO) {
-            if (usedGPIO.contains(gpio)) continue;
-            available.add(gpio);
+        for (Integer gpioPin : busy) {
+            if (usedGPIO.contains(gpioPin)) continue;
+            available.add(gpioPin);
         }
         return available;
     }

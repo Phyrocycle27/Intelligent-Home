@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import tk.hiddenname.smarthome.service.task.impl.processor.Processor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,7 +18,7 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "processing_set_digital_signal")
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class SetDigitalSignalObject extends ProcessingObject {
+public abstract class SetDigitalSignalObject extends ProcessingObject implements Processor {
 
     @NotNull
     @Column(name = "device_id", nullable = false)
