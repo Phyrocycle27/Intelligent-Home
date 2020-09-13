@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
+import tk.hiddenname.smarthome.entity.Area;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,7 +16,6 @@ import java.time.LocalDateTime;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class Sensor {
 
     @Id
@@ -40,4 +40,8 @@ public class Sensor {
             @AttributeOverride(name = "mode", column = @Column(nullable = false, updatable = false))
     })
     private GPIO gpio;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_order")
+    private Area area;
 }

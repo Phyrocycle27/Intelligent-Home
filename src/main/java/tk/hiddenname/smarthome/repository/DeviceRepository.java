@@ -10,5 +10,9 @@ import java.util.List;
 @Repository
 public interface DeviceRepository extends JpaRepository<Device, Integer> {
 
-    List<Device> findByGpioType(SignalType type);
+    List<Device> findAllByGpio_Type(SignalType type);
+
+    List<Device> findAllByArea_Id(Integer areaId);
+
+    List<Device> findAllByGpio_TypeAndArea_Id(SignalType type, Integer areaId);
 }

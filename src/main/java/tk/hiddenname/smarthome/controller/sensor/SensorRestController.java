@@ -29,19 +29,20 @@ public class SensorRestController {
     private final SensorManager manager;
 
     @GetMapping(value = {"/all"}, produces = {"application/json"})
-    public List<Sensor> getAll(@RequestParam(name = "type", defaultValue = "", required = false) String t)
+    public List<Sensor> getAll(@RequestParam(name = "type", defaultValue = "", required = false) String t,
+                               @RequestParam(name = "areaId", defaultValue = "-1", required = false) Integer areaId)
             throws SignalTypeNotFoundException {
-        if (t.isEmpty()) {
+
+        if (t.isEmpty() && areaId == -1) {
             return dbService.getAll();
+        } else if (!t.isEmpty() && areaId != -1) {
+            SignalType type = SignalType.getSignalType(t);
+            return dbService.getAllBySignalTypeAndAreaId(type, areaId);
+        } else if (!t.isEmpty()) {
+            SignalType type = SignalType.getSignalType(t);
+            return dbService.getAllBySignalType(type);
         } else {
-            try {
-                SignalType type = SignalType.valueOf(t.toUpperCase());
-                return dbService.getAllBySignalType(type);
-            } catch (IllegalArgumentException e) {
-                SignalTypeNotFoundException ex = new SignalTypeNotFoundException(t);
-                log.warn(ex.getMessage());
-                throw ex;
-            }
+            return dbService.getAllByAreaId(areaId);
         }
     }
 

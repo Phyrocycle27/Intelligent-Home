@@ -26,7 +26,15 @@ public class DeviceDatabaseService {
     }
 
     public List<Device> getAllBySignalType(SignalType type) {
-        return repo.findByGpioType(type);
+        return repo.findAllByGpio_Type(type);
+    }
+
+    public List<Device> getAllByAreaId(Integer areaId) {
+        return repo.findAllByArea_Id(areaId);
+    }
+
+    public List<Device> getAllBySignalTypeAndAreaId(SignalType type, Integer areaId) {
+        return repo.findAllByGpio_TypeAndArea_Id(type, areaId);
     }
 
     public Device getOne(Integer id) throws DeviceNotFoundException {
