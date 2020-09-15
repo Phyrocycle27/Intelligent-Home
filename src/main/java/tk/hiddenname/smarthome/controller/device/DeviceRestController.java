@@ -1,8 +1,6 @@
 package tk.hiddenname.smarthome.controller.device;
 
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tk.hiddenname.smarthome.entity.hardware.Device;
@@ -22,12 +20,11 @@ import java.util.List;
 @AllArgsConstructor
 public class DeviceRestController {
 
-    private static final Logger log = LoggerFactory.getLogger(DeviceRestController.class);
-
     private final DeviceDatabaseService dbService;
     // Gpio creator
     private final DeviceManager manager;
 
+    @SuppressWarnings("DuplicatedCode")
     @GetMapping(value = {"/all"}, produces = {"application/json"})
     public List<Device> getAll(@RequestParam(name = "type", defaultValue = "", required = false) String t,
                                @RequestParam(name = "areaId", defaultValue = "-1", required = false) Integer areaId)

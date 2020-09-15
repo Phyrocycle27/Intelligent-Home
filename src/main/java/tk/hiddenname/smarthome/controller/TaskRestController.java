@@ -1,8 +1,6 @@
 package tk.hiddenname.smarthome.controller;
 
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tk.hiddenname.smarthome.entity.task.Task;
@@ -17,8 +15,6 @@ import java.util.List;
 @RequestMapping(value = {"/tasks"})
 @AllArgsConstructor
 public class TaskRestController {
-
-    private static final Logger log = LoggerFactory.getLogger(TaskRestController.class);
 
     private final TaskRepository repo;
     private final TaskManager manager;

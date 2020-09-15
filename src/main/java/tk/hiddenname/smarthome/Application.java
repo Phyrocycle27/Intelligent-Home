@@ -1,8 +1,6 @@
 package tk.hiddenname.smarthome;
 
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -15,7 +13,7 @@ import tk.hiddenname.smarthome.utils.gpio.GpioManager;
 @SpringBootApplication
 public class Application {
 
-    private static final Logger log = LoggerFactory.getLogger(Application.class);
+
     private static final String HOST = "87.255.8.24";
     private static final int PORT = 3141;
 

@@ -95,6 +95,7 @@ public class ChangeDigitalSignalListener implements Listener {
         }
     }
 
+    @SuppressWarnings("BusyWait")
     private class DelayCounterThread extends Thread {
 
         private int delay;
@@ -113,6 +114,7 @@ public class ChangeDigitalSignalListener implements Listener {
         public void run() {
             while (status && delay > 0) {
                 try {
+                    //noinspection BusyWait
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     log.error(e.getMessage());

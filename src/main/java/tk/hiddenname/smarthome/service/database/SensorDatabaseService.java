@@ -1,8 +1,6 @@
 package tk.hiddenname.smarthome.service.database;
 
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -16,8 +14,6 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class SensorDatabaseService {
-
-    private static final Logger log = LoggerFactory.getLogger(SensorDatabaseService.class);
 
     private final SensorRepository repo;
 

@@ -23,6 +23,7 @@ public class GPIO {
     @Enumerated(EnumType.STRING)
     private SignalType type;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
-    private GPIOMode mode = GPIOMode.OUTPUT;
+    private GPIOMode mode;
 }

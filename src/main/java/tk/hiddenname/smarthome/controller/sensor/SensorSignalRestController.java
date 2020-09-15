@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import tk.hiddenname.smarthome.entity.hardware.Sensor;
 import tk.hiddenname.smarthome.entity.signal.DigitalState;
 import tk.hiddenname.smarthome.service.database.SensorDatabaseService;
-import tk.hiddenname.smarthome.service.hardware.impl.digital.input.DigitalSensorServiceImpl;
+import tk.hiddenname.smarthome.service.hardware.impl.digital.input.DigitalSensorService;
 
 import javax.validation.Valid;
 
@@ -19,7 +19,7 @@ public class SensorSignalRestController {
 
     private final SensorDatabaseService dbService;
     // services
-    private final DigitalSensorServiceImpl digitalService;
+    private final DigitalSensorService digitalService;
 
     // ***************************** DIGITAL **************************************************
 
