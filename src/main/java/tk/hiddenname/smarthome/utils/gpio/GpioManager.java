@@ -4,10 +4,12 @@ import com.pi4j.io.gpio.*;
 import com.pi4j.wiringpi.Gpio;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
+import tk.hiddenname.smarthome.entity.hardware.AvailableGpioPins;
 import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
+import tk.hiddenname.smarthome.exception.UnsupportedSignalTypeException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -204,7 +206,7 @@ public class GpioManager {
         return pin;
     }
 
-    public Set<Integer> getAvailableGpioPins(SignalType type) {
+    public AvailableGpioPins getAvailableGpioPins(SignalType type) {
         Set<Integer> available = new HashSet<>();
         Set<Integer> busy;
 
@@ -213,14 +215,14 @@ public class GpioManager {
         } else if (type == SignalType.PWM) {
             busy = pwmGPIO;
         } else {
-            throw new SignalTypeNotFoundException(type.name());
+            throw new UnsupportedSignalTypeException(type);
         }
 
         for (Integer gpioPin : busy) {
             if (usedGPIO.contains(gpioPin)) continue;
             available.add(gpioPin);
         }
-        return available;
+        return new AvailableGpioPins(available);
     }
 
     public void shutdown() {
