@@ -3,7 +3,10 @@ package tk.hiddenname.smarthome.entity.hardware;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import tk.hiddenname.smarthome.entity.Area;
 
 import javax.persistence.*;
