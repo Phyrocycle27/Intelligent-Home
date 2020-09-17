@@ -33,6 +33,10 @@ public class Device {
     @Column(nullable = false, length = 25)
     private String name;
 
+    @Size(min = 3, max = 200)
+    @Column(nullable = false, length = 25)
+    private String description;
+
     @Column(nullable = false)
     private boolean reverse = false;
 
@@ -48,7 +52,6 @@ public class Device {
             @AttributeOverride(name = "mode", column = @Column(nullable = false, updatable = false))
     })
     private GPIO gpio;
-
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_area")

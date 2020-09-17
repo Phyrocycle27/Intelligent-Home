@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import tk.hiddenname.smarthome.entity.Area;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data
@@ -26,16 +28,23 @@ public class Sensor {
     @Column(updatable = false, nullable = false)
     private Integer id;
 
-    @Column(nullable = false)
+    @NotNull
+    @Size(min = 3, max = 25)
+    @Column(nullable = false, length = 25)
     private String name;
 
+    @Size(min = 3, max = 200)
+    @Column(nullable = false, length = 25)
+    private String description;
+
     @Column(nullable = false)
-    private Boolean reverse;
+    private boolean reverse = false;
 
     @Column(updatable = false, nullable = false, name = "creation_date")
     @JsonFormat(shape = JsonFormat.Shape.OBJECT, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime creationDate;
 
+    @NotNull
     @Embedded
     @AttributeOverrides(value = {
             @AttributeOverride(name = "type", column = @Column(nullable = false, updatable = false)),
@@ -45,6 +54,6 @@ public class Sensor {
     private GPIO gpio;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_order")
+    @JoinColumn(name = "fk_area")
     private Area area;
 }
