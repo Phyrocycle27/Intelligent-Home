@@ -13,6 +13,7 @@ import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,6 +33,10 @@ public class Task {
 
     @Column(nullable = false)
     private String name;
+
+    @Size(min = 3, max = 50)
+    @Column(nullable = false, length = 50)
+    private String description;
 
     @NotNull
     @JoinTable(

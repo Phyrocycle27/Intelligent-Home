@@ -26,4 +26,9 @@ public class Area {
     @Size(min = 3, max = 25)
     @Column(nullable = false, length = 25)
     private String name;
+
+    @NotNull
+    @Size(min = 3, max = 50)
+    @Column(nullable = false, length = 50)
+    private String description;
 }

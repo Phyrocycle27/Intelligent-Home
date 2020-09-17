@@ -33,8 +33,8 @@ public class Sensor {
     @Column(nullable = false, length = 25)
     private String name;
 
-    @Size(min = 3, max = 200)
-    @Column(nullable = false, length = 25)
+    @Size(min = 3, max = 50)
+    @Column(nullable = false, length = 50)
     private String description;
 
     @Column(nullable = false)
