@@ -10,7 +10,7 @@ import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
-import tk.hiddenname.smarthome.repository.SensorRepository;
+import tk.hiddenname.smarthome.service.database.SensorDatabaseService;
 import tk.hiddenname.smarthome.service.hardware.impl.GPIOService;
 import tk.hiddenname.smarthome.service.hardware.impl.digital.input.DigitalSensorServiceImpl;
 
@@ -21,7 +21,7 @@ public class SensorManager {
     private static final Logger log = LoggerFactory.getLogger(SensorManager.class);
 
     private final DigitalSensorServiceImpl digitalService;
-    private final SensorRepository sensorRepo;
+    private final SensorDatabaseService service;
 
     public void create(Sensor sensor) throws PinSignalSupportException, GPIOBusyException {
         log.debug("Creating device " + sensor.toString());
@@ -29,7 +29,7 @@ public class SensorManager {
         getService(gpio.getType()).save(
                 sensor.getId(),
                 gpio.getGpio(),
-                sensor.getReverse()
+                sensor.isReverse()
         );
     }
 
@@ -42,7 +42,7 @@ public class SensorManager {
     }
 
     public void loadSensors() {
-        for (Sensor sensor : sensorRepo.findAll()) {
+        for (Sensor sensor : service.getAll()) {
             try {
                 create(sensor);
             } catch (PinSignalSupportException | GPIOBusyException e) {

@@ -9,9 +9,8 @@ import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entity.hardware.Device;
 import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
 import tk.hiddenname.smarthome.entity.task.processing.objects.SetPwmSignalObject;
-import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
 import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException;
-import tk.hiddenname.smarthome.repository.DeviceRepository;
+import tk.hiddenname.smarthome.service.database.DeviceDatabaseService;
 import tk.hiddenname.smarthome.service.hardware.impl.pwm.output.PwmDeviceService;
 import tk.hiddenname.smarthome.service.task.impl.processor.Processor;
 
@@ -25,18 +24,14 @@ public class SetPwmSignalProcessor implements Processor {
     @NonNull
     private final PwmDeviceService service;
     @NonNull
-    private final DeviceRepository repository;
+    private final DeviceDatabaseService dbService;
 
     private SetPwmSignalObject object;
 
     @Override
     public void process() {
         new Thread(() -> {
-            Device device = repository.findById(object.getDeviceId()).orElseThrow(() -> {
-                DeviceNotFoundException e = new DeviceNotFoundException(object.getDeviceId());
-                log.warn(e.getMessage());
-                return e;
-            });
+            Device device = dbService.getOne(object.getDeviceId());
 
             int currSignal = service.getSignal(device.getId(), device.isReverse()).getPwmSignal();
             if (currSignal != object.getTargetSignal()) {

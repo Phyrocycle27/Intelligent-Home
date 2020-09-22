@@ -11,10 +11,9 @@ import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entity.hardware.Sensor;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.ChangeDigitalSignalObject;
 import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
-import tk.hiddenname.smarthome.exception.SensorNotFoundException;
 import tk.hiddenname.smarthome.exception.TriggerNotFoundException;
 import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException;
-import tk.hiddenname.smarthome.repository.SensorRepository;
+import tk.hiddenname.smarthome.service.database.SensorDatabaseService;
 import tk.hiddenname.smarthome.service.hardware.impl.digital.input.DigitalSensorService;
 import tk.hiddenname.smarthome.service.task.impl.listener.EventListener;
 import tk.hiddenname.smarthome.service.task.impl.listener.Listener;
@@ -30,7 +29,7 @@ public class ChangeDigitalSignalListener implements Listener {
     private final EventListener listener;
 
     private DigitalSensorService service;
-    private SensorRepository repository;
+    private SensorDatabaseService dbService;
 
     private ChangeDigitalSignalObject object;
     private GpioPinListenerDigital gpioListener;
@@ -42,18 +41,17 @@ public class ChangeDigitalSignalListener implements Listener {
     }
 
     @Autowired
-    public void setRepository(SensorRepository repository) {
-        this.repository = repository;
+    public void setDbService(SensorDatabaseService dbService) {
+        this.dbService = dbService;
     }
 
     @Override
     public void register(TriggerObject object) throws UnsupportedTriggerObjectTypeException {
         if (object instanceof ChangeDigitalSignalObject) {
             this.object = (ChangeDigitalSignalObject) object;
-            Sensor sensor = repository.findById(this.object.getSensorId())
-                    .orElseThrow(() -> new SensorNotFoundException(object.getId()));
+            Sensor sensor = dbService.getOne(this.object.getSensorId());
             gpioListener = service.addListener(this, sensor.getId(), this.object.isTargetState(),
-                    sensor.getReverse());
+                    sensor.isReverse());
         } else {
             throw new UnsupportedTriggerObjectTypeException(object.getClass().getSimpleName());
         }

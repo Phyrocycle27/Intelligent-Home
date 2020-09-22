@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.entity.task.Task;
 import tk.hiddenname.smarthome.exception.*;
-import tk.hiddenname.smarthome.repository.TaskRepository;
+import tk.hiddenname.smarthome.service.database.TaskDatabaseService;
 import tk.hiddenname.smarthome.service.task.impl.TaskObject;
 
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class TaskManager {
     private final Map<Integer, TaskObject> tasks = new HashMap<>();
 
     private final ApplicationContext context;
-    private final TaskRepository repo;
+    private final TaskDatabaseService service;
 
     public void addTask(Task task) throws TriggerExistsException, UnsupportedTriggerObjectTypeException, NoSuchListenerException,
             NoSuchProcessorException, ProcessorExistsException, UnsupportedProcessingObjectTypeException {
@@ -40,7 +40,7 @@ public class TaskManager {
     }
 
     public void loadTasks() {
-        for (Task task : repo.findAll()) {
+        for (Task task : service.getAll()) {
             try {
                 addTask(task);
             } catch (TriggerExistsException | UnsupportedTriggerObjectTypeException | NoSuchListenerException
