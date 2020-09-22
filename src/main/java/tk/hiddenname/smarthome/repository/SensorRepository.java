@@ -12,7 +12,7 @@ public interface SensorRepository extends JpaRepository<Sensor, Integer> {
 
     List<Sensor> findAllByGpio_Type(SignalType type);
 
-    List<Sensor> findAllByArea_Id(Integer id);
+    List<Sensor> findAllByAreaId(Integer id);
 
-    List<Sensor> findAllByGpio_TypeAndArea_Id(SignalType type, Integer areaId);
+    List<Sensor> findAllByGpio_TypeAndAreaId(SignalType type, Integer areaId);
 }

@@ -26,11 +26,11 @@ public class DeviceDatabaseService {
     }
 
     public List<Device> getAllByAreaId(Integer areaId) {
-        return repo.findAllByArea_Id(areaId);
+        return repo.findAllByAreaId(areaId);
     }
 
     public List<Device> getAllBySignalTypeAndAreaId(SignalType type, Integer areaId) {
-        return repo.findAllByGpio_TypeAndArea_Id(type, areaId);
+        return repo.findAllByGpio_TypeAndAreaId(type, areaId);
     }
 
     public Device getOne(Integer id) throws DeviceNotFoundException {

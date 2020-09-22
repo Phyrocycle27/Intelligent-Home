@@ -26,11 +26,11 @@ public class SensorDatabaseService {
     }
 
     public List<Sensor> getAllByAreaId(Integer areaId) {
-        return repo.findAllByArea_Id(areaId);
+        return repo.findAllByAreaId(areaId);
     }
 
     public List<Sensor> getAllBySignalTypeAndAreaId(SignalType type, Integer areaId) {
-        return repo.findAllByGpio_TypeAndArea_Id(type, areaId);
+        return repo.findAllByGpio_TypeAndAreaId(type, areaId);
     }
 
     public Sensor getOne(Integer id) throws SensorNotFoundException {

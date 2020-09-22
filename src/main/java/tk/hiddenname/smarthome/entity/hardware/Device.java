@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import tk.hiddenname.smarthome.entity.Area;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -40,6 +39,9 @@ public class Device {
     @Column(nullable = false)
     private boolean reverse = false;
 
+    @Column(nullable = false)
+    private int areaId;
+
     @Column(nullable = false, updatable = false, name = "creation_date")
     @JsonFormat(shape = JsonFormat.Shape.OBJECT, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime creationDate;
@@ -52,8 +54,4 @@ public class Device {
             @AttributeOverride(name = "mode", column = @Column(nullable = false, updatable = false))
     })
     private GPIO gpio;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fk_area")
-    private Area area;
 }
