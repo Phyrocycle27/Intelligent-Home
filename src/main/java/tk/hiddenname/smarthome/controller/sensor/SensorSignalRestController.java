@@ -27,6 +27,6 @@ public class SensorSignalRestController {
     public DigitalState getState(@Valid @RequestParam(name = "id") Integer id) {
         Sensor sensor = dbService.getOne(id);
 
-        return digitalService.getState(sensor.getId(), sensor.getReverse());
+        return digitalService.getState(sensor.getId(), sensor.isReverse());
     }
 }
