@@ -33,7 +33,7 @@ public class Device {
     private String name;
 
     @Size(min = 3, max = 50)
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String description;
 
     @Column(nullable = false)
