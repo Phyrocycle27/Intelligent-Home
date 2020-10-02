@@ -18,4 +18,7 @@ public class AreaDatabaseService {
         return repo.findAll(Sort.by("id"));
     }
 
+    public Area create(Area newArea) {
+        return repo.save(newArea);
+    }
 }
