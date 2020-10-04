@@ -21,4 +21,8 @@ public class AreaDatabaseService {
     public Area create(Area newArea) {
         return repo.save(newArea);
     }
+
+    public void delete(Integer id) {
+        repo.deleteById(id);
+    }
 }

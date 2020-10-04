@@ -2,6 +2,7 @@ package tk.hiddenname.smarthome.controller;
 
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tk.hiddenname.smarthome.entity.Area;
 import tk.hiddenname.smarthome.service.database.AreaDatabaseService;
@@ -24,5 +25,12 @@ public class AreaRestController {
     @PostMapping(value = {"/create"}, produces = {"application/json"})
     public Area create(@Valid @RequestBody Area newArea) {
         return dbService.create(newArea);
+    }
+
+    @DeleteMapping(value = {"/one/{id}"})
+    public ResponseEntity<?> delete(@PathVariable(name = "id") Integer id) {
+        dbService.delete(id);
+
+        return ResponseEntity.noContent().build();
     }
 }
