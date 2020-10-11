@@ -5,7 +5,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import tk.hiddenname.smarthome.exception.NoSuchProcessorException;
 import tk.hiddenname.smarthome.exception.UnsupportedProcessingObjectTypeException;
-import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException;
 import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject;
 import tk.hiddenname.smarthome.service.task.impl.processor.impl.SetDigitalSignalProcessor;
 import tk.hiddenname.smarthome.service.task.impl.processor.impl.SetPwmSignalProcessor;
@@ -17,7 +16,7 @@ public class ProcessorFactory {
     private final ApplicationContext ctx;
 
     public Processor create(ProcessingObject object) throws NoSuchProcessorException,
-            UnsupportedTriggerObjectTypeException, UnsupportedProcessingObjectTypeException {
+            UnsupportedProcessingObjectTypeException {
 
         Processor processor;
 

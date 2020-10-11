@@ -3,6 +3,7 @@ package tk.hiddenname.smarthome.service.task.impl.listener.impl;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class ChangeDigitalSignalListener implements Listener {
     }
 
     @Override
-    public void register(TriggerObject object) throws UnsupportedTriggerObjectTypeException {
+    public void register(@NotNull TriggerObject object) throws UnsupportedTriggerObjectTypeException {
         if (object instanceof ChangeDigitalSignalObject) {
             this.object = (ChangeDigitalSignalObject) object;
             Sensor sensor = dbService.getOne(this.object.getSensorId());
@@ -58,7 +59,7 @@ public class ChangeDigitalSignalListener implements Listener {
     }
 
     @Override
-    public void update(TriggerObject object) throws UnsupportedTriggerObjectTypeException {
+    public void update(@NotNull TriggerObject object) throws UnsupportedTriggerObjectTypeException {
         unregister();
         register(object);
     }

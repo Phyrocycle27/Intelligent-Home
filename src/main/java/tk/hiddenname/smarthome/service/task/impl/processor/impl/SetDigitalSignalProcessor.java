@@ -2,6 +2,7 @@ package tk.hiddenname.smarthome.service.task.impl.processor.impl;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -60,7 +61,7 @@ public class SetDigitalSignalProcessor implements Processor {
     }
 
     @Override
-    public void register(ProcessingObject object) throws UnsupportedProcessingObjectTypeException {
+    public void register(@NotNull ProcessingObject object) throws UnsupportedProcessingObjectTypeException {
         if (object instanceof SetDigitalSignalObject) {
             this.object = (SetDigitalSignalObject) object;
         } else {

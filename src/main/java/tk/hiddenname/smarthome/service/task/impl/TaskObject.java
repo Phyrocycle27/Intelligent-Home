@@ -71,13 +71,13 @@ public class TaskObject {
     }
 
     public void registerProcessors(Set<ProcessingObject> processingObjects) throws NoSuchProcessorException,
-            UnsupportedTriggerObjectTypeException, ProcessorExistsException, UnsupportedProcessingObjectTypeException {
+            ProcessorExistsException, UnsupportedProcessingObjectTypeException {
 
         processor.registerProcessors(processingObjects);
     }
 
     public void registerProcessor(ProcessingObject object) throws NoSuchProcessorException,
-            UnsupportedTriggerObjectTypeException, ProcessorExistsException, UnsupportedProcessingObjectTypeException {
+            ProcessorExistsException, UnsupportedProcessingObjectTypeException {
 
         processor.registerProcessor(object);
     }

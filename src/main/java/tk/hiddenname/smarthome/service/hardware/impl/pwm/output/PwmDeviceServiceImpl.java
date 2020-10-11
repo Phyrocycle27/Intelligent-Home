@@ -2,6 +2,7 @@ package tk.hiddenname.smarthome.service.hardware.impl.pwm.output;
 
 import com.pi4j.io.gpio.GpioPinPwmOutput;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
@@ -22,36 +23,38 @@ public class PwmDeviceServiceImpl implements PwmDeviceService {
     private final GpioManager gpioManager;
 
     @Override
-    public void delete(Long id) {
+    public void delete(long id) {
         controller.setSignal(map.get(id), 0);
         gpioManager.deletePin(map.get(id));
         map.remove(id);
     }
 
     @Override
-    public void save(Long id, int gpioPin, boolean reverse)
+    public void save(long id, int gpioPin, boolean reverse)
             throws GPIOBusyException, PinSignalSupportException {
         map.put(id, gpioManager.createPwmOutput(gpioPin, reverse));
     }
 
     @Override
-    public void update(Long id, boolean reverse) {
+    public void update(long id, boolean reverse) {
         setSignal(id, reverse, getSignal(id, reverse).getPwmSignal());
     }
 
+    @NotNull
     @Override
-    public PwmSignal getSignal(Long id, boolean reverse) {
+    public PwmSignal getSignal(long id, boolean reverse) {
         int signal = getPin(id).getPwm();
         return new PwmSignal(id, reverse ? gpioManager.getPwmRange() - signal : signal);
     }
 
+    @NotNull
     @Override
-    public PwmSignal setSignal(Long id, boolean reverse, int newSignal) {
+    public PwmSignal setSignal(long id, boolean reverse, int newSignal) {
         int currSignal = controller.setSignal(getPin(id), reverse ? gpioManager.getPwmRange() - newSignal : newSignal);
         return new PwmSignal(id, reverse ? gpioManager.getPwmRange() - currSignal : currSignal);
     }
 
-    private GpioPinPwmOutput getPin(Long id) {
+    private GpioPinPwmOutput getPin(long id) {
         GpioPinPwmOutput pin = map.getOrDefault(id, null);
 
         if (pin == null) {

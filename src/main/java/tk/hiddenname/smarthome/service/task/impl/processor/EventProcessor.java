@@ -5,7 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import tk.hiddenname.smarthome.exception.*;
+import tk.hiddenname.smarthome.exception.NoSuchProcessorException;
+import tk.hiddenname.smarthome.exception.ProcessorExistsException;
+import tk.hiddenname.smarthome.exception.ProcessorNotFoundException;
+import tk.hiddenname.smarthome.exception.UnsupportedProcessingObjectTypeException;
 import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject;
 
 import java.util.HashMap;
@@ -23,7 +26,7 @@ public class EventProcessor {
     private final ProcessorFactory processorFactory;
 
     public void registerProcessors(Set<ProcessingObject> objects) throws NoSuchProcessorException,
-            UnsupportedTriggerObjectTypeException, ProcessorExistsException, UnsupportedProcessingObjectTypeException {
+            ProcessorExistsException, UnsupportedProcessingObjectTypeException {
 
         for (ProcessingObject object : objects) {
             registerProcessor(object);
@@ -31,7 +34,7 @@ public class EventProcessor {
     }
 
     public void registerProcessor(ProcessingObject object) throws NoSuchProcessorException,
-            UnsupportedTriggerObjectTypeException, ProcessorExistsException, UnsupportedProcessingObjectTypeException {
+            ProcessorExistsException, UnsupportedProcessingObjectTypeException {
 
         if (!processors.containsKey(object.getId())) {
             processors.put(object.getId(), processorFactory.create(object));

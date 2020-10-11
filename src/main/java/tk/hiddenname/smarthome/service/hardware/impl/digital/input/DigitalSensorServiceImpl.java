@@ -3,6 +3,7 @@ package tk.hiddenname.smarthome.service.hardware.impl.digital.input;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
@@ -22,24 +23,25 @@ public class DigitalSensorServiceImpl implements DigitalSensorService {
     private final GpioManager gpioManager;
 
     @Override
-    public void delete(Long id) {
+    public void delete(long id) {
         gpioManager.deletePin(map.get(id));
         map.remove(id);
     }
 
     @Override
-    public void save(Long id, int gpioPin, boolean reverse)
+    public void save(long id, int gpioPin, boolean reverse)
             throws GPIOBusyException, PinSignalSupportException {
 
         map.put(id, gpioManager.createDigitalInput(gpioPin));
     }
 
     @Override
-    public void update(Long id, boolean reverse) {
+    public void update(long id, boolean reverse) {
     }
 
+    @NotNull
     @Override
-    public DigitalState getState(Long id, boolean reverse) {
+    public DigitalState getState(long id, boolean reverse) {
         GpioPinDigitalInput pin = map.getOrDefault(id, null);
 
         if (pin == null) {
@@ -49,8 +51,9 @@ public class DigitalSensorServiceImpl implements DigitalSensorService {
     }
 
 
+    @NotNull
     @Override
-    public GpioPinListenerDigital addListener(Listener listener, Long sensorId,
+    public GpioPinListenerDigital addListener(@NotNull Listener listener, long sensorId,
                                               boolean targetSignal, boolean reverse) {
 
         GpioPinDigitalInput pin = map.getOrDefault(sensorId, null);
@@ -66,7 +69,7 @@ public class DigitalSensorServiceImpl implements DigitalSensorService {
     }
 
     @Override
-    public void removeListener(GpioPinListenerDigital listener, Long sensorId) {
+    public void removeListener(@NotNull GpioPinListenerDigital listener, long sensorId) {
         GpioPinDigitalInput pin = map.getOrDefault(sensorId, null);
 
         if (pin != null) {

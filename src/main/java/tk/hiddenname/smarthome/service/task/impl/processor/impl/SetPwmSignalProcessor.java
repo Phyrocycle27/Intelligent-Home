@@ -2,11 +2,12 @@ package tk.hiddenname.smarthome.service.task.impl.processor.impl;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException;
+import tk.hiddenname.smarthome.exception.UnsupportedProcessingObjectTypeException;
 import tk.hiddenname.smarthome.model.hardware.Device;
 import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject;
 import tk.hiddenname.smarthome.model.task.processing.objects.SetPwmSignalObject;
@@ -60,11 +61,11 @@ public class SetPwmSignalProcessor implements Processor {
     }
 
     @Override
-    public void register(ProcessingObject object) throws UnsupportedTriggerObjectTypeException {
+    public void register(@NotNull ProcessingObject object) throws UnsupportedProcessingObjectTypeException {
         if (object instanceof SetPwmSignalObject) {
             this.object = (SetPwmSignalObject) object;
         } else {
-            throw new UnsupportedTriggerObjectTypeException(object.getClass().getSimpleName());
+            throw new UnsupportedProcessingObjectTypeException(object.getClass().getSimpleName());
         }
     }
 }
