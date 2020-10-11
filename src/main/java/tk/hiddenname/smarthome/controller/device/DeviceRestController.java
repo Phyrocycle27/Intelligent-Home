@@ -56,7 +56,6 @@ public class DeviceRestController {
         newDevice = dbService.create(newDevice);
         manager.create(newDevice);
 
-
         return newDevice;
     }
 
