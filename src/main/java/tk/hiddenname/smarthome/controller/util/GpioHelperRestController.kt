@@ -1,23 +1,19 @@
-package tk.hiddenname.smarthome.controller.util;
+package tk.hiddenname.smarthome.controller.util
 
-import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import tk.hiddenname.smarthome.model.hardware.AvailableGpioPins;
-import tk.hiddenname.smarthome.model.signal.SignalTypeKt;
-import tk.hiddenname.smarthome.utils.gpio.GpioManager;
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
+import tk.hiddenname.smarthome.model.hardware.AvailableGpioPins
+import tk.hiddenname.smarthome.model.signal.getSignalType
+import tk.hiddenname.smarthome.utils.gpio.GpioManager
 
 @RestController
-@RequestMapping(value = {"/util/gpio"})
-@AllArgsConstructor
-public class GpioHelperRestController {
+@RequestMapping(value = ["/util/gpio"])
+class GpioHelperRestController(private val gpioManager: GpioManager) {
 
-    private final GpioManager gpioManager;
-
-    @GetMapping(value = {"/available"}, produces = {"application/json"})
-    public AvailableGpioPins getAvailableGpioPins(@RequestParam(name = "type") String t) {
-        return gpioManager.getAvailableGpioPins(SignalTypeKt.getSignalType(t));
+    @GetMapping(value = ["/available"], produces = ["application/json"])
+    fun getAvailableGpioPins(@RequestParam(name = "type") t: String): AvailableGpioPins {
+        return gpioManager.getAvailableGpioPins(getSignalType(t))
     }
 }

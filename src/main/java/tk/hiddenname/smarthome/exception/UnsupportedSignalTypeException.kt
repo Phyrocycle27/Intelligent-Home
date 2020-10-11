@@ -1,14 +1,9 @@
-package tk.hiddenname.smarthome.exception;
+package tk.hiddenname.smarthome.exception
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import tk.hiddenname.smarthome.model.signal.SignalType;
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
+import tk.hiddenname.smarthome.model.signal.SignalType
 
 @ResponseStatus(value = HttpStatus.CONFLICT)
-public class UnsupportedSignalTypeException extends RuntimeException {
-
-    public UnsupportedSignalTypeException(SignalType type) {
-        super(String.format("Signal type \"%s\" exists but not supported by your current device's configuration",
-                type.toString()));
-    }
-}
+class UnsupportedSignalTypeException(type: SignalType) :
+        RuntimeException("Signal type \"$type\" exists but not supported by your current device's configuration")

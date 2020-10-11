@@ -1,12 +1,7 @@
-package tk.hiddenname.smarthome.exception;
+package tk.hiddenname.smarthome.exception
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(value = HttpStatus.CONFLICT)
-public class ProcessorExistsException extends Exception {
-
-    public ProcessorExistsException(int id) {
-        super(String.format("Processor with id '%d' has been already existed", id));
-    }
-}
+class ProcessorExistsException(id: Int) : Exception("Processor with id '$id' has been already existed")

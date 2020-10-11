@@ -25,11 +25,11 @@ public class DeviceDatabaseService {
         return repo.findAllByGpioType(type);
     }
 
-    public List<Device> getAllByAreaId(Integer areaId) {
+    public List<Device> getAllByAreaId(Long areaId) {
         return repo.findAllByAreaId(areaId);
     }
 
-    public List<Device> getAllBySignalTypeAndAreaId(SignalType type, Integer areaId) {
+    public List<Device> getAllBySignalTypeAndAreaId(SignalType type, Long areaId) {
         return repo.findAllByGpioTypeAndAreaId(type, areaId);
     }
 

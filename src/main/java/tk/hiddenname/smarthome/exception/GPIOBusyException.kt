@@ -1,12 +1,7 @@
-package tk.hiddenname.smarthome.exception;
+package tk.hiddenname.smarthome.exception
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(value = HttpStatus.CONFLICT)
-public class GPIOBusyException extends Exception {
-
-    public GPIOBusyException(int gpio) {
-        super(String.format("The GPIO '%d' has been already busied", gpio));
-    }
-}
+class GPIOBusyException(gpioPin: Int) : Exception("The GPIO pin '$gpioPin' has been already busied")

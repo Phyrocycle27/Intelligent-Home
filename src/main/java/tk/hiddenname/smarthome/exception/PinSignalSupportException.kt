@@ -1,12 +1,7 @@
-package tk.hiddenname.smarthome.exception;
+package tk.hiddenname.smarthome.exception
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(value = HttpStatus.CONFLICT)
-public class PinSignalSupportException extends Exception {
-
-    public PinSignalSupportException(int gpio) {
-        super(String.format("GPIO '%d' doesn't support this type of signal", gpio));
-    }
-}
+class PinSignalSupportException(gpioPin: Int) : Exception("GPIO pin '$gpioPin' doesn't support this type of signal")

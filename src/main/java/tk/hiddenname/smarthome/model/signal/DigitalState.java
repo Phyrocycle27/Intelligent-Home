@@ -13,8 +13,9 @@ import javax.validation.constraints.NotNull;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class DigitalState extends Signal {
 
-    @NotNull
+
     @Getter
+    @NotNull
     private final boolean digitalState;
 
     public DigitalState(Long id, boolean digitalState) {
