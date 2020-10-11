@@ -4,7 +4,7 @@ package tk.hiddenname.smarthome.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tk.hiddenname.smarthome.entity.Area;
+import tk.hiddenname.smarthome.model.Area;
 import tk.hiddenname.smarthome.service.database.AreaDatabaseService;
 
 import javax.validation.Valid;
@@ -28,7 +28,7 @@ public class AreaRestController {
     }
 
     @DeleteMapping(value = {"/one/{id}"})
-    public ResponseEntity<?> delete(@PathVariable(name = "id") Integer id) {
+    public ResponseEntity<?> delete(@PathVariable(name = "id") Long id) {
         dbService.delete(id);
 
         return ResponseEntity.noContent().build();

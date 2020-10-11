@@ -3,8 +3,8 @@ package tk.hiddenname.smarthome.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tk.hiddenname.smarthome.entity.task.Task;
 import tk.hiddenname.smarthome.exception.*;
+import tk.hiddenname.smarthome.model.task.Task;
 import tk.hiddenname.smarthome.service.database.TaskDatabaseService;
 import tk.hiddenname.smarthome.service.task.TaskManager;
 
@@ -34,7 +34,7 @@ public class TaskRestController {
     }
 
     @DeleteMapping(value = {"/one/delete/{id}"}, produces = {"application/json"})
-    public ResponseEntity<?> delete(@PathVariable Integer id) throws TaskNotFoundException {
+    public ResponseEntity<?> delete(@PathVariable Long id) throws TaskNotFoundException {
         manager.removeTask(id);
         service.delete(id);
 

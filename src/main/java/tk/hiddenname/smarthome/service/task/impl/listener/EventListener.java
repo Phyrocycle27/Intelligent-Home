@@ -7,11 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 import tk.hiddenname.smarthome.exception.NoSuchListenerException;
 import tk.hiddenname.smarthome.exception.TriggerExistsException;
 import tk.hiddenname.smarthome.exception.TriggerNotFoundException;
 import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException;
+import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject;
 import tk.hiddenname.smarthome.service.task.impl.TaskObject;
 
 import java.util.HashMap;

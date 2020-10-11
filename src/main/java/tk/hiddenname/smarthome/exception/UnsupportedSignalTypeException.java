@@ -2,7 +2,7 @@ package tk.hiddenname.smarthome.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import tk.hiddenname.smarthome.entity.signal.SignalType;
+import tk.hiddenname.smarthome.model.signal.SignalType;
 
 @ResponseStatus(value = HttpStatus.CONFLICT)
 public class UnsupportedSignalTypeException extends RuntimeException {

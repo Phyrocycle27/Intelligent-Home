@@ -6,10 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import tk.hiddenname.smarthome.entity.hardware.Device;
-import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
-import tk.hiddenname.smarthome.entity.task.processing.objects.SetPwmSignalObject;
 import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException;
+import tk.hiddenname.smarthome.model.hardware.Device;
+import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject;
+import tk.hiddenname.smarthome.model.task.processing.objects.SetPwmSignalObject;
 import tk.hiddenname.smarthome.service.database.DeviceDatabaseService;
 import tk.hiddenname.smarthome.service.hardware.impl.pwm.output.PwmDeviceService;
 import tk.hiddenname.smarthome.service.task.impl.processor.Processor;
@@ -37,7 +37,7 @@ public class SetPwmSignalProcessor implements Processor {
             if (currSignal != object.getTargetSignal()) {
                 log.info(String.format(" * Pwm signal (%d) will be set to device with id (%d) on GPIO " +
                                 "(%d) for (%d) seconds",
-                        object.getTargetSignal(), device.getId(), device.getGpio().getGpio(), object.getDelay()));
+                        object.getTargetSignal(), device.getId(), device.getGpio().getGpioPin(), object.getDelay()));
                 service.setSignal(device.getId(), device.isReverse(), object.getTargetSignal());
 
                 if (object.getDelay() > 0) {
@@ -49,12 +49,12 @@ public class SetPwmSignalProcessor implements Processor {
                     service.setSignal(device.getId(), device.isReverse(), currSignal);
                     log.info(String.format("* Processing complete! Pwm signal (%d) will be set to device " +
                                     "with id (%d) on GPIO (%d)",
-                            currSignal, device.getId(), device.getGpio().getGpio()));
+                            currSignal, device.getId(), device.getGpio().getGpioPin()));
                 }
             } else {
                 log.info(String.format(" * Pwm signal on device with id (%d) on gpio (%d) have been already " +
                                 "(%d). Nothing to change",
-                        device.getId(), device.getGpio().getGpio(), object.getTargetSignal()));
+                        device.getId(), device.getGpio().getGpioPin(), object.getTargetSignal()));
             }
         }).start();
     }

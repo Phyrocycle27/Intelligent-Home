@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import tk.hiddenname.smarthome.entity.hardware.GPIO;
-import tk.hiddenname.smarthome.entity.hardware.Sensor;
-import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
+import tk.hiddenname.smarthome.model.hardware.GPIO;
+import tk.hiddenname.smarthome.model.hardware.Sensor;
+import tk.hiddenname.smarthome.model.signal.SignalType;
 import tk.hiddenname.smarthome.service.database.SensorDatabaseService;
 import tk.hiddenname.smarthome.service.hardware.impl.GPIOService;
 import tk.hiddenname.smarthome.service.hardware.impl.digital.input.DigitalSensorServiceImpl;
@@ -28,7 +28,7 @@ public class SensorManager {
         GPIO gpio = sensor.getGpio();
         getService(gpio.getType()).save(
                 sensor.getId(),
-                gpio.getGpio(),
+                gpio.getGpioPin(),
                 sensor.isReverse()
         );
     }

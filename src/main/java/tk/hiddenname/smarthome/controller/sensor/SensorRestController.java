@@ -3,12 +3,12 @@ package tk.hiddenname.smarthome.controller.sensor;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tk.hiddenname.smarthome.entity.hardware.Sensor;
-import tk.hiddenname.smarthome.entity.signal.SignalType;
-import tk.hiddenname.smarthome.entity.signal.SignalTypeKt;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
+import tk.hiddenname.smarthome.model.hardware.Sensor;
+import tk.hiddenname.smarthome.model.signal.SignalType;
+import tk.hiddenname.smarthome.model.signal.SignalTypeKt;
 import tk.hiddenname.smarthome.service.database.SensorDatabaseService;
 import tk.hiddenname.smarthome.service.hardware.manager.SensorManager;
 
@@ -28,7 +28,7 @@ public class SensorRestController {
     @SuppressWarnings("DuplicatedCode")
     @GetMapping(value = {"/all"}, produces = {"application/json"})
     public List<Sensor> getAll(@RequestParam(name = "type", defaultValue = "", required = false) String t,
-                               @RequestParam(name = "areaId", defaultValue = "-1", required = false) Integer areaId)
+                               @RequestParam(name = "areaId", defaultValue = "-1", required = false) Long areaId)
             throws SignalTypeNotFoundException {
 
         if (t.isEmpty() && areaId == -1) {
@@ -45,7 +45,7 @@ public class SensorRestController {
     }
 
     @GetMapping(value = {"/one/{id}"}, produces = {"application/json"})
-    public Sensor getOne(@PathVariable Integer id) {
+    public Sensor getOne(@PathVariable Long id) {
         return dbService.getOne(id);
     }
 
@@ -61,12 +61,12 @@ public class SensorRestController {
     }
 
     @PutMapping(value = {"/one/{id}"}, produces = {"application/json"})
-    public Sensor update(@Valid @RequestBody Sensor newSensor, @PathVariable Integer id) {
+    public Sensor update(@Valid @RequestBody Sensor newSensor, @PathVariable Long id) {
         return dbService.update(id, newSensor);
     }
 
     @DeleteMapping(value = {"/one/{id}"}, produces = {"application/json"})
-    public ResponseEntity<?> delete(@PathVariable Integer id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         Sensor sensor = dbService.getOne(id);
         manager.delete(sensor);
         dbService.delete(id);

@@ -3,7 +3,7 @@ package tk.hiddenname.smarthome.service.database;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import tk.hiddenname.smarthome.entity.task.Task;
+import tk.hiddenname.smarthome.model.task.Task;
 import tk.hiddenname.smarthome.repository.TaskRepository;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class TaskDatabaseService {
         return repo.save(newTask);
     }
 
-    public void delete(Integer id) {
+    public void delete(Long id) {
         repo.deleteById(id);
     }
 }

@@ -5,10 +5,10 @@ import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 
 public interface GPIOService {
 
-    void delete(Integer id);
+    void delete(Long id);
 
-    void save(Integer id, Integer gpio, boolean reverse) throws GPIOBusyException,
+    void save(Long id, int gpioPin, boolean reverse) throws GPIOBusyException,
             PinSignalSupportException;
 
-    void update(Integer id, boolean reverse);
+    void update(Long id, boolean reverse);
 }

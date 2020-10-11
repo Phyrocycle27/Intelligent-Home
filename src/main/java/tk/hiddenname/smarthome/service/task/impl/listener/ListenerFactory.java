@@ -3,9 +3,9 @@ package tk.hiddenname.smarthome.service.task.impl.listener;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 import tk.hiddenname.smarthome.exception.NoSuchListenerException;
 import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException;
+import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject;
 import tk.hiddenname.smarthome.service.task.impl.listener.impl.ChangeDigitalSignalListener;
 
 import javax.validation.constraints.NotNull;

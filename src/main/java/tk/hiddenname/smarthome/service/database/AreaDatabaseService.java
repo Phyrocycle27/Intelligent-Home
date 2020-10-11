@@ -3,7 +3,7 @@ package tk.hiddenname.smarthome.service.database;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import tk.hiddenname.smarthome.entity.Area;
+import tk.hiddenname.smarthome.model.Area;
 import tk.hiddenname.smarthome.repository.AreaRepository;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class AreaDatabaseService {
         return repo.save(newArea);
     }
 
-    public void delete(Integer id) {
+    public void delete(Long id) {
         repo.deleteById(id);
     }
 }

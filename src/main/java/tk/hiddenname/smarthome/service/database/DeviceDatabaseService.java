@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import tk.hiddenname.smarthome.entity.hardware.Device;
-import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
+import tk.hiddenname.smarthome.model.hardware.Device;
+import tk.hiddenname.smarthome.model.signal.SignalType;
 import tk.hiddenname.smarthome.repository.DeviceRepository;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class DeviceDatabaseService {
     }
 
     public List<Device> getAllBySignalType(SignalType type) {
-        return repo.findAllByGpio_Type(type);
+        return repo.findAllByGpioType(type);
     }
 
     public List<Device> getAllByAreaId(Integer areaId) {
@@ -30,10 +30,10 @@ public class DeviceDatabaseService {
     }
 
     public List<Device> getAllBySignalTypeAndAreaId(SignalType type, Integer areaId) {
-        return repo.findAllByGpio_TypeAndAreaId(type, areaId);
+        return repo.findAllByGpioTypeAndAreaId(type, areaId);
     }
 
-    public Device getOne(Integer id) throws DeviceNotFoundException {
+    public Device getOne(Long id) throws DeviceNotFoundException {
         return repo.findById(id).orElseThrow(() -> new DeviceNotFoundException(id));
     }
 
@@ -41,7 +41,7 @@ public class DeviceDatabaseService {
         return repo.save(newDevice);
     }
 
-    public Device update(Integer id, Device newDevice) {
+    public Device update(Long id, Device newDevice) {
         return repo.findById(id)
                 .map(device -> {
                     BeanUtils.copyProperties(newDevice, device, "id", "creationDate", "gpio");
@@ -49,7 +49,7 @@ public class DeviceDatabaseService {
                 }).orElseThrow(() -> new DeviceNotFoundException(id));
     }
 
-    public void delete(Integer id) {
+    public void delete(Long id) {
         repo.deleteById(id);
     }
 }

@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import tk.hiddenname.smarthome.entity.hardware.AvailableGpioPins;
-import tk.hiddenname.smarthome.entity.signal.SignalTypeKt;
+import tk.hiddenname.smarthome.model.hardware.AvailableGpioPins;
+import tk.hiddenname.smarthome.model.signal.SignalTypeKt;
 import tk.hiddenname.smarthome.utils.gpio.GpioManager;
 
 @RestController

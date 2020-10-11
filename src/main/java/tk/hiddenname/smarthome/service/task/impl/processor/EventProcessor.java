@@ -5,8 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import tk.hiddenname.smarthome.entity.task.processing.objects.ProcessingObject;
 import tk.hiddenname.smarthome.exception.*;
+import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject;
 
 import java.util.HashMap;
 import java.util.Map;

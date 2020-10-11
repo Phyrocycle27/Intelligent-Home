@@ -1,7 +1,7 @@
 package tk.hiddenname.smarthome.service.task.impl.listener;
 
-import tk.hiddenname.smarthome.entity.task.trigger.objects.TriggerObject;
 import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException;
+import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject;
 
 public interface Listener {
 

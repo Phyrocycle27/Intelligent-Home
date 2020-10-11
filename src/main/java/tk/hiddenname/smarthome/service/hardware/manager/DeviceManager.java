@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import tk.hiddenname.smarthome.entity.hardware.Device;
-import tk.hiddenname.smarthome.entity.hardware.GPIO;
-import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
+import tk.hiddenname.smarthome.model.hardware.Device;
+import tk.hiddenname.smarthome.model.hardware.GPIO;
+import tk.hiddenname.smarthome.model.signal.SignalType;
 import tk.hiddenname.smarthome.service.database.DeviceDatabaseService;
 import tk.hiddenname.smarthome.service.hardware.impl.GPIOService;
 import tk.hiddenname.smarthome.service.hardware.impl.digital.output.DigitalDeviceServiceImpl;
@@ -30,7 +30,7 @@ public class DeviceManager {
         GPIO gpio = device.getGpio();
         getService(gpio.getType()).save(
                 device.getId(),
-                gpio.getGpio(),
+                gpio.getGpioPin(),
                 device.isReverse()
         );
     }

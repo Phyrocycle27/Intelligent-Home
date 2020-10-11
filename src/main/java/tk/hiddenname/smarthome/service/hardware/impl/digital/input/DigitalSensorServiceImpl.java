@@ -4,10 +4,10 @@ import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import tk.hiddenname.smarthome.entity.signal.DigitalState;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.SensorNotFoundException;
+import tk.hiddenname.smarthome.model.signal.DigitalState;
 import tk.hiddenname.smarthome.service.task.impl.listener.Listener;
 import tk.hiddenname.smarthome.utils.gpio.GpioManager;
 
@@ -18,28 +18,28 @@ import java.util.Map;
 @AllArgsConstructor
 public class DigitalSensorServiceImpl implements DigitalSensorService {
 
-    private final Map<Integer, GpioPinDigitalInput> map = new HashMap<>();
+    private final Map<Long, GpioPinDigitalInput> map = new HashMap<>();
     private final GpioManager gpioManager;
 
     @Override
-    public void delete(Integer id) {
+    public void delete(Long id) {
         gpioManager.deletePin(map.get(id));
         map.remove(id);
     }
 
     @Override
-    public void save(Integer id, Integer gpio, boolean reverse)
+    public void save(Long id, int gpioPin, boolean reverse)
             throws GPIOBusyException, PinSignalSupportException {
 
-        map.put(id, gpioManager.createDigitalInput(gpio));
+        map.put(id, gpioManager.createDigitalInput(gpioPin));
     }
 
     @Override
-    public void update(Integer id, boolean reverse) {
+    public void update(Long id, boolean reverse) {
     }
 
     @Override
-    public DigitalState getState(Integer id, Boolean reverse) {
+    public DigitalState getState(Long id, boolean reverse) {
         GpioPinDigitalInput pin = map.getOrDefault(id, null);
 
         if (pin == null) {
@@ -50,7 +50,7 @@ public class DigitalSensorServiceImpl implements DigitalSensorService {
 
 
     @Override
-    public GpioPinListenerDigital addListener(Listener listener, Integer sensorId,
+    public GpioPinListenerDigital addListener(Listener listener, Long sensorId,
                                               boolean targetSignal, boolean reverse) {
 
         GpioPinDigitalInput pin = map.getOrDefault(sensorId, null);
@@ -66,7 +66,7 @@ public class DigitalSensorServiceImpl implements DigitalSensorService {
     }
 
     @Override
-    public void removeListener(GpioPinListenerDigital listener, Integer sensorId) {
+    public void removeListener(GpioPinListenerDigital listener, Long sensorId) {
         GpioPinDigitalInput pin = map.getOrDefault(sensorId, null);
 
         if (pin != null) {

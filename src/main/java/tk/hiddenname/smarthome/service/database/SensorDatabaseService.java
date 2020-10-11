@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import tk.hiddenname.smarthome.entity.hardware.Sensor;
-import tk.hiddenname.smarthome.entity.signal.SignalType;
 import tk.hiddenname.smarthome.exception.SensorNotFoundException;
+import tk.hiddenname.smarthome.model.hardware.Sensor;
+import tk.hiddenname.smarthome.model.signal.SignalType;
 import tk.hiddenname.smarthome.repository.SensorRepository;
 
 import java.util.List;
@@ -22,18 +22,18 @@ public class SensorDatabaseService {
     }
 
     public List<Sensor> getAllBySignalType(SignalType type) {
-        return repo.findAllByGpio_Type(type);
+        return repo.findAllByGpioType(type);
     }
 
-    public List<Sensor> getAllByAreaId(Integer areaId) {
+    public List<Sensor> getAllByAreaId(Long areaId) {
         return repo.findAllByAreaId(areaId);
     }
 
-    public List<Sensor> getAllBySignalTypeAndAreaId(SignalType type, Integer areaId) {
-        return repo.findAllByGpio_TypeAndAreaId(type, areaId);
+    public List<Sensor> getAllBySignalTypeAndAreaId(SignalType type, Long areaId) {
+        return repo.findAllByGpioTypeAndAreaId(type, areaId);
     }
 
-    public Sensor getOne(Integer id) throws SensorNotFoundException {
+    public Sensor getOne(Long id) throws SensorNotFoundException {
         return repo.findById(id).orElseThrow(() -> new SensorNotFoundException(id));
     }
 
@@ -41,7 +41,7 @@ public class SensorDatabaseService {
         return repo.save(newDevice);
     }
 
-    public Sensor update(Integer id, Sensor newSensor) {
+    public Sensor update(Long id, Sensor newSensor) {
         return repo.findById(id)
                 .map(sensor -> {
                     BeanUtils.copyProperties(newSensor, sensor, "id", "creationDate", "gpio");
@@ -49,7 +49,7 @@ public class SensorDatabaseService {
                 }).orElseThrow(() -> new SensorNotFoundException(id));
     }
 
-    public void delete(Integer id) {
+    public void delete(Long id) {
         repo.deleteById(id);
     }
 }

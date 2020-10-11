@@ -3,12 +3,12 @@ package tk.hiddenname.smarthome.controller.device;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tk.hiddenname.smarthome.entity.hardware.Device;
-import tk.hiddenname.smarthome.entity.signal.SignalType;
-import tk.hiddenname.smarthome.entity.signal.SignalTypeKt;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
+import tk.hiddenname.smarthome.model.hardware.Device;
+import tk.hiddenname.smarthome.model.signal.SignalType;
+import tk.hiddenname.smarthome.model.signal.SignalTypeKt;
 import tk.hiddenname.smarthome.service.database.DeviceDatabaseService;
 import tk.hiddenname.smarthome.service.hardware.manager.DeviceManager;
 
@@ -45,7 +45,7 @@ public class DeviceRestController {
     }
 
     @GetMapping(value = {"/one/{id}"}, produces = {"application/json"})
-    public Device getOne(@PathVariable Integer id) {
+    public Device getOne(@PathVariable Long id) {
         return dbService.getOne(id);
     }
 
@@ -61,7 +61,7 @@ public class DeviceRestController {
     }
 
     @PutMapping(value = {"/one/{id}"}, produces = {"application/json"})
-    public Device update(@Valid @RequestBody Device newDevice, @PathVariable Integer id) {
+    public Device update(@Valid @RequestBody Device newDevice, @PathVariable Long id) {
         Device device = dbService.getOne(id);
         newDevice = dbService.update(id, newDevice);
 
@@ -73,7 +73,7 @@ public class DeviceRestController {
     }
 
     @DeleteMapping(value = {"/one/{id}"}, produces = {"application/json"})
-    public ResponseEntity<?> delete(@PathVariable Integer id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         Device device = dbService.getOne(id);
         manager.delete(device);
         dbService.delete(id);

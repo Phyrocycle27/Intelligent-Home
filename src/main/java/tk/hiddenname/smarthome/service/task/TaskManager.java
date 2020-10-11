@@ -5,8 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import tk.hiddenname.smarthome.entity.task.Task;
 import tk.hiddenname.smarthome.exception.*;
+import tk.hiddenname.smarthome.model.task.Task;
 import tk.hiddenname.smarthome.service.database.TaskDatabaseService;
 import tk.hiddenname.smarthome.service.task.impl.TaskObject;
 
@@ -19,7 +19,7 @@ public class TaskManager {
 
     private static final Logger log = LoggerFactory.getLogger(TaskManager.class);
 
-    private final Map<Integer, TaskObject> tasks = new HashMap<>();
+    private final Map<Long, TaskObject> tasks = new HashMap<>();
 
     private final ApplicationContext context;
     private final TaskDatabaseService service;
@@ -31,7 +31,7 @@ public class TaskManager {
         tasks.put(task.getId(), taskObject.register(task));
     }
 
-    public void removeTask(Integer taskId) throws TaskNotFoundException {
+    public void removeTask(Long taskId) throws TaskNotFoundException {
         if (tasks.containsKey(taskId)) {
             tasks.get(taskId).unregister();
         } else {
