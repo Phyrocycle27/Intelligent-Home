@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tk.hiddenname.smarthome.entity.hardware.AvailableGpioPins;
-import tk.hiddenname.smarthome.entity.signal.SignalType;
+import tk.hiddenname.smarthome.entity.signal.SignalTypeKt;
 import tk.hiddenname.smarthome.utils.gpio.GpioManager;
 
 @RestController
@@ -18,6 +18,6 @@ public class GpioHelperRestController {
 
     @GetMapping(value = {"/available"}, produces = {"application/json"})
     public AvailableGpioPins getAvailableGpioPins(@RequestParam(name = "type") String t) {
-        return gpioManager.getAvailableGpioPins(SignalType.getSignalType(t));
+        return gpioManager.getAvailableGpioPins(SignalTypeKt.getSignalType(t));
     }
 }

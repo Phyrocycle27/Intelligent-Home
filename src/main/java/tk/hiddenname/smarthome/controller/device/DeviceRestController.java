@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tk.hiddenname.smarthome.entity.hardware.Device;
 import tk.hiddenname.smarthome.entity.signal.SignalType;
+import tk.hiddenname.smarthome.entity.signal.SignalTypeKt;
 import tk.hiddenname.smarthome.exception.GPIOBusyException;
 import tk.hiddenname.smarthome.exception.PinSignalSupportException;
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException;
@@ -33,10 +34,10 @@ public class DeviceRestController {
         if (t.isEmpty() && areaId == -1) {
             return dbService.getAll();
         } else if (!t.isEmpty() && areaId != -1) {
-            SignalType type = SignalType.getSignalType(t);
+            SignalType type = SignalTypeKt.getSignalType(t);
             return dbService.getAllBySignalTypeAndAreaId(type, areaId);
         } else if (!t.isEmpty()) {
-            SignalType type = SignalType.getSignalType(t);
+            SignalType type = SignalTypeKt.getSignalType(t);
             return dbService.getAllBySignalType(type);
         } else {
             return dbService.getAllByAreaId(areaId);
