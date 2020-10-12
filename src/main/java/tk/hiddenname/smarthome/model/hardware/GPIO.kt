@@ -1,29 +1,18 @@
-package tk.hiddenname.smarthome.model.hardware;
+package tk.hiddenname.smarthome.model.hardware
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import tk.hiddenname.smarthome.model.signal.SignalType;
-
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.validation.constraints.NotNull;
+import lombok.Data
+import tk.hiddenname.smarthome.model.signal.SignalType
+import javax.persistence.Embeddable
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.validation.constraints.NotNull
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Embeddable
-public class GPIO {
+class GPIO(private val gpioPin: Int = 0,
+           @Enumerated(EnumType.STRING)
+           private val type: @NotNull SignalType? = null) {
 
-    @NotNull
-    private int gpioPin;
-
-    @NotNull
     @Enumerated(EnumType.STRING)
-    private SignalType type;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private GPIOMode mode;
+    private val mode: @NotNull GPIOMode? = null
 }
