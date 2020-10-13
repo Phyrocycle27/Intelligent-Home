@@ -17,6 +17,6 @@ class SensorSignalRestController(private val dbService: SensorDatabaseService,
     @GetMapping(value = ["/digital"], produces = ["application/json"])
     fun getState(@RequestParam(name = "id") id: @Valid Long): DigitalState {
         val sensor = dbService.getOne(id)
-        return digitalService.getState(sensor.id, sensor.isReverse)
+        return digitalService.getState(sensor.id, sensor.reverse)
     }
 }

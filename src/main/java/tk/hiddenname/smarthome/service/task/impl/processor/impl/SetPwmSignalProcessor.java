@@ -15,6 +15,8 @@ import tk.hiddenname.smarthome.service.database.DeviceDatabaseService;
 import tk.hiddenname.smarthome.service.hardware.impl.pwm.output.PwmDeviceService;
 import tk.hiddenname.smarthome.service.task.impl.processor.Processor;
 
+import java.util.Objects;
+
 @Component
 @RequiredArgsConstructor
 @Scope(scopeName = "prototype")
@@ -34,12 +36,13 @@ public class SetPwmSignalProcessor implements Processor {
         new Thread(() -> {
             Device device = dbService.getOne(object.getDeviceId());
 
-            int currSignal = service.getSignal(device.getId(), device.isReverse()).getPwmSignal();
+            int currSignal = service.getSignal(device.getId(), device.getReverse()).getPwmSignal();
             if (currSignal != object.getTargetSignal()) {
                 log.info(String.format(" * Pwm signal (%d) will be set to device with id (%d) on GPIO " +
                                 "(%d) for (%d) seconds",
-                        object.getTargetSignal(), device.getId(), device.getGpio().getGpioPin(), object.getDelay()));
-                service.setSignal(device.getId(), device.isReverse(), object.getTargetSignal());
+                        object.getTargetSignal(), device.getId(), Objects.requireNonNull(device.getGpio()).getGpioPin(),
+                        object.getDelay()));
+                service.setSignal(device.getId(), device.getReverse(), object.getTargetSignal());
 
                 if (object.getDelay() > 0) {
                     try {
@@ -47,7 +50,7 @@ public class SetPwmSignalProcessor implements Processor {
                     } catch (InterruptedException e) {
                         log.error(e.getMessage());
                     }
-                    service.setSignal(device.getId(), device.isReverse(), currSignal);
+                    service.setSignal(device.getId(), device.getReverse(), currSignal);
                     log.info(String.format("* Processing complete! Pwm signal (%d) will be set to device " +
                                     "with id (%d) on GPIO (%d)",
                             currSignal, device.getId(), device.getGpio().getGpioPin()));
@@ -55,7 +58,7 @@ public class SetPwmSignalProcessor implements Processor {
             } else {
                 log.info(String.format(" * Pwm signal on device with id (%d) on gpio (%d) have been already " +
                                 "(%d). Nothing to change",
-                        device.getId(), device.getGpio().getGpioPin(), object.getTargetSignal()));
+                        device.getId(), Objects.requireNonNull(device.getGpio()).getGpioPin(), object.getTargetSignal()));
             }
         }).start();
     }

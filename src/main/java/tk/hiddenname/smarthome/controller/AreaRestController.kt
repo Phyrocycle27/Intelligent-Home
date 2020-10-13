@@ -14,6 +14,9 @@ class AreaRestController(private val dbService: AreaDatabaseService) {
     @GetMapping(value = ["/all"], produces = ["application/json"])
     fun getAll(): List<Area> = dbService.all
 
+    @GetMapping(value = ["/one/{id}"], produces = ["application/json"])
+    fun getOne(@PathVariable(name = "id") id: Long): Area = dbService.getOne(id)
+
     @PostMapping(value = ["/create"], produces = ["application/json"])
     fun create(@RequestBody @NotNull newArea: @Valid Area): Area {
         return dbService.create(newArea)

@@ -15,6 +15,8 @@ import tk.hiddenname.smarthome.service.hardware.impl.GPIOService;
 import tk.hiddenname.smarthome.service.hardware.impl.digital.output.DigitalDeviceServiceImpl;
 import tk.hiddenname.smarthome.service.hardware.impl.pwm.output.PwmDeviceServiceImpl;
 
+import java.util.Objects;
+
 @Component
 @AllArgsConstructor
 public class DeviceManager {
@@ -28,26 +30,29 @@ public class DeviceManager {
     public void create(Device device) throws PinSignalSupportException, GPIOBusyException {
         log.debug("Creating device " + device.toString());
         GPIO gpio = device.getGpio();
-        getService(gpio.getType()).save(
+        assert gpio != null;
+        getService(Objects.requireNonNull(gpio.getType())).save(
                 device.getId(),
                 gpio.getGpioPin(),
-                device.isReverse()
+                device.getReverse()
         );
     }
 
     public void update(Device device) {
         log.debug("Updating device " + device.toString());
         GPIO gpio = device.getGpio();
-        getService(gpio.getType()).update(
+        assert gpio != null;
+        getService(Objects.requireNonNull(gpio.getType())).update(
                 device.getId(),
-                device.isReverse()
+                device.getReverse()
         );
     }
 
     public void delete(Device device) {
         log.debug("Deleting device " + device.toString());
         GPIO gpio = device.getGpio();
-        getService(gpio.getType()).delete(
+        assert gpio != null;
+        getService(Objects.requireNonNull(gpio.getType())).delete(
                 device.getId()
         );
     }

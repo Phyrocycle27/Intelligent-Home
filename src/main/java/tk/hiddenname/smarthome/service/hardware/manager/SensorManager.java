@@ -26,16 +26,18 @@ public class SensorManager {
     public void create(Sensor sensor) throws PinSignalSupportException, GPIOBusyException {
         log.debug("Creating device " + sensor.toString());
         GPIO gpio = sensor.getGpio();
+        assert gpio != null;
         getService(gpio.getType()).save(
                 sensor.getId(),
                 gpio.getGpioPin(),
-                sensor.isReverse()
+                sensor.getReverse()
         );
     }
 
     public void delete(Sensor sensor) {
         log.debug("Deleting sensor " + sensor.toString());
         GPIO gpio = sensor.getGpio();
+        assert gpio != null;
         getService(gpio.getType()).delete(
                 sensor.getId()
         );

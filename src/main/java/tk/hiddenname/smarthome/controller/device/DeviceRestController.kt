@@ -57,8 +57,7 @@ class DeviceRestController(private val dbService: DeviceDatabaseService, private
         var newDevice = device
         val oldDevice = dbService.getOne(id)
         newDevice = dbService.update(id, newDevice)
-
-        if (oldDevice.isReverse != newDevice.isReverse) {
+        if (oldDevice.reverse != newDevice.reverse) {
             manager.update(newDevice)
         }
 

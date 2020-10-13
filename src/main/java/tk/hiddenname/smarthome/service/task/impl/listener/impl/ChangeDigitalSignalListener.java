@@ -52,7 +52,7 @@ public class ChangeDigitalSignalListener implements Listener {
             this.object = (ChangeDigitalSignalObject) object;
             Sensor sensor = dbService.getOne(this.object.getSensorId());
             gpioListener = service.addListener(this, sensor.getId(), this.object.isTargetState(),
-                    sensor.isReverse());
+                    sensor.getReverse());
         } else {
             throw new UnsupportedTriggerObjectTypeException(object.getClass().getSimpleName());
         }

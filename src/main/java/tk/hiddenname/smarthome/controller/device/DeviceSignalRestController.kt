@@ -21,14 +21,14 @@ class DeviceSignalRestController(private val dbService: DeviceDatabaseService,
     @GetMapping(value = ["/pwm"], produces = ["application/json"])
     fun getPwmSignal(@RequestParam(name = "id") id: Long?): PwmSignal {
         val device = dbService.getOne(id)
-        return pwmService.getSignal(device.id, device.isReverse)
+        return pwmService.getSignal(device.id, device.reverse)
     }
 
     @PutMapping(value = ["/pwm"], produces = ["application/json"])
     fun setPwmSignal(@RequestBody @NotNull signal: @Valid PwmSignal?): PwmSignal {
         val device = dbService.getOne(signal?.id)
         return pwmService.setSignal(device.id,
-                device.isReverse,
+                device.reverse,
                 signal!!.pwmSignal)
     }
 
@@ -36,14 +36,14 @@ class DeviceSignalRestController(private val dbService: DeviceDatabaseService,
     @GetMapping(value = ["/digital"], produces = ["application/json"])
     fun getState(@RequestParam(name = "id") id: Long?): DigitalState {
         val device = dbService.getOne(id)
-        return digitalService.getState(device.id, device.isReverse)
+        return digitalService.getState(device.id, device.reverse)
     }
 
     @PutMapping(value = ["/digital"], produces = ["application/json"])
     fun setState(@RequestBody @NotNull state: @Valid DigitalState?): DigitalState {
         val device = dbService.getOne(state?.id)
         return digitalService.setState(device.id,
-                device.isReverse,
+                device.reverse,
                 state!!.isDigitalState
         )
     }

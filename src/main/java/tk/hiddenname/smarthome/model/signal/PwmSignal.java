@@ -15,7 +15,7 @@ public class PwmSignal extends Signal {
 
     @NotNull
     @Getter
-    private final int pwmSignal;
+    public final int pwmSignal;
 
     public PwmSignal(Long id, Integer pwmSignal) {
         super(id);

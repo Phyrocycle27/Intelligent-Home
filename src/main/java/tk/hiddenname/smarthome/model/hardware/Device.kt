@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 import org.jetbrains.annotations.NotNull
+import tk.hiddenname.smarthome.model.AbstractJpaPersistable
 import java.time.LocalDateTime
 import javax.persistence.*
 import javax.validation.constraints.Size
@@ -12,28 +13,23 @@ import javax.validation.constraints.Size
 @Table(name = "device")
 @JsonNaming(SnakeCaseStrategy::class)
 data class Device(
-        @Id
-        @GeneratedValue(strategy = GenerationType.SEQUENCE)
-        @Column(updatable = false, nullable = false)
-        private var id: Long = 0L,
-
         @NotNull
         @Column(nullable = false, length = 25)
-        private var name: @Size(min = 3, max = 25) String = "",
+        var name: @Size(min = 3, max = 25) String = "",
 
         @Column(length = 50)
-        private var description: @Size(min = 3, max = 50) String = "",
+        var description: @Size(min = 3, max = 50) String = "",
 
         @Column(nullable = false)
-        private var reverse: Boolean = false,
+        var reverse: Boolean = false,
 
         @Column(nullable = false)
-        private var areaId: Long = 0L,
+        var areaId: Long = 0L,
 
         @NotNull
         @Column(nullable = false, updatable = false, name = "creation_date")
         @JsonFormat(shape = JsonFormat.Shape.OBJECT, pattern = "yyyy-MM-dd HH:mm:ss")
-        private var creationDate: LocalDateTime? = null,
+        var creationDate: LocalDateTime? = null,
 
         @NotNull
         @Embedded
@@ -42,5 +38,5 @@ data class Device(
                 AttributeOverride(name = "gpioPin", column = Column(nullable = false, updatable = false)),
                 AttributeOverride(name = "mode", column = Column(nullable = false, updatable = false))
         ])
-        private var gpio: GPIO? = null
-)
+        var gpio: GPIO? = null
+) : AbstractJpaPersistable()
