@@ -45,7 +45,7 @@ class SensorRestController(private val dbService: SensorDatabaseService, private
     fun create(@RequestBody @NotNull sensor: @Valid Sensor): Sensor {
         var newSensor = sensor
 
-        newSensor.creationDate = LocalDateTime.now()
+        newSensor.creationTimestamp = LocalDateTime.now()
         newSensor = dbService.create(newSensor)
         manager.create(newSensor)
 

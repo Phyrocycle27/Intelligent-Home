@@ -30,7 +30,7 @@ public class SensorManager {
         getService(gpio.getType()).save(
                 sensor.getId(),
                 gpio.getGpioPin(),
-                sensor.getReverse()
+                sensor.getSignalInversion()
         );
     }
 

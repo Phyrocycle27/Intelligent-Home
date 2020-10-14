@@ -1,13 +1,11 @@
 package tk.hiddenname.smarthome.model
 
-import lombok.Data
 import org.jetbrains.annotations.NotNull
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
 import javax.validation.constraints.Size
 
-@Data
 @Entity
 @Table(name = "area")
 data class Area(@NotNull

@@ -45,7 +45,7 @@ class DeviceRestController(private val dbService: DeviceDatabaseService, private
     fun create(@RequestBody @NotNull device: @Valid Device): Device {
         var newDevice = device
 
-        newDevice.creationDate = LocalDateTime.now()
+        newDevice.creationTimestamp = LocalDateTime.now()
         newDevice = dbService.create(newDevice)
         manager.create(newDevice)
 
@@ -57,7 +57,7 @@ class DeviceRestController(private val dbService: DeviceDatabaseService, private
         var newDevice = device
         val oldDevice = dbService.getOne(id)
         newDevice = dbService.update(id, newDevice)
-        if (oldDevice.reverse != newDevice.reverse) {
+        if (oldDevice.signalInversion != newDevice.signalInversion) {
             manager.update(newDevice)
         }
 

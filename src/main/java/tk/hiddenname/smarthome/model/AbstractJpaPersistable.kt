@@ -4,9 +4,8 @@ import javax.persistence.*
 
 @MappedSuperclass
 abstract class AbstractJpaPersistable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(updatable = false, nullable = false)
-    var id: Long = 0L
+        @Id
+        @GeneratedValue(strategy = GenerationType.SEQUENCE)
+        @Column(updatable = false, nullable = false)
+        var id: Long = 0L
 }

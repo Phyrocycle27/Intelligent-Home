@@ -36,9 +36,9 @@ public class SetDigitalSignalProcessor implements Processor {
         new Thread(() -> {
             Device device = dbService.getOne(object.getDeviceId());
 
-            boolean currState = service.getState(device.getId(), device.getReverse()).isDigitalState();
+            boolean currState = service.getState(device.getId(), device.getSignalInversion()).isDigitalState();
             if (currState != object.isTargetState()) {
-                service.setState(device.getId(), device.getReverse(), object.isTargetState());
+                service.setState(device.getId(), device.getSignalInversion(), object.isTargetState());
                 log.info(String.format(" * Digital state (%b) will be set to device with id (%d) on GPIO " +
                                 "(%d) for (%d) seconds",
                         object.isTargetState(), device.getId(), Objects.requireNonNull(device.getGpio()).getGpioPin(),
@@ -50,7 +50,7 @@ public class SetDigitalSignalProcessor implements Processor {
                     } catch (InterruptedException e) {
                         log.error(e.getMessage());
                     }
-                    service.setState(device.getId(), device.getReverse(), currState);
+                    service.setState(device.getId(), device.getSignalInversion(), currState);
                     log.info(String.format("* Processing complete! Digital state (%b) will be set to device " +
                                     "with id (%d) on GPIO (%d)",
                             currState, device.getId(), device.getGpio().getGpioPin()));

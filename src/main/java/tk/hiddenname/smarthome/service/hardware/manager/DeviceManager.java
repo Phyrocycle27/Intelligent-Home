@@ -34,7 +34,7 @@ public class DeviceManager {
         getService(Objects.requireNonNull(gpio.getType())).save(
                 device.getId(),
                 gpio.getGpioPin(),
-                device.getReverse()
+                device.getSignalInversion()
         );
     }
 
@@ -44,7 +44,7 @@ public class DeviceManager {
         assert gpio != null;
         getService(Objects.requireNonNull(gpio.getType())).update(
                 device.getId(),
-                device.getReverse()
+                device.getSignalInversion()
         );
     }
 
