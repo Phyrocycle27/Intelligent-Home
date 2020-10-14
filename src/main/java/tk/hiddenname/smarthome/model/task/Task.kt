@@ -1,59 +1,42 @@
-package tk.hiddenname.smarthome.model.task;
+package tk.hiddenname.smarthome.model.task
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject;
-import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy
+import com.fasterxml.jackson.databind.annotation.JsonNaming
+import org.hibernate.annotations.LazyCollection
+import org.hibernate.annotations.LazyCollectionOption
+import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
+import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject
+import java.util.*
+import javax.persistence.*
+import javax.validation.constraints.NotNull
+import javax.validation.constraints.Size
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
-
-@Data
 @Entity
 @Table(name = "task")
-@EqualsAndHashCode(of = {"id"})
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-@NoArgsConstructor
-@AllArgsConstructor
-public class Task {
-
+@JsonNaming(SnakeCaseStrategy::class)
+class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(updatable = false, nullable = false)
-    private Long id;
+    var id: Long? = null
 
     @Column(nullable = false)
-    private String name;
+    var name: String? = null
 
-    @Size(min = 3, max = 50)
     @Column(nullable = false, length = 50)
-    private String description;
+    var description: @Size(min = 3, max = 50) String? = null
 
-    @NotNull
-    @JoinTable(
-            name = "task_to_trigger_object",
-            joinColumns = @JoinColumn(name = "fk_task", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "fk_object", referencedColumnName = "id")
-    )
-    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "task_to_trigger_object",
+            joinColumns = [JoinColumn(name = "fk_task", referencedColumnName = "id")],
+            inverseJoinColumns = [JoinColumn(name = "fk_object", referencedColumnName = "id")])
+    @OneToMany(cascade = [CascadeType.ALL])
     @LazyCollection(LazyCollectionOption.FALSE)
-    private Set<TriggerObject> triggerObjects = new HashSet<>();
+    var triggerObjects: @NotNull MutableSet<TriggerObject>? = HashSet()
 
-    @NotNull
-    @JoinTable(
-            name = "task_to_processing_object",
-            joinColumns = @JoinColumn(name = "fk_task", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "fk_object", referencedColumnName = "id"))
-    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "task_to_processing_object",
+            joinColumns = [JoinColumn(name = "fk_task", referencedColumnName = "id")],
+            inverseJoinColumns = [JoinColumn(name = "fk_object", referencedColumnName = "id")])
+    @OneToMany(cascade = [CascadeType.ALL])
     @LazyCollection(LazyCollectionOption.FALSE)
-    private Set<ProcessingObject> processingObjects = new HashSet<>();
+    var processingObjects: @NotNull MutableSet<ProcessingObject>? = HashSet()
 }
