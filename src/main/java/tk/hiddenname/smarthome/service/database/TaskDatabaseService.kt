@@ -1,28 +1,16 @@
-package tk.hiddenname.smarthome.service.database;
+package tk.hiddenname.smarthome.service.database
 
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import tk.hiddenname.smarthome.model.task.Task;
-import tk.hiddenname.smarthome.repository.TaskRepository;
-
-import java.util.List;
+import org.springframework.data.domain.Sort
+import org.springframework.stereotype.Service
+import tk.hiddenname.smarthome.model.task.Task
+import tk.hiddenname.smarthome.repository.TaskRepository
 
 @Service
-@AllArgsConstructor
-public class TaskDatabaseService {
+class TaskDatabaseService(private val repo: TaskRepository) {
 
-    private final TaskRepository repo;
+    fun getAll(): List<Task> = repo.findAll(Sort.by("id"))
 
-    public List<Task> getAll() {
-        return repo.findAll(Sort.by("id"));
-    }
+    fun create(newTask: Task): Task = repo.save(newTask)
 
-    public Task create(Task newTask) {
-        return repo.save(newTask);
-    }
-
-    public void delete(Long id) {
-        repo.deleteById(id);
-    }
+    fun delete(id: Long) = repo.deleteById(id)
 }

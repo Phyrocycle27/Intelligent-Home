@@ -1,32 +1,18 @@
-package tk.hiddenname.smarthome.service.database;
+package tk.hiddenname.smarthome.service.database
 
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import tk.hiddenname.smarthome.model.Area;
-import tk.hiddenname.smarthome.repository.AreaRepository;
-
-import java.util.List;
+import org.springframework.data.domain.Sort
+import org.springframework.stereotype.Service
+import tk.hiddenname.smarthome.model.Area
+import tk.hiddenname.smarthome.repository.AreaRepository
 
 @Service
-@AllArgsConstructor
-public class AreaDatabaseService {
+class AreaDatabaseService(private val repo: AreaRepository) {
 
-    private final AreaRepository repo;
+    fun getAll(): List<Area> = repo.findAll(Sort.by("id"))
 
-    public List<Area> getAll() {
-        return repo.findAll(Sort.by("id"));
-    }
+    fun getOne(id: Long): Area = repo.getOne(id)
 
-    public Area getOne(Long id) {
-        return repo.getOne(id);
-    }
+    fun create(newArea: Area): Area = repo.save(newArea)
 
-    public Area create(Area newArea) {
-        return repo.save(newArea);
-    }
-
-    public void delete(Long id) {
-        repo.deleteById(id);
-    }
+    fun delete(id: Long) = repo.deleteById(id)
 }

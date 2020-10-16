@@ -8,7 +8,6 @@ import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
 import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject
 import java.util.*
 import javax.persistence.*
-import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
 @Entity
@@ -31,12 +30,12 @@ class Task {
             inverseJoinColumns = [JoinColumn(name = "fk_object", referencedColumnName = "id")])
     @OneToMany(cascade = [CascadeType.ALL])
     @LazyCollection(LazyCollectionOption.FALSE)
-    var triggerObjects: @NotNull MutableSet<TriggerObject>? = HashSet()
+    var triggerObjects: MutableSet<TriggerObject>? = HashSet()
 
     @JoinTable(name = "task_to_processing_object",
             joinColumns = [JoinColumn(name = "fk_task", referencedColumnName = "id")],
             inverseJoinColumns = [JoinColumn(name = "fk_object", referencedColumnName = "id")])
     @OneToMany(cascade = [CascadeType.ALL])
     @LazyCollection(LazyCollectionOption.FALSE)
-    var processingObjects: @NotNull MutableSet<ProcessingObject>? = HashSet()
+    var processingObjects: MutableSet<ProcessingObject>? = HashSet()
 }

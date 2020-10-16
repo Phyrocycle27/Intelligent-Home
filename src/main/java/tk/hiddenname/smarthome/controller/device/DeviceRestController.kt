@@ -1,6 +1,5 @@
 package tk.hiddenname.smarthome.controller.device
 
-import org.jetbrains.annotations.NotNull
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tk.hiddenname.smarthome.exception.GPIOBusyException
@@ -15,7 +14,8 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping(value = ["/devices"])
-class DeviceRestController(private val dbService: DeviceDatabaseService, private val manager: DeviceManager) {
+class DeviceRestController(private val dbService: DeviceDatabaseService,
+                           private val manager: DeviceManager) {
 
     @Suppress("DuplicatedCode")
     @GetMapping(value = ["/all"], produces = ["application/json"])
@@ -24,7 +24,7 @@ class DeviceRestController(private val dbService: DeviceDatabaseService, private
                @RequestParam(name = "areaId", defaultValue = "-1", required = false) areaId: Long): List<Device> {
 
         return if (t.isEmpty() && areaId == -1L) {
-            dbService.all
+            dbService.getAll()
         } else if (t.isNotEmpty()) {
             val type = getSignalType(t)
             if (areaId != -1L) {
@@ -42,7 +42,7 @@ class DeviceRestController(private val dbService: DeviceDatabaseService, private
 
     @PostMapping(value = ["/create"], produces = ["application/json"])
     @Throws(GPIOBusyException::class, PinSignalSupportException::class, SignalTypeNotFoundException::class)
-    fun create(@RequestBody @NotNull device: @Valid Device): Device {
+    fun create(@RequestBody(required = true) device: @Valid Device): Device {
         var newDevice = device
 
         newDevice.creationTimestamp = LocalDateTime.now()
@@ -53,10 +53,11 @@ class DeviceRestController(private val dbService: DeviceDatabaseService, private
     }
 
     @PutMapping(value = ["/one/{id}"], produces = ["application/json"])
-    fun update(@RequestBody @NotNull device: @Valid Device, @PathVariable id: Long): Device {
+    fun update(@RequestBody(required = true) device: @Valid Device, @PathVariable id: Long): Device {
         var newDevice = device
         val oldDevice = dbService.getOne(id)
         newDevice = dbService.update(id, newDevice)
+
         if (oldDevice.signalInversion != newDevice.signalInversion) {
             manager.update(newDevice)
         }

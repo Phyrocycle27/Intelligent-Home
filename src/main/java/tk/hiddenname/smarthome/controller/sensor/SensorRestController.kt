@@ -1,6 +1,5 @@
 package tk.hiddenname.smarthome.controller.sensor
 
-import org.jetbrains.annotations.NotNull
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tk.hiddenname.smarthome.exception.GPIOBusyException
@@ -24,7 +23,7 @@ class SensorRestController(private val dbService: SensorDatabaseService, private
                @RequestParam(name = "areaId", defaultValue = "-1", required = false) areaId: Long): List<Sensor> {
 
         return if (t.isEmpty() && areaId == -1L) {
-            dbService.all
+            dbService.getAll()
         } else if (t.isNotEmpty()) {
             val type = getSignalType(t)
             if (areaId != -1L) {
@@ -38,11 +37,11 @@ class SensorRestController(private val dbService: SensorDatabaseService, private
     }
 
     @GetMapping(value = ["/one/{id}"], produces = ["application/json"])
-    fun getOne(@PathVariable id: Long): Sensor = dbService.getOne(id)
+    fun getOne(@PathVariable(name = "id", required = true) id: Long): Sensor = dbService.getOne(id)
 
     @PostMapping(value = ["/create"], produces = ["application/json"])
     @Throws(GPIOBusyException::class, PinSignalSupportException::class, SignalTypeNotFoundException::class)
-    fun create(@RequestBody @NotNull sensor: @Valid Sensor): Sensor {
+    fun create(@RequestBody(required = true) sensor: @Valid Sensor): Sensor {
         var newSensor = sensor
 
         newSensor.creationTimestamp = LocalDateTime.now()
@@ -53,12 +52,12 @@ class SensorRestController(private val dbService: SensorDatabaseService, private
     }
 
     @PutMapping(value = ["/one/{id}"], produces = ["application/json"])
-    fun update(@RequestBody @NotNull newSensor: @Valid Sensor, @PathVariable id: Long): Sensor {
+    fun update(@RequestBody(required = true) newSensor: @Valid Sensor, @PathVariable id: Long): Sensor {
         return dbService.update(id, newSensor)
     }
 
     @DeleteMapping(value = ["/one/{id}"], produces = ["application/json"])
-    fun delete(@PathVariable id: Long): ResponseEntity<Any> {
+    fun delete(@PathVariable(name = "id", required = true) id: Long): ResponseEntity<Any> {
         val sensor = dbService.getOne(id)
 
         manager.delete(sensor)

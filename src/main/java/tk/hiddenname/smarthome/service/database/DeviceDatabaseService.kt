@@ -1,55 +1,44 @@
-package tk.hiddenname.smarthome.service.database;
+package tk.hiddenname.smarthome.service.database
 
-import lombok.AllArgsConstructor;
-import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import tk.hiddenname.smarthome.exception.DeviceNotFoundException;
-import tk.hiddenname.smarthome.model.hardware.Device;
-import tk.hiddenname.smarthome.model.signal.SignalType;
-import tk.hiddenname.smarthome.repository.DeviceRepository;
-
-import java.util.List;
+import org.springframework.beans.BeanUtils
+import org.springframework.data.domain.Sort
+import org.springframework.stereotype.Service
+import tk.hiddenname.smarthome.exception.DeviceNotFoundException
+import tk.hiddenname.smarthome.model.hardware.Device
+import tk.hiddenname.smarthome.model.signal.SignalType
+import tk.hiddenname.smarthome.repository.DeviceRepository
 
 @Service
-@AllArgsConstructor
-public class DeviceDatabaseService {
+class DeviceDatabaseService(private val repo: DeviceRepository) {
 
-    private final DeviceRepository repo;
+    fun getAll(): List<Device> = repo.findAll(Sort.by("id"))
 
-    public List<Device> getAll() {
-        return repo.findAll(Sort.by("id"));
+    fun getAllBySignalType(type: SignalType): List<Device> {
+        return repo.findAllByGpioType(type)
     }
 
-    public List<Device> getAllBySignalType(SignalType type) {
-        return repo.findAllByGpioType(type);
+    fun getAllByAreaId(areaId: Long): List<Device> {
+        return repo.findAllByAreaId(areaId)
     }
 
-    public List<Device> getAllByAreaId(Long areaId) {
-        return repo.findAllByAreaId(areaId);
+    fun getAllBySignalTypeAndAreaId(type: SignalType, areaId: Long): List<Device> {
+        return repo.findAllByGpioTypeAndAreaId(type, areaId)
     }
 
-    public List<Device> getAllBySignalTypeAndAreaId(SignalType type, Long areaId) {
-        return repo.findAllByGpioTypeAndAreaId(type, areaId);
+    @Throws(DeviceNotFoundException::class)
+    fun getOne(id: Long): Device {
+        return repo.findById(id).orElseThrow { DeviceNotFoundException(id) }
     }
 
-    public Device getOne(Long id) throws DeviceNotFoundException {
-        return repo.findById(id).orElseThrow(() -> new DeviceNotFoundException(id));
-    }
+    fun create(newDevice: Device): Device = repo.save(newDevice)
 
-    public Device create(Device newDevice) {
-        return repo.save(newDevice);
-    }
-
-    public Device update(Long id, Device newDevice) {
+    fun update(id: Long, newDevice: Device): Device {
         return repo.findById(id)
-                .map(device -> {
-                    BeanUtils.copyProperties(newDevice, device, "id", "creationDate", "gpio");
-                    return repo.save(device);
-                }).orElseThrow(() -> new DeviceNotFoundException(id));
+                .map { device: Device ->
+                    BeanUtils.copyProperties(newDevice, device, "id", "creationDate", "gpio")
+                    repo.save(device)
+                }.orElseThrow { DeviceNotFoundException(id) }
     }
 
-    public void delete(Long id) {
-        repo.deleteById(id);
-    }
+    fun delete(id: Long) = repo.deleteById(id)
 }

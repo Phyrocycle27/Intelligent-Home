@@ -13,7 +13,7 @@ import tk.hiddenname.smarthome.utils.gpio.GpioManager
 class GpioHelperRestController(private val gpioManager: GpioManager) {
 
     @GetMapping(value = ["/available"], produces = ["application/json"])
-    fun getAvailableGpioPins(@RequestParam(name = "type") t: String): AvailableGpioPins {
+    fun getAvailableGpioPins(@RequestParam(name = "type", required = true) t: String): AvailableGpioPins {
         return gpioManager.getAvailableGpioPins(getSignalType(t))
     }
 }

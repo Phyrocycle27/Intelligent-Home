@@ -1,6 +1,5 @@
 package tk.hiddenname.smarthome.controller
 
-import org.jetbrains.annotations.NotNull
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tk.hiddenname.smarthome.model.Area
@@ -12,18 +11,18 @@ import javax.validation.Valid
 class AreaRestController(private val dbService: AreaDatabaseService) {
 
     @GetMapping(value = ["/all"], produces = ["application/json"])
-    fun getAll(): List<Area> = dbService.all
+    fun getAll(): List<Area> = dbService.getAll()
 
     @GetMapping(value = ["/one/{id}"], produces = ["application/json"])
-    fun getOne(@PathVariable(name = "id") id: Long): Area = dbService.getOne(id)
+    fun getOne(@PathVariable(name = "id", required = true) id: Long): Area = dbService.getOne(id)
 
     @PostMapping(value = ["/create"], produces = ["application/json"])
-    fun create(@RequestBody @NotNull newArea: @Valid Area): Area {
+    fun create(@RequestBody(required = true) newArea: @Valid Area): Area {
         return dbService.create(newArea)
     }
 
     @DeleteMapping(value = ["/one/{id}"])
-    fun delete(@PathVariable(name = "id") id: Long): ResponseEntity<Any> {
+    fun delete(@PathVariable(name = "id", required = true) id: Long): ResponseEntity<Any> {
         dbService.delete(id)
         return ResponseEntity.noContent().build()
     }
