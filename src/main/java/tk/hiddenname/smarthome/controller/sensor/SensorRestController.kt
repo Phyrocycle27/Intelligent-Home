@@ -14,7 +14,8 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping(value = ["/sensors"])
-class SensorRestController(private val dbService: SensorDatabaseService, private val manager: SensorManager) {
+class SensorRestController(private val dbService: SensorDatabaseService,
+                           private val manager: SensorManager) {
 
     @Suppress("DuplicatedCode")
     @GetMapping(value = ["/all"], produces = ["application/json"])

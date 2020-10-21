@@ -1,6 +1,5 @@
 package tk.hiddenname.smarthome.controller.device
 
-import lombok.AllArgsConstructor
 import org.springframework.web.bind.annotation.*
 import tk.hiddenname.smarthome.model.signal.DigitalState
 import tk.hiddenname.smarthome.model.signal.PwmSignal
@@ -11,7 +10,6 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping(value = ["/devices/control"])
-@AllArgsConstructor
 class DeviceSignalRestController(private val dbService: DeviceDatabaseService,
                                  private val digitalService: DigitalDeviceServiceImpl,
                                  private val pwmService: PwmDeviceServiceImpl) {

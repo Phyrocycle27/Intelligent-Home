@@ -1,15 +1,17 @@
 package tk.hiddenname.smarthome.service.hardware.impl
 
+import tk.hiddenname.smarthome.exception.DeviceNotFoundException
 import tk.hiddenname.smarthome.exception.GPIOBusyException
 import tk.hiddenname.smarthome.exception.PinSignalSupportException
-import javax.validation.constraints.NotNull
 
 interface GPIOService {
 
-    fun delete(id: @NotNull Long)
+    @Throws(DeviceNotFoundException::class)
+    fun delete(id: Long)
 
     @Throws(GPIOBusyException::class, PinSignalSupportException::class)
-    fun save(id: @NotNull Long, gpioPin: @NotNull Int, reverse: @NotNull Boolean)
+    fun save(id: Long, gpioPin: Int, reverse: Boolean)
 
-    fun update(id: @NotNull Long, reverse: @NotNull Boolean)
+    @Throws(DeviceNotFoundException::class)
+    fun update(id: Long, reverse: Boolean)
 }

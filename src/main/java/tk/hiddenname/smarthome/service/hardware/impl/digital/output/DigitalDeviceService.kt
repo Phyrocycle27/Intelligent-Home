@@ -1,12 +1,14 @@
 package tk.hiddenname.smarthome.service.hardware.impl.digital.output
 
+import tk.hiddenname.smarthome.exception.DeviceNotFoundException
 import tk.hiddenname.smarthome.model.signal.DigitalState
 import tk.hiddenname.smarthome.service.hardware.impl.GPIOService
-import javax.validation.constraints.NotNull
 
 interface DigitalDeviceService : GPIOService {
 
-    fun getState(id: @NotNull Long, reverse: @NotNull Boolean): DigitalState
+    @Throws(DeviceNotFoundException::class)
+    fun getState(id: Long, reverse: Boolean): DigitalState
 
-    fun setState(id: @NotNull Long, reverse: @NotNull Boolean, newState: @NotNull Boolean): DigitalState
+    @Throws(DeviceNotFoundException::class)
+    fun setState(id: Long, reverse: Boolean, newState: Boolean): DigitalState
 }

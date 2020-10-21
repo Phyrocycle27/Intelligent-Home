@@ -10,7 +10,8 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping(value = ["/tasks"])
-class TaskRestController(private val service: TaskDatabaseService, private val manager: TaskManager) {
+class TaskRestController(private val service: TaskDatabaseService,
+                         private val manager: TaskManager) {
 
     @GetMapping(value = ["/all"], produces = ["application/json"])
     fun getAll(): List<Task> = service.getAll()
