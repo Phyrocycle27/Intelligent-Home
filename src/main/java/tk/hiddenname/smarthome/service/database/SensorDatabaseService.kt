@@ -32,6 +32,7 @@ class SensorDatabaseService(private val repo: SensorRepository) {
 
     fun create(newDevice: Sensor): Sensor = repo.save(newDevice)
 
+    @Throws(SensorNotFoundException::class)
     fun update(id: Long, newSensor: Sensor): Sensor {
         return repo.findById(id)
                 .map { sensor: Sensor ->

@@ -1,36 +1,25 @@
-package tk.hiddenname.smarthome.service.task.impl.processor;
+package tk.hiddenname.smarthome.service.task.impl.processor
 
-import lombok.AllArgsConstructor;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
-import tk.hiddenname.smarthome.exception.NoSuchProcessorException;
-import tk.hiddenname.smarthome.exception.UnsupportedProcessingObjectTypeException;
-import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject;
-import tk.hiddenname.smarthome.service.task.impl.processor.impl.SetDigitalSignalProcessor;
-import tk.hiddenname.smarthome.service.task.impl.processor.impl.SetPwmSignalProcessor;
+import org.springframework.context.ApplicationContext
+import org.springframework.stereotype.Component
+import tk.hiddenname.smarthome.exception.NoSuchProcessorException
+import tk.hiddenname.smarthome.exception.UnsupportedProcessingObjectTypeException
+import tk.hiddenname.smarthome.model.task.processing.ProcessingAction
+import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
+import tk.hiddenname.smarthome.service.task.impl.processor.impl.SetDigitalSignalProcessor
+import tk.hiddenname.smarthome.service.task.impl.processor.impl.SetPwmSignalProcessor
 
 @Component
-@AllArgsConstructor
-public class ProcessorFactory {
+class ProcessorFactory(private val ctx: ApplicationContext) {
 
-    private final ApplicationContext ctx;
-
-    public Processor create(ProcessingObject object) throws NoSuchProcessorException,
-            UnsupportedProcessingObjectTypeException {
-
-        Processor processor;
-
-        switch (object.getAction()) {
-            case SET_DIGITAL_SIGNAL:
-                processor = ctx.getBean(SetDigitalSignalProcessor.class);
-                break;
-            case SET_PWM_SIGNAL:
-                processor = ctx.getBean(SetPwmSignalProcessor.class);
-                break;
-            default:
-                throw new NoSuchProcessorException();
+    @Throws(NoSuchProcessorException::class, UnsupportedProcessingObjectTypeException::class)
+    fun create(processingObject: ProcessingObject): Processor {
+        val processor = when (processingObject.action) {
+            ProcessingAction.SET_DIGITAL_SIGNAL -> ctx.getBean(SetDigitalSignalProcessor::class.java)
+            ProcessingAction.SET_PWM_SIGNAL -> ctx.getBean(SetPwmSignalProcessor::class.java)
+            else -> throw NoSuchProcessorException()
         }
-        processor.register(object);
-        return processor;
+        processor.register(processingObject)
+        return processor
     }
 }

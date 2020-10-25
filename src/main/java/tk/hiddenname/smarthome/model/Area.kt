@@ -8,14 +8,11 @@ import javax.validation.constraints.Size
 
 @Entity
 @Table(name = "area")
-class Area(
-        id: Long,
+data class Area(
         @NotNull
         @Column(nullable = false, length = 25)
         var name: @Size(min = 3, max = 25) String = "",
 
         @Column(length = 50)
         var description: @Size(min = 0, max = 50) String = ""
-) : AbstractJpaPersistable(id) {
-        constructor()
-}
+) : AbstractJpaPersistable()

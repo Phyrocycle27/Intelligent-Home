@@ -1,74 +1,59 @@
-package tk.hiddenname.smarthome.service.task.impl.processor.impl;
+package tk.hiddenname.smarthome.service.task.impl.processor.impl
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import tk.hiddenname.smarthome.exception.UnsupportedProcessingObjectTypeException;
-import tk.hiddenname.smarthome.model.hardware.Device;
-import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject;
-import tk.hiddenname.smarthome.model.task.processing.objects.SetPwmSignalObject;
-import tk.hiddenname.smarthome.service.database.DeviceDatabaseService;
-import tk.hiddenname.smarthome.service.hardware.impl.pwm.output.PwmDeviceService;
-import tk.hiddenname.smarthome.service.task.impl.processor.Processor;
-
-import java.util.Objects;
+import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
+import tk.hiddenname.smarthome.exception.UnsupportedProcessingObjectTypeException
+import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
+import tk.hiddenname.smarthome.model.task.processing.objects.SetPwmSignalObject
+import tk.hiddenname.smarthome.service.database.DeviceDatabaseService
+import tk.hiddenname.smarthome.service.hardware.impl.pwm.output.PwmDeviceService
+import tk.hiddenname.smarthome.service.task.impl.processor.Processor
 
 @Component
-@RequiredArgsConstructor
 @Scope(scopeName = "prototype")
-public class SetPwmSignalProcessor implements Processor {
+class SetPwmSignalProcessor(private val dbService: DeviceDatabaseService,
+                            private val service: PwmDeviceService) : Processor {
 
-    private static final Logger log = LoggerFactory.getLogger(SetPwmSignalProcessor.class);
+    private val log = LoggerFactory.getLogger(SetPwmSignalProcessor::class.java)
 
-    @NonNull
-    private final PwmDeviceService service;
-    @NonNull
-    private final DeviceDatabaseService dbService;
+    private var processingObject: SetPwmSignalObject? = null
 
-    private SetPwmSignalObject object;
-
-    @Override
-    public void process() {
-        new Thread(() -> {
-            Device device = dbService.getOne(object.getDeviceId());
-
-            int currSignal = service.getSignal(device.getId(), device.getSignalInversion()).getPwmSignal();
-            if (currSignal != object.getTargetSignal()) {
+    override fun process() {
+        Thread {
+            val device = dbService.getOne(processingObject!!.deviceId)
+            val currSignal = service.getSignal(device.id, device.signalInversion).pwmSignal
+            if (currSignal != processingObject!!.targetSignal) {
                 log.info(String.format(" * Pwm signal (%d) will be set to device with id (%d) on GPIO " +
-                                "(%d) for (%d) seconds",
-                        object.getTargetSignal(), device.getId(), Objects.requireNonNull(device.getGpio()).getGpioPin(),
-                        object.getDelay()));
-                service.setSignal(device.getId(), device.getSignalInversion(), object.getTargetSignal());
-
-                if (object.getDelay() > 0) {
+                        "(%d) for (%d) seconds",
+                        processingObject!!.targetSignal, device.id, device.gpio!!.gpioPin,
+                        processingObject!!.delay))
+                service.setSignal(device.id, device.signalInversion, processingObject!!.targetSignal)
+                if (processingObject!!.delay > 0) {
                     try {
-                        Thread.sleep(object.getDelay() * 1000);
-                    } catch (InterruptedException e) {
-                        log.error(e.getMessage());
+                        Thread.sleep(processingObject!!.delay * 1000.toLong())
+                    } catch (e: InterruptedException) {
+                        log.error(e.message)
                     }
-                    service.setSignal(device.getId(), device.getSignalInversion(), currSignal);
+                    service.setSignal(device.id, device.signalInversion, currSignal)
                     log.info(String.format("* Processing complete! Pwm signal (%d) will be set to device " +
-                                    "with id (%d) on GPIO (%d)",
-                            currSignal, device.getId(), device.getGpio().getGpioPin()));
+                            "with id (%d) on GPIO (%d)",
+                            currSignal, device.id, device.gpio.gpioPin))
                 }
             } else {
                 log.info(String.format(" * Pwm signal on device with id (%d) on gpio (%d) have been already " +
-                                "(%d). Nothing to change",
-                        device.getId(), Objects.requireNonNull(device.getGpio()).getGpioPin(), object.getTargetSignal()));
+                        "(%d). Nothing to change",
+                        device.id, device.gpio!!.gpioPin, processingObject!!.targetSignal))
             }
-        }).start();
+        }.start()
     }
 
-    @Override
-    public void register(@NotNull ProcessingObject object) throws UnsupportedProcessingObjectTypeException {
-        if (object instanceof SetPwmSignalObject) {
-            this.object = (SetPwmSignalObject) object;
+    @Throws(UnsupportedProcessingObjectTypeException::class)
+    override fun register(processingObject: ProcessingObject) {
+        if (processingObject is SetPwmSignalObject) {
+            this.processingObject = processingObject
         } else {
-            throw new UnsupportedProcessingObjectTypeException(object.getClass().getSimpleName());
+            throw UnsupportedProcessingObjectTypeException(processingObject.javaClass.simpleName)
         }
     }
 }

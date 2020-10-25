@@ -10,11 +10,13 @@ import javax.persistence.Enumerated
 @Embeddable
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
 class GPIO(
-        var gpioPin: Int = 0,
+        var gpioPin: Int,
 
         @Enumerated(EnumType.STRING)
-        var type: SignalType? = null,
+        var type: SignalType,
 
         @Enumerated(EnumType.STRING)
-        var mode: GPIOMode? = null
-)
+        var mode: GPIOMode
+) {
+    constructor() : this(0, SignalType.DIGITAL, GPIOMode.OUTPUT)
+}

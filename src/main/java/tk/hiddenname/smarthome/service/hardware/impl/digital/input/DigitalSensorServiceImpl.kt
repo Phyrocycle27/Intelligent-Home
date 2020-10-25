@@ -4,7 +4,7 @@ import com.pi4j.io.gpio.GpioPinDigitalInput
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent
 import com.pi4j.io.gpio.event.GpioPinListenerDigital
 import org.springframework.stereotype.Service
-import tk.hiddenname.smarthome.exception.GPIOBusyException
+import tk.hiddenname.smarthome.exception.GpioBusyException
 import tk.hiddenname.smarthome.exception.PinSignalSupportException
 import tk.hiddenname.smarthome.exception.SensorNotFoundException
 import tk.hiddenname.smarthome.model.signal.DigitalState
@@ -24,7 +24,7 @@ class DigitalSensorServiceImpl(private val gpioManager: GpioManager) : DigitalSe
         digitalInputsToSensorId.remove(id)
     }
 
-    @Throws(GPIOBusyException::class, PinSignalSupportException::class)
+    @Throws(GpioBusyException::class, PinSignalSupportException::class)
     override fun save(id: Long, gpioPin: Int, reverse: Boolean) {
         digitalInputsToSensorId[id] = gpioManager.createDigitalInput(gpioPin)
     }

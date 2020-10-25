@@ -65,7 +65,7 @@ public class ClientInitializer extends ChannelInitializer<SocketChannel> {
                     ch.pipeline().remove("bytesEncoder");
                     ch.pipeline().addAfter("frameEncoder", "cipherDecoder", new CipherDecoder(enc));
                     ch.pipeline().addAfter("cipherDecoder", "cipherEncoder", new CipherEncoder(enc));
-                    ChannelFuture f = ch.writeAndFlush(Application.getToken());
+                    ChannelFuture f = ch.writeAndFlush(Application.token);
 
                     // вот тут мы делаем такую штуку с помощью ChannelFuture, которая будет отсылать токен серверу и
                     // получать в ответ прошли мы аутентификацию или нет

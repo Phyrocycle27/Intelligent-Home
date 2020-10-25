@@ -3,10 +3,7 @@ package tk.hiddenname.smarthome.utils.gpio
 import com.pi4j.io.gpio.*
 import com.pi4j.wiringpi.Gpio
 import org.springframework.stereotype.Component
-import tk.hiddenname.smarthome.exception.GPIOBusyException
-import tk.hiddenname.smarthome.exception.PinSignalSupportException
-import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException
-import tk.hiddenname.smarthome.exception.UnsupportedSignalTypeException
+import tk.hiddenname.smarthome.exception.*
 import tk.hiddenname.smarthome.model.hardware.AvailableGpioPins
 import tk.hiddenname.smarthome.model.signal.SignalType
 
@@ -30,18 +27,19 @@ class GpioManager {
         pin.removeAllListeners()
     }
 
-    @Throws(PinSignalSupportException::class, SignalTypeNotFoundException::class, GPIOBusyException::class)
+    @Throws(PinSignalSupportException::class, SignalTypeNotFoundException::class, GpioBusyException::class)
     fun validate(gpio: Int, type: SignalType) {
         if (!isSupports(type, gpio)) {
             throw PinSignalSupportException(gpio)
         }
-        if (isExists(gpio)) throw GPIOBusyException(gpio)
+        if (isExists(gpio)) throw GpioBusyException(gpio)
     }
 
     private fun isSupports(type: SignalType, gpio: Int): Boolean {
         return when (type) {
             SignalType.DIGITAL -> digitalGPIO.contains(gpio)
             SignalType.PWM -> pwmGPIO.contains(gpio)
+            else -> throw SignalTypeNotSupportsException(type)
         }
     }
 
@@ -49,6 +47,7 @@ class GpioManager {
         return usedGPIO.contains(gpio)
     }
 
+    @Throws(GpioNotFoundException::class)
     private fun getPinByGPIONumber(gpioNumber: Int): Pin? {
         return when (gpioNumber) {
             2 -> RaspiPin.GPIO_08
@@ -79,11 +78,11 @@ class GpioManager {
             16 -> RaspiPin.GPIO_27
             20 -> RaspiPin.GPIO_28
             21 -> RaspiPin.GPIO_29
-            else -> null
+            else -> throw GpioNotFoundException(gpioNumber)
         }
     }
 
-    @Throws(GPIOBusyException::class, PinSignalSupportException::class)
+    @Throws(GpioBusyException::class, PinSignalSupportException::class)
     fun createDigitalOutput(gpio: Int, reverse: Boolean?): GpioPinDigitalOutput {
         validate(gpio, SignalType.DIGITAL)
         val pin = controller.provisionDigitalOutputPin(
@@ -93,21 +92,20 @@ class GpioManager {
         return pin
     }
 
-    @Throws(GPIOBusyException::class, PinSignalSupportException::class)
+    @Throws(GpioBusyException::class, PinSignalSupportException::class)
     fun createDigitalInput(gpio: Int): GpioPinDigitalInput {
         validate(gpio, SignalType.DIGITAL)
-        val pin = controller.provisionDigitalInputPin(
-                getPinByGPIONumber(gpio), PinPullResistance.PULL_DOWN)
+        val pin = controller.provisionDigitalInputPin(getPinByGPIONumber(gpio), PinPullResistance.PULL_DOWN)
         pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF, PinMode.DIGITAL_INPUT)
         usedGPIO.add(gpio)
         return pin
     }
 
-    @Throws(GPIOBusyException::class, PinSignalSupportException::class)
+    @Throws(GpioBusyException::class, PinSignalSupportException::class)
     fun createPwmOutput(gpio: Int, reverse: Boolean): GpioPinPwmOutput {
         validate(gpio, SignalType.PWM)
-        val pin = controller.provisionPwmOutputPin(
-                getPinByGPIONumber(gpio), if (reverse) pwmRange else 0)
+
+        val pin = controller.provisionPwmOutputPin(getPinByGPIONumber(gpio), if (reverse) pwmRange else 0)
         pin.setPwmRange(pwmRange)
         pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF)
         usedGPIO.add(gpio)
@@ -115,22 +113,19 @@ class GpioManager {
     }
 
     fun getAvailableGpioPins(type: SignalType): AvailableGpioPins {
-        val available: MutableSet<Int> = HashSet()
-        val busy = when {
-            type === SignalType.DIGITAL -> {
-                digitalGPIO
-            }
-            type === SignalType.PWM -> {
-                pwmGPIO
-            }
-            else -> {
-                throw UnsupportedSignalTypeException(type)
+        val available = HashSet<Int>()
+        val busy = when (type) {
+            SignalType.DIGITAL -> digitalGPIO
+            SignalType.PWM -> pwmGPIO
+            else -> throw UnsupportedSignalTypeException(type)
+        }
+
+        busy.forEach {
+            if (!usedGPIO.contains(it)) {
+                available.add(it)
             }
         }
-        for (gpioPin in busy) {
-            if (usedGPIO.contains(gpioPin)) continue
-            available.add(gpioPin)
-        }
+
         return AvailableGpioPins(available)
     }
 

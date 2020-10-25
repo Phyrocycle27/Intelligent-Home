@@ -1,127 +1,104 @@
-package tk.hiddenname.smarthome.service.task.impl.listener.impl;
+package tk.hiddenname.smarthome.service.task.impl.listener.impl
 
-import com.pi4j.io.gpio.event.GpioPinListenerDigital;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import tk.hiddenname.smarthome.exception.TriggerNotFoundException;
-import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException;
-import tk.hiddenname.smarthome.model.hardware.Sensor;
-import tk.hiddenname.smarthome.model.task.trigger.objects.ChangeDigitalSignalObject;
-import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject;
-import tk.hiddenname.smarthome.service.database.SensorDatabaseService;
-import tk.hiddenname.smarthome.service.hardware.impl.digital.input.DigitalSensorService;
-import tk.hiddenname.smarthome.service.task.impl.listener.EventListener;
-import tk.hiddenname.smarthome.service.task.impl.listener.Listener;
+import com.pi4j.io.gpio.event.GpioPinListenerDigital
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
+import tk.hiddenname.smarthome.exception.TriggerNotFoundException
+import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException
+import tk.hiddenname.smarthome.model.task.trigger.objects.ChangeDigitalSignalObject
+import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject
+import tk.hiddenname.smarthome.service.database.SensorDatabaseService
+import tk.hiddenname.smarthome.service.hardware.impl.digital.input.DigitalSensorService
+import tk.hiddenname.smarthome.service.task.impl.listener.EventListener
+import tk.hiddenname.smarthome.service.task.impl.listener.Listener
 
 @Component
-@RequiredArgsConstructor
-@Scope(scopeName = "prototype")
-public class ChangeDigitalSignalListener implements Listener {
+@Scope("prototype")
+class ChangeDigitalSignalListener(private val listener: EventListener,
+                                  private var service: DigitalSensorService,
+                                  private var dbService: SensorDatabaseService) : Listener {
 
-    private static final Logger log = LoggerFactory.getLogger(ChangeDigitalSignalListener.class);
+    private val log = LoggerFactory.getLogger(ChangeDigitalSignalListener::class.java)
 
-    @NonNull
-    private final EventListener listener;
-
-    private DigitalSensorService service;
-    private SensorDatabaseService dbService;
-
-    private ChangeDigitalSignalObject object;
-    private GpioPinListenerDigital gpioListener;
-    private DelayCounterThread delayCounter;
+    private var triggerObject: ChangeDigitalSignalObject? = null
+    private var gpioListener: GpioPinListenerDigital? = null
+    private var delayCounter: DelayCounterThread? = null
 
     @Autowired
-    public void setService(DigitalSensorService service) {
-        this.service = service;
+    fun setService(service: DigitalSensorService) {
+        this.service = service
     }
 
     @Autowired
-    public void setDbService(SensorDatabaseService dbService) {
-        this.dbService = dbService;
+    fun setDbService(dbService: SensorDatabaseService) {
+        this.dbService = dbService
     }
 
-    @Override
-    public void register(@NotNull TriggerObject object) throws UnsupportedTriggerObjectTypeException {
-        if (object instanceof ChangeDigitalSignalObject) {
-            this.object = (ChangeDigitalSignalObject) object;
-            Sensor sensor = dbService.getOne(this.object.getSensorId());
-            gpioListener = service.addListener(this, sensor.getId(), this.object.isTargetState(),
-                    sensor.getSignalInversion());
+    @Throws(UnsupportedTriggerObjectTypeException::class)
+    override fun register(triggerObject: TriggerObject) {
+        if (triggerObject is ChangeDigitalSignalObject) {
+            this.triggerObject = triggerObject
+            val sensor = dbService.getOne(this.triggerObject!!.id)
+            gpioListener = service.addListener(this, sensor.id, this.triggerObject!!.targetState,
+                    sensor.signalInversion)
         } else {
-            throw new UnsupportedTriggerObjectTypeException(object.getClass().getSimpleName());
+            throw UnsupportedTriggerObjectTypeException(triggerObject.javaClass.simpleName)
         }
     }
 
-    @Override
-    public void update(@NotNull TriggerObject object) throws UnsupportedTriggerObjectTypeException {
-        unregister();
-        register(object);
+    @Throws(UnsupportedTriggerObjectTypeException::class)
+    override fun update(triggerObject: TriggerObject) {
+        unregister()
+        register(triggerObject)
     }
 
-    @Override
-    public void unregister() {
-        service.removeListener(gpioListener, object.getSensorId());
+    override fun unregister() {
+        service.removeListener(gpioListener!!, triggerObject!!.sensorId)
     }
 
-    @Override
-    public void trigger(boolean flag) {
+    override fun trigger(flag: Boolean) {
         if (delayCounter == null) {
             if (flag) {
-                delayCounter = new DelayCounterThread(object.getDelay());
-                delayCounter.setDaemon(true);
-                delayCounter.start();
+                delayCounter = DelayCounterThread(triggerObject!!.delay)
+                delayCounter!!.isDaemon = true
+                delayCounter!!.start()
             }
         } else {
             if (!flag) {
-                delayCounter.disable();
-                setEventListenerFlag(false);
-                delayCounter = null;
+                delayCounter!!.disable()
+                setEventListenerFlag(false)
+                delayCounter = null
             }
         }
     }
 
-    private void setEventListenerFlag(boolean flag) {
+    private fun setEventListenerFlag(flag: Boolean) {
         try {
-            listener.updateFlag(object.getId(), flag);
-        } catch (TriggerNotFoundException e) {
-            unregister();
+            listener.updateFlag(triggerObject!!.id, flag)
+        } catch (e: TriggerNotFoundException) {
+            unregister()
         }
     }
 
-    @SuppressWarnings("BusyWait")
-    private class DelayCounterThread extends Thread {
-
-        private int delay;
-        private boolean status;
-
-        public DelayCounterThread(int delay) {
-            this.delay = delay;
-            this.status = true;
+    private inner class DelayCounterThread(private var delay: Int) : Thread() {
+        private var status = true
+        fun disable() {
+            status = false
         }
 
-        private void disable() {
-            status = false;
-        }
-
-        @Override
-        public void run() {
+        override fun run() {
             while (status && delay > 0) {
                 try {
-                    //noinspection BusyWait
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    log.error(e.getMessage());
+                    sleep(1000)
+                } catch (e: InterruptedException) {
+                    log.error(e.message)
                 }
-                delay--;
+                delay--
             }
             if (delay == 0) {
-                setEventListenerFlag(true);
+                setEventListenerFlag(true)
             }
         }
     }

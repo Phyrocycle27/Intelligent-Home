@@ -1,74 +1,59 @@
-package tk.hiddenname.smarthome.service.task.impl.processor.impl;
+package tk.hiddenname.smarthome.service.task.impl.processor.impl
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import tk.hiddenname.smarthome.exception.UnsupportedProcessingObjectTypeException;
-import tk.hiddenname.smarthome.model.hardware.Device;
-import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject;
-import tk.hiddenname.smarthome.model.task.processing.objects.SetDigitalSignalObject;
-import tk.hiddenname.smarthome.service.database.DeviceDatabaseService;
-import tk.hiddenname.smarthome.service.hardware.impl.digital.output.DigitalDeviceService;
-import tk.hiddenname.smarthome.service.task.impl.processor.Processor;
-
-import java.util.Objects;
+import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
+import tk.hiddenname.smarthome.exception.UnsupportedProcessingObjectTypeException
+import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
+import tk.hiddenname.smarthome.model.task.processing.objects.SetDigitalSignalObject
+import tk.hiddenname.smarthome.service.database.DeviceDatabaseService
+import tk.hiddenname.smarthome.service.hardware.impl.digital.output.DigitalDeviceService
+import tk.hiddenname.smarthome.service.task.impl.processor.Processor
 
 @Component
-@RequiredArgsConstructor
 @Scope(scopeName = "prototype")
-public class SetDigitalSignalProcessor implements Processor {
+class SetDigitalSignalProcessor(private val service: DigitalDeviceService,
+                                private val dbService: DeviceDatabaseService) : Processor {
 
-    private static final Logger log = LoggerFactory.getLogger(SetDigitalSignalProcessor.class);
+    private val log = LoggerFactory.getLogger(SetDigitalSignalProcessor::class.java)
 
-    @NonNull
-    private final DigitalDeviceService service;
-    @NonNull
-    private final DeviceDatabaseService dbService;
+    private var processingObject: SetDigitalSignalObject? = null
 
-    private SetDigitalSignalObject object;
-
-    @Override
-    public void process() {
-        new Thread(() -> {
-            Device device = dbService.getOne(object.getDeviceId());
-
-            boolean currState = service.getState(device.getId(), device.getSignalInversion()).isDigitalState();
-            if (currState != object.isTargetState()) {
-                service.setState(device.getId(), device.getSignalInversion(), object.isTargetState());
-                log.info(String.format(" * Digital state (%b) will be set to device with id (%d) on GPIO " +
-                                "(%d) for (%d) seconds",
-                        object.isTargetState(), device.getId(), Objects.requireNonNull(device.getGpio()).getGpioPin(),
-                        object.getDelay()));
-
-                if (object.getDelay() > 0) {
+    override fun process() {
+        Thread {
+            val device = dbService.getOne(processingObject!!.deviceId)
+            val currState = service.getState(device.id, device.signalInversion).isDigitalState
+            if (currState != processingObject!!.targetState) {
+                service.setState(device.id, device.signalInversion, processingObject!!.targetState)
+                log.info(java.lang.String.format(" * Digital state (%b) will be set to device with id (%d) on GPIO " +
+                        "(%d) for (%d) seconds",
+                        processingObject!!.targetState, device.id, device.gpio!!.gpioPin,
+                        processingObject!!.delay))
+                if (processingObject!!.delay > 0) {
                     try {
-                        Thread.sleep(object.getDelay() * 1000);
-                    } catch (InterruptedException e) {
-                        log.error(e.getMessage());
+                        Thread.sleep(processingObject!!.delay * 1000.toLong())
+                    } catch (e: InterruptedException) {
+                        log.error(e.message)
                     }
-                    service.setState(device.getId(), device.getSignalInversion(), currState);
+                    service.setState(device.id, device.signalInversion, currState)
                     log.info(String.format("* Processing complete! Digital state (%b) will be set to device " +
-                                    "with id (%d) on GPIO (%d)",
-                            currState, device.getId(), device.getGpio().getGpioPin()));
+                            "with id (%d) on GPIO (%d)",
+                            currState, device.id, device.gpio.gpioPin))
                 }
             } else {
-                log.info(String.format(" * Digital state on device with id (%d) on gpio (%d) have been already " +
-                                "(%b). Nothing to change",
-                        device.getId(), Objects.requireNonNull(device.getGpio()).getGpioPin(), object.isTargetState()));
+                log.info(java.lang.String.format(" * Digital state on device with id (%d) on gpio (%d) have been already " +
+                        "(%b). Nothing to change",
+                        device.id, device.gpio!!.gpioPin, processingObject!!.targetState))
             }
-        }).start();
+        }.start()
     }
 
-    @Override
-    public void register(@NotNull ProcessingObject object) throws UnsupportedProcessingObjectTypeException {
-        if (object instanceof SetDigitalSignalObject) {
-            this.object = (SetDigitalSignalObject) object;
+    @Throws(UnsupportedProcessingObjectTypeException::class)
+    override fun register(processingObject: ProcessingObject) {
+        if (processingObject is SetDigitalSignalObject) {
+            this.processingObject = processingObject
         } else {
-            throw new UnsupportedProcessingObjectTypeException(object.getClass().getSimpleName());
+            throw UnsupportedProcessingObjectTypeException(processingObject.javaClass.simpleName)
         }
     }
 }

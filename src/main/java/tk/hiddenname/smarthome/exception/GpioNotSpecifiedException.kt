@@ -3,5 +3,6 @@ package tk.hiddenname.smarthome.exception
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
 
+// TODO: Обозначить код ошибки HTTP
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
-class TriggerNotFoundException(id: Long) : Exception("The trigger with id '$id' not found")
+class GpioNotSpecifiedException : Exception("The gpio is not specified")

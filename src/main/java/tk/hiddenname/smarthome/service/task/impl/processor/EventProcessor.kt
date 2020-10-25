@@ -1,69 +1,62 @@
-package tk.hiddenname.smarthome.service.task.impl.processor;
+package tk.hiddenname.smarthome.service.task.impl.processor
 
-import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import tk.hiddenname.smarthome.exception.NoSuchProcessorException;
-import tk.hiddenname.smarthome.exception.ProcessorExistsException;
-import tk.hiddenname.smarthome.exception.ProcessorNotFoundException;
-import tk.hiddenname.smarthome.exception.UnsupportedProcessingObjectTypeException;
-import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
+import tk.hiddenname.smarthome.exception.NoSuchProcessorException
+import tk.hiddenname.smarthome.exception.ProcessorExistsException
+import tk.hiddenname.smarthome.exception.ProcessorNotFoundException
+import tk.hiddenname.smarthome.exception.UnsupportedProcessingObjectTypeException
+import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
+import java.util.*
 
 @Component
 @Scope("prototype")
-@RequiredArgsConstructor
-public class EventProcessor {
+class EventProcessor(private val processorFactory: ProcessorFactory) {
 
-    private static final Logger log = LoggerFactory.getLogger(EventProcessor.class);
-    private final Map<Integer, Processor> processors = new HashMap<>();
+    private val log = LoggerFactory.getLogger(EventProcessor::class.java)
 
-    private final ProcessorFactory processorFactory;
+    private val processors = HashMap<Long, Processor>()
 
-    public void registerProcessors(Set<ProcessingObject> objects) throws NoSuchProcessorException,
-            ProcessorExistsException, UnsupportedProcessingObjectTypeException {
-
-        for (ProcessingObject object : objects) {
-            registerProcessor(object);
+    @Throws(NoSuchProcessorException::class, ProcessorExistsException::class,
+            UnsupportedProcessingObjectTypeException::class)
+    fun registerProcessors(processingObjects: Set<ProcessingObject>) {
+        processingObjects.forEach {
+            registerProcessor(it)
         }
     }
 
-    public void registerProcessor(ProcessingObject object) throws NoSuchProcessorException,
-            ProcessorExistsException, UnsupportedProcessingObjectTypeException {
-
-        if (!processors.containsKey(object.getId())) {
-            processors.put(object.getId(), processorFactory.create(object));
+    @Throws(NoSuchProcessorException::class, ProcessorExistsException::class, UnsupportedProcessingObjectTypeException::class)
+    fun registerProcessor(processingObject: ProcessingObject) {
+        if (processors.containsKey(processingObject.id)) {
+            throw ProcessorExistsException(processingObject.id)
         } else {
-            throw new ProcessorExistsException(object.getId());
+            processors.putIfAbsent(processingObject.id, processorFactory.create(processingObject))
         }
     }
 
-    public void unregisterProcessors() {
-        for (Integer id : processors.keySet()) {
+    fun unregisterProcessors() {
+        processors.keys.forEach {
             try {
-                unregisterProcessor(id);
-            } catch (ProcessorNotFoundException e) {
-                log.warn(e.getMessage());
+                unregisterProcessor(it)
+            } catch (e: ProcessorNotFoundException) {
+                log.warn(e.message)
             }
         }
     }
 
-    public void unregisterProcessor(Integer id) throws ProcessorNotFoundException {
+    @Throws(ProcessorNotFoundException::class)
+    fun unregisterProcessor(id: Long) {
         if (processors.containsKey(id)) {
-            processors.remove(id);
+            processors.remove(id)
         } else {
-            throw new ProcessorNotFoundException(id);
+            throw ProcessorNotFoundException(id)
         }
     }
 
-    public void process() {
-        for (Processor processor : processors.values()) {
-            processor.process();
+    fun process() {
+        processors.values.forEach {
+            it.process()
         }
     }
 }

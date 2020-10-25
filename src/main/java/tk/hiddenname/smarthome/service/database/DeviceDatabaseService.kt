@@ -32,6 +32,7 @@ class DeviceDatabaseService(private val repo: DeviceRepository) {
 
     fun create(newDevice: Device): Device = repo.save(newDevice)
 
+    @Throws(DeviceNotFoundException::class)
     fun update(id: Long, newDevice: Device): Device {
         return repo.findById(id)
                 .map { device: Device ->

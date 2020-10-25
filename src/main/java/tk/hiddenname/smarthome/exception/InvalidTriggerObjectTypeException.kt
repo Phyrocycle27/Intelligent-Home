@@ -4,4 +4,5 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-class InvalidTriggerObjectTypeException : RuntimeException("Invalid TriggerObject type")
+class InvalidTriggerObjectTypeException(id: String)
+    : RuntimeException("The type '$id'of trigger object is invalid")

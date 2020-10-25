@@ -2,7 +2,7 @@ package tk.hiddenname.smarthome.controller.device
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import tk.hiddenname.smarthome.exception.GPIOBusyException
+import tk.hiddenname.smarthome.exception.GpioBusyException
 import tk.hiddenname.smarthome.exception.PinSignalSupportException
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException
 import tk.hiddenname.smarthome.model.hardware.Device
@@ -41,13 +41,13 @@ class DeviceRestController(private val dbService: DeviceDatabaseService,
     fun getOne(@PathVariable id: Long): Device = dbService.getOne(id)
 
     @PostMapping(value = ["/create"], produces = ["application/json"])
-    @Throws(GPIOBusyException::class, PinSignalSupportException::class, SignalTypeNotFoundException::class)
+    @Throws(GpioBusyException::class, PinSignalSupportException::class, SignalTypeNotFoundException::class)
     fun create(@RequestBody(required = true) device: @Valid Device): Device {
         var newDevice = device
 
         newDevice.creationTimestamp = LocalDateTime.now()
         newDevice = dbService.create(newDevice)
-        manager.create(newDevice)
+        manager.register(newDevice)
 
         return newDevice
     }
@@ -69,7 +69,7 @@ class DeviceRestController(private val dbService: DeviceDatabaseService,
     fun delete(@PathVariable id: Long): ResponseEntity<Any> {
         val device = dbService.getOne(id)
 
-        manager.delete(device)
+        manager.unregister(device)
         dbService.delete(id)
 
         return ResponseEntity.noContent().build()
