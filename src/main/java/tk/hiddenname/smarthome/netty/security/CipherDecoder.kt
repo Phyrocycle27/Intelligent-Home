@@ -1,28 +1,15 @@
-package tk.hiddenname.smarthome.netty.security;
+package tk.hiddenname.smarthome.netty.security
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.buffer.ByteBuf
+import io.netty.channel.ChannelHandlerContext
+import io.netty.handler.codec.ByteToMessageDecoder
 
-import java.util.Arrays;
-import java.util.List;
-
-public class CipherDecoder extends ByteToMessageDecoder {
-
-    private final Encryption enc;
-
-    public CipherDecoder(Encryption enc) {
-        this.enc = enc;
-    }
-
-    @Override
-    protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf buf, List<Object> list) {
-        byte[] dataWithParams = new byte[buf.readableBytes()];
-        buf.readBytes(dataWithParams);
-
-        byte[] params = Arrays.copyOf(dataWithParams, 18);
-        byte[] data = Arrays.copyOfRange(dataWithParams, 18, dataWithParams.length);
-
-        list.add(enc.decode(data, params));
+class CipherDecoder(private val enc: Encryption) : ByteToMessageDecoder() {
+    override fun decode(channelHandlerContext: ChannelHandlerContext, buf: ByteBuf, list: MutableList<Any>) {
+        val dataWithParams = ByteArray(buf.readableBytes())
+        buf.readBytes(dataWithParams)
+        val params = dataWithParams.copyOf(18)
+        val data = dataWithParams.copyOfRange(18, dataWithParams.size)
+        list.add(enc.decode(data, params))
     }
 }

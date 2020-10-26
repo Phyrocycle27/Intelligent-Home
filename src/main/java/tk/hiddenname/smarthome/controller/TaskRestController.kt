@@ -20,11 +20,10 @@ class TaskRestController(private val dbService: TaskDatabaseService,
     @Throws(NoSuchProcessorException::class, UnsupportedTriggerObjectTypeException::class, NoSuchListenerException::class,
             TriggerExistsException::class, ProcessorExistsException::class, UnsupportedProcessingObjectTypeException::class)
     fun create(@RequestBody(required = true) task: @Valid Task): Task {
-        var newTask = task
-        newTask = dbService.create(newTask)
-        taskService.addTask(newTask)
+        task.id = dbService.getNextId()
 
-        return newTask
+        taskService.addTask(task)
+        return dbService.create(task)
     }
 
     @DeleteMapping(value = ["/one/delete/{id}"], produces = ["application/json"])

@@ -5,9 +5,10 @@ import javax.persistence.*
 
 @MappedSuperclass
 abstract class AbstractJpaPersistable {
+
     @Id
     @Column(updatable = false, nullable = false)
+    @get:JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    val id: Long = 0L
+    var id: Long = 0L
 }

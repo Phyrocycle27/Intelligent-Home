@@ -46,21 +46,12 @@ class DeviceRestController(private val dbService: DeviceDatabaseService,
     @PostMapping(value = ["/create"], produces = ["application/json"])
     @Throws(GpioBusyException::class, PinSignalSupportException::class, SignalTypeNotFoundException::class)
     fun create(@RequestBody(required = true) device: @Valid Device): Device {
-        var newDevice = device
+        device.creationTimestamp = LocalDateTime.now()
+        device.updateTimestamp = LocalDateTime.now()
+        device.id = dbService.getNextId()
 
-        newDevice.creationTimestamp = LocalDateTime.now()
-        newDevice.updateTimestamp = LocalDateTime.now()
-        newDevice = dbService.create(newDevice)
-
-        // TODO: Remove reduant call to database with manual ID set
-        try {
-            manager.register(newDevice)
-        } catch (e: Exception) {
-            dbService.delete(newDevice.id)
-            throw e
-        }
-
-        return newDevice
+        manager.register(device)
+        return dbService.create(device)
     }
 
     @PutMapping(value = ["/one/{id}"], produces = ["application/json"])

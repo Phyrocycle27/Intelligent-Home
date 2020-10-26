@@ -13,4 +13,6 @@ class TaskDatabaseService(private val repo: TaskRepository) {
     fun create(newTask: Task): Task = repo.save(newTask)
 
     fun delete(id: Long) = repo.deleteById(id)
+
+    fun getNextId() = repo.getNextId()
 }

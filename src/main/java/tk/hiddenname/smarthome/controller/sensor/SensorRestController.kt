@@ -43,21 +43,12 @@ class SensorRestController(private val dbService: SensorDatabaseService,
     @PostMapping(value = ["/create"], produces = ["application/json"])
     @Throws(GpioBusyException::class, PinSignalSupportException::class, SignalTypeNotFoundException::class)
     fun create(@RequestBody(required = true) sensor: @Valid Sensor): Sensor {
-        var newSensor = sensor
+        sensor.creationTimestamp = LocalDateTime.now()
+        sensor.updateTimestamp = LocalDateTime.now()
+        sensor.id = dbService.getNextId()
 
-        newSensor.creationTimestamp = LocalDateTime.now()
-        newSensor.updateTimestamp = LocalDateTime.now()
-        newSensor = dbService.create(newSensor)
-
-        // TODO: Remove reduant call to database with manual ID set
-        try {
-            manager.create(newSensor)
-        } catch (e: Exception) {
-            dbService.delete(newSensor.id)
-            throw e
-        }
-
-        return newSensor
+        manager.create(sensor)
+        return dbService.create(sensor)
     }
 
     @PutMapping(value = ["/one/{id}"], produces = ["application/json"])
