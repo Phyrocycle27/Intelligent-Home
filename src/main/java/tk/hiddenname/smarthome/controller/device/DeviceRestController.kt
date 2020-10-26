@@ -7,6 +7,7 @@ import tk.hiddenname.smarthome.exception.GpioBusyException
 import tk.hiddenname.smarthome.exception.PinSignalSupportException
 import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException
 import tk.hiddenname.smarthome.model.hardware.Device
+import tk.hiddenname.smarthome.model.hardware.GPIOMode
 import tk.hiddenname.smarthome.model.signal.getSignalType
 import tk.hiddenname.smarthome.service.database.DeviceDatabaseService
 import tk.hiddenname.smarthome.service.hardware.manager.DeviceManager
@@ -49,6 +50,7 @@ class DeviceRestController(private val dbService: DeviceDatabaseService,
         device.creationTimestamp = LocalDateTime.now()
         device.updateTimestamp = LocalDateTime.now()
         device.id = dbService.getNextId()
+        device.gpio!!.pinMode = GPIOMode.OUTPUT
 
         manager.register(device)
         return dbService.create(device)

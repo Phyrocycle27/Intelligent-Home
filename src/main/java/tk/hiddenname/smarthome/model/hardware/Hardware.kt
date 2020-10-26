@@ -13,7 +13,7 @@ abstract class Hardware(
         val name: @Size(min = 3, max = 25) String = "",
 
         @Column(nullable = false, length = 50)
-        val description: @Size(min = 3, max = 50) String = "",
+        val description: @Size(max = 50) String = "",
 
         @Column(nullable = false)
         val signalInversion: Boolean = false,
@@ -22,12 +22,12 @@ abstract class Hardware(
         val areaId: Long = 0,
 
         @Column(nullable = false, updatable = false, name = "creation_timestamp")
-        @get:JsonFormat(shape = JsonFormat.Shape.OBJECT, pattern = "yyyy-MM-dd HH:mm:ss")
+        @get:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         @get:JsonProperty(access = JsonProperty.Access.READ_ONLY)
         var creationTimestamp: LocalDateTime? = null,
 
         @Column(nullable = false, updatable = true, name = "update_timestamp")
-        @get:JsonFormat(shape = JsonFormat.Shape.OBJECT, pattern = "yyyy-MM-dd HH:mm:ss")
+        @get:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         @get:JsonProperty(access = JsonProperty.Access.READ_ONLY)
         var updateTimestamp: LocalDateTime? = null,
 
