@@ -1,5 +1,6 @@
 package tk.hiddenname.smarthome.controller.device
 
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tk.hiddenname.smarthome.exception.GpioBusyException
@@ -16,6 +17,8 @@ import javax.validation.Valid
 @RequestMapping(value = ["/devices"])
 class DeviceRestController(private val dbService: DeviceDatabaseService,
                            private val manager: DeviceManager) {
+
+    private val log = LoggerFactory.getLogger(DeviceRestController::class.java)
 
     @Suppress("DuplicatedCode")
     @GetMapping(value = ["/all"], produces = ["application/json"])
@@ -46,8 +49,16 @@ class DeviceRestController(private val dbService: DeviceDatabaseService,
         var newDevice = device
 
         newDevice.creationTimestamp = LocalDateTime.now()
+        newDevice.updateTimestamp = LocalDateTime.now()
         newDevice = dbService.create(newDevice)
-        manager.register(newDevice)
+
+        // TODO: Remove reduant call to database with manual ID set
+        try {
+            manager.register(newDevice)
+        } catch (e: Exception) {
+            dbService.delete(newDevice.id)
+            throw e
+        }
 
         return newDevice
     }
@@ -56,11 +67,13 @@ class DeviceRestController(private val dbService: DeviceDatabaseService,
     fun update(@RequestBody(required = true) device: @Valid Device, @PathVariable id: Long): Device {
         var newDevice = device
         val oldDevice = dbService.getOne(id)
-        newDevice = dbService.update(id, newDevice)
 
         if (oldDevice.signalInversion != newDevice.signalInversion) {
             manager.update(newDevice)
         }
+
+        newDevice.updateTimestamp = LocalDateTime.now()
+        newDevice = dbService.update(id, newDevice)
 
         return newDevice
     }

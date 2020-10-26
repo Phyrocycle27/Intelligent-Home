@@ -14,5 +14,5 @@ import javax.persistence.*
 abstract class TriggerObject(
         @Column(updatable = false, nullable = false)
         @Enumerated(EnumType.STRING)
-        val action: TriggerAction = TriggerAction.NOT_SPECIFIED
+        open val action: TriggerAction = TriggerAction.NOT_SPECIFIED
 ) : AbstractJpaPersistable()

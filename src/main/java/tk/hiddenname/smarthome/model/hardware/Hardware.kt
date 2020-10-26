@@ -20,12 +20,12 @@ abstract class Hardware(
         @Column(nullable = false)
         val areaId: Long = 0,
 
-        @Column(nullable = false, updatable = false, name = "creation_date")
-        @JsonFormat(shape = JsonFormat.Shape.OBJECT, pattern = "yyyy-MM-dd HH:mm:ss")
+        @Column(nullable = false, updatable = false, name = "creation_timestamp")
+        @get:JsonFormat(shape = JsonFormat.Shape.OBJECT, pattern = "yyyy-MM-dd HH:mm:ss")
         var creationTimestamp: LocalDateTime? = null,
 
-        @Column(nullable = false, updatable = false, name = "creation_date")
-        @JsonFormat(shape = JsonFormat.Shape.OBJECT, pattern = "yyyy-MM-dd HH:mm:ss")
+        @Column(nullable = false, updatable = true, name = "update_timestamp")
+        @get:JsonFormat(shape = JsonFormat.Shape.OBJECT, pattern = "yyyy-MM-dd HH:mm:ss")
         var updateTimestamp: LocalDateTime? = null,
 
         @Embedded
@@ -35,4 +35,12 @@ abstract class Hardware(
             AttributeOverride(name = "mode", column = Column(nullable = false, updatable = false))
         ])
         val gpio: GPIO? = null
-) : AbstractJpaPersistable()
+) : AbstractJpaPersistable() {
+
+    override fun toString(): String {
+        return "Hardware(id=$id, areaId=$areaId, name=$name, description=$description, " +
+                "creationTimestamp=$creationTimestamp, updateTimestamp=$updateTimestamp" +
+                "signalInversion=$signalInversion, gpioPin=${gpio?.gpioPin}, " +
+                "signalType=${gpio?.signalType}, mode=${gpio?.pinMode})"
+    }
+}

@@ -46,14 +46,23 @@ class SensorRestController(private val dbService: SensorDatabaseService,
         var newSensor = sensor
 
         newSensor.creationTimestamp = LocalDateTime.now()
+        newSensor.updateTimestamp = LocalDateTime.now()
         newSensor = dbService.create(newSensor)
-        manager.create(newSensor)
+
+        // TODO: Remove reduant call to database with manual ID set
+        try {
+            manager.create(newSensor)
+        } catch (e: Exception) {
+            dbService.delete(newSensor.id)
+            throw e
+        }
 
         return newSensor
     }
 
     @PutMapping(value = ["/one/{id}"], produces = ["application/json"])
     fun update(@RequestBody(required = true) newSensor: @Valid Sensor, @PathVariable id: Long): Sensor {
+        newSensor.updateTimestamp = LocalDateTime.now()
         return dbService.update(id, newSensor)
     }
 

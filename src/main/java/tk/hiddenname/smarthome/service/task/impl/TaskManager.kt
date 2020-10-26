@@ -8,14 +8,19 @@ import tk.hiddenname.smarthome.model.task.Task
 import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
 import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject
 import tk.hiddenname.smarthome.service.task.impl.listener.EventListener
+import tk.hiddenname.smarthome.service.task.impl.listener.ListenerFactory
 import tk.hiddenname.smarthome.service.task.impl.processor.EventProcessor
+import tk.hiddenname.smarthome.service.task.impl.processor.ProcessorFactory
 
 @Component
 @Scope("prototype")
-class TaskManager(context: ApplicationContext) {
+class TaskManager(
+        context: ApplicationContext,
+        listenerFactory: ListenerFactory,
+        processorFactory: ProcessorFactory) {
 
-    private val listener: EventListener = context.getBean(EventListener::class.java, this)
-    val processor: EventProcessor = context.getBean(EventProcessor::class.java)
+    private val listener: EventListener = context.getBean(EventListener::class.java, this, listenerFactory)
+    val processor: EventProcessor = context.getBean(EventProcessor::class.java, processorFactory)
 
     @Throws(TriggerExistsException::class, UnsupportedTriggerObjectTypeException::class,
             NoSuchListenerException::class, NoSuchProcessorException::class, ProcessorExistsException::class,

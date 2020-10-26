@@ -1,5 +1,6 @@
 package tk.hiddenname.smarthome.model.hardware
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 import tk.hiddenname.smarthome.model.signal.SignalType
@@ -10,13 +11,12 @@ import javax.persistence.Enumerated
 @Embeddable
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
 class GPIO(
-        var gpioPin: Int,
+        var gpioPin: Int = 0,
 
         @Enumerated(EnumType.STRING)
-        var type: SignalType,
+        var signalType: SignalType = SignalType.NOT_SPECIFIED,
 
         @Enumerated(EnumType.STRING)
-        var mode: GPIOMode
-) {
-    constructor() : this(0, SignalType.DIGITAL, GPIOMode.OUTPUT)
-}
+        @get:JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        var pinMode: GPIOMode = GPIOMode.NOT_SPECIFIED
+)

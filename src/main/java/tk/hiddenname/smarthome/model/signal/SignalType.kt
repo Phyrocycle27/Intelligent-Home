@@ -5,7 +5,8 @@ import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException
 enum class SignalType {
     DIGITAL,
     PWM,
-    ANALOG
+    ANALOG,
+    NOT_SPECIFIED
 }
 
 fun getSignalType(signalTypeName: String): SignalType {

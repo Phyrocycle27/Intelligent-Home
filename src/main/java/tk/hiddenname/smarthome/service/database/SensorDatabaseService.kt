@@ -14,7 +14,7 @@ class SensorDatabaseService(private val repo: SensorRepository) {
     fun getAll(): List<Sensor> = repo.findAll(Sort.by("id"))
 
     fun getAllBySignalType(type: SignalType): List<Sensor> {
-        return repo.findAllByGpioType(type)
+        return repo.findAllByGpioSignalType(type)
     }
 
     fun getAllByAreaId(areaId: Long): List<Sensor> {
@@ -22,7 +22,7 @@ class SensorDatabaseService(private val repo: SensorRepository) {
     }
 
     fun getAllBySignalTypeAndAreaId(type: SignalType, areaId: Long): List<Sensor> {
-        return repo.findAllByGpioTypeAndAreaId(type, areaId)
+        return repo.findAllByGpioSignalTypeAndAreaId(type, areaId)
     }
 
     @Throws(SensorNotFoundException::class)

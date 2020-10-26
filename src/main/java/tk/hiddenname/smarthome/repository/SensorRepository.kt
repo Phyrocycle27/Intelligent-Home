@@ -9,9 +9,9 @@ import javax.validation.constraints.NotNull
 @Repository
 interface SensorRepository : JpaRepository<Sensor, Long> {
 
-    fun findAllByGpioType(type: @NotNull SignalType): List<Sensor>
+    fun findAllByGpioSignalType(type: @NotNull SignalType): List<Sensor>
 
     fun findAllByAreaId(id: @NotNull Long): List<Sensor>
 
-    fun findAllByGpioTypeAndAreaId(type: @NotNull SignalType, areaId: @NotNull Long): List<Sensor>
+    fun findAllByGpioSignalTypeAndAreaId(type: @NotNull SignalType, areaId: @NotNull Long): List<Sensor>
 }

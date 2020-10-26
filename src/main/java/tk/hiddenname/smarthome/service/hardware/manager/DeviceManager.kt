@@ -24,7 +24,7 @@ class DeviceManager(private val digitalService: DigitalDeviceService,
     fun register(device: Device) {
         log.debug("Creating device $device")
         val gpio = device.gpio ?: throw GpioNotSpecifiedException()
-        getService(gpio.type).save(
+        getService(gpio.signalType).save(
                 device.id,
                 gpio.gpioPin,
                 device.signalInversion
@@ -34,7 +34,7 @@ class DeviceManager(private val digitalService: DigitalDeviceService,
     fun update(device: Device) {
         log.debug("Updating device $device")
         val gpio = device.gpio ?: throw GpioNotSpecifiedException()
-        getService(gpio.type).update(
+        getService(gpio.signalType).update(
                 device.id,
                 device.signalInversion
         )
@@ -43,7 +43,7 @@ class DeviceManager(private val digitalService: DigitalDeviceService,
     fun unregister(device: Device) {
         log.debug("Deleting device $device")
         val gpio = device.gpio ?: throw GpioNotSpecifiedException()
-        getService(gpio.type).delete(
+        getService(gpio.signalType).delete(
                 device.id
         )
     }

@@ -12,19 +12,21 @@ import tk.hiddenname.smarthome.service.task.impl.processor.Processor
 
 @Component
 @Scope(scopeName = "prototype")
-class SetDigitalSignalProcessor(private val service: DigitalDeviceService,
-                                private val dbService: DeviceDatabaseService) : Processor {
+class SetDigitalSignalProcessor : Processor {
 
     private val log = LoggerFactory.getLogger(SetDigitalSignalProcessor::class.java)
 
     private var processingObject: SetDigitalSignalObject? = null
 
+    private val service: DigitalDeviceService? = null
+    private val dbService: DeviceDatabaseService? = null
+
     override fun process() {
         Thread {
-            val device = dbService.getOne(processingObject!!.deviceId)
-            val currState = service.getState(device.id, device.signalInversion).isDigitalState
+            val device = dbService?.getOne(processingObject!!.deviceId)
+            val currState = service?.getState(device?.id!!, device.signalInversion)?.isDigitalState
             if (currState != processingObject!!.targetState) {
-                service.setState(device.id, device.signalInversion, processingObject!!.targetState)
+                service!!.setState(device!!.id, device.signalInversion, processingObject!!.targetState)
                 log.info(java.lang.String.format(" * Digital state (%b) will be set to device with id (%d) on GPIO " +
                         "(%d) for (%d) seconds",
                         processingObject!!.targetState, device.id, device.gpio!!.gpioPin,
@@ -35,7 +37,7 @@ class SetDigitalSignalProcessor(private val service: DigitalDeviceService,
                     } catch (e: InterruptedException) {
                         log.error(e.message)
                     }
-                    service.setState(device.id, device.signalInversion, currState)
+                    service.setState(device.id, device.signalInversion, currState!!)
                     log.info(String.format("* Processing complete! Digital state (%b) will be set to device " +
                             "with id (%d) on GPIO (%d)",
                             currState, device.id, device.gpio.gpioPin))
@@ -43,7 +45,7 @@ class SetDigitalSignalProcessor(private val service: DigitalDeviceService,
             } else {
                 log.info(java.lang.String.format(" * Digital state on device with id (%d) on gpio (%d) have been already " +
                         "(%b). Nothing to change",
-                        device.id, device.gpio!!.gpioPin, processingObject!!.targetState))
+                        device!!.id, device.gpio!!.gpioPin, processingObject!!.targetState))
             }
         }.start()
     }

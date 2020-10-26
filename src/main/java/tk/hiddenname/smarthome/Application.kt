@@ -16,20 +16,21 @@ open class Application {
         private const val allowConnectionToServer = true
 
         const val token = "Dq62R5gswBxAOqUITvO0KEH6aZmT6BQ8"
-    }
 
-    fun main() {
-        // Run the Spring
-        val ctx: ApplicationContext = SpringApplication.run(Application::class.java)
-        Runtime.getRuntime().addShutdownHook(Thread { ctx.getBean(GpioManager::class.java).shutdown() })
+        @JvmStatic
+        fun main(args: Array<String>) {
+            // Run the Spring
+            val ctx: ApplicationContext = SpringApplication.run(Application::class.java)
+            Runtime.getRuntime().addShutdownHook(Thread { ctx.getBean(GpioManager::class.java).shutdown() })
 
-        // Run the Netty
-        /*if (allowConnectionToServer) {
-            Client(HOST, PORT)
-        }*/
+            // Run the Netty
+            /*if (allowConnectionToServer) {
+                Client(HOST, PORT)
+            }*/
 
-        ctx.getBean(DeviceManager::class.java).loadDevices()
-        ctx.getBean(SensorManager::class.java).loadSensors()
-        ctx.getBean(TaskService::class.java).loadTasks()
+            ctx.getBean(DeviceManager::class.java).loadDevices()
+            ctx.getBean(SensorManager::class.java).loadSensors()
+            ctx.getBean(TaskService::class.java).loadTasks()
+        }
     }
 }

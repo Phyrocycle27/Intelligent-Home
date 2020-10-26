@@ -14,7 +14,7 @@ class DeviceDatabaseService(private val repo: DeviceRepository) {
     fun getAll(): List<Device> = repo.findAll(Sort.by("id"))
 
     fun getAllBySignalType(type: SignalType): List<Device> {
-        return repo.findAllByGpioType(type)
+        return repo.findAllByGpioSignalType(type)
     }
 
     fun getAllByAreaId(areaId: Long): List<Device> {
@@ -22,7 +22,7 @@ class DeviceDatabaseService(private val repo: DeviceRepository) {
     }
 
     fun getAllBySignalTypeAndAreaId(type: SignalType, areaId: Long): List<Device> {
-        return repo.findAllByGpioTypeAndAreaId(type, areaId)
+        return repo.findAllByGpioSignalTypeAndAreaId(type, areaId)
     }
 
     @Throws(DeviceNotFoundException::class)

@@ -21,7 +21,7 @@ class SensorManager(private val service: SensorDatabaseService, private val digi
     fun create(sensor: Sensor) {
         log.debug("Creating device $sensor")
         val gpio = sensor.gpio ?: throw GpioNotSpecifiedException()
-        getService(gpio.type).save(
+        getService(gpio.signalType).save(
                 sensor.id,
                 gpio.gpioPin,
                 sensor.signalInversion
@@ -31,7 +31,7 @@ class SensorManager(private val service: SensorDatabaseService, private val digi
     fun delete(sensor: Sensor) {
         log.debug("Deleting sensor $sensor")
         val gpio = sensor.gpio ?: throw GpioNotSpecifiedException()
-        getService(gpio.type).delete(
+        getService(gpio.signalType).delete(
                 sensor.id
         )
     }

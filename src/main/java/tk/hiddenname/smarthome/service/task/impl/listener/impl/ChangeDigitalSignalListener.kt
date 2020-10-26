@@ -16,15 +16,16 @@ import tk.hiddenname.smarthome.service.task.impl.listener.Listener
 
 @Component
 @Scope("prototype")
-class ChangeDigitalSignalListener(private val listener: EventListener,
-                                  private var service: DigitalSensorService,
-                                  private var dbService: SensorDatabaseService) : Listener {
+class ChangeDigitalSignalListener(private val listener: EventListener) : Listener {
 
     private val log = LoggerFactory.getLogger(ChangeDigitalSignalListener::class.java)
 
     private var triggerObject: ChangeDigitalSignalObject? = null
     private var gpioListener: GpioPinListenerDigital? = null
     private var delayCounter: DelayCounterThread? = null
+
+    private var service: DigitalSensorService? = null
+    private var dbService: SensorDatabaseService? = null
 
     @Autowired
     fun setService(service: DigitalSensorService) {
@@ -40,8 +41,8 @@ class ChangeDigitalSignalListener(private val listener: EventListener,
     override fun register(triggerObject: TriggerObject) {
         if (triggerObject is ChangeDigitalSignalObject) {
             this.triggerObject = triggerObject
-            val sensor = dbService.getOne(this.triggerObject!!.id)
-            gpioListener = service.addListener(this, sensor.id, this.triggerObject!!.targetState,
+            val sensor = dbService?.getOne(this.triggerObject!!.id)
+            gpioListener = service?.addListener(this, sensor!!.id, this.triggerObject!!.targetState,
                     sensor.signalInversion)
         } else {
             throw UnsupportedTriggerObjectTypeException(triggerObject.javaClass.simpleName)
@@ -55,7 +56,7 @@ class ChangeDigitalSignalListener(private val listener: EventListener,
     }
 
     override fun unregister() {
-        service.removeListener(gpioListener!!, triggerObject!!.sensorId)
+        service!!.removeListener(gpioListener!!, triggerObject!!.sensorId)
     }
 
     override fun trigger(flag: Boolean) {

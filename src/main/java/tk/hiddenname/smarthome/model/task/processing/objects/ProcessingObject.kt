@@ -14,5 +14,5 @@ import javax.persistence.*
 abstract class ProcessingObject(
         @Column(nullable = false, updatable = false)
         @Enumerated(EnumType.STRING)
-        val action: ProcessingAction = ProcessingAction.NOT_SPECIFIED
+        open val action: ProcessingAction = ProcessingAction.NOT_SPECIFIED
 ) : AbstractJpaPersistable()

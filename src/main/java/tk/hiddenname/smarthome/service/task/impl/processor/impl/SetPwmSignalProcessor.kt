@@ -12,30 +12,34 @@ import tk.hiddenname.smarthome.service.task.impl.processor.Processor
 
 @Component
 @Scope(scopeName = "prototype")
-class SetPwmSignalProcessor(private val dbService: DeviceDatabaseService,
-                            private val service: PwmDeviceService) : Processor {
+class SetPwmSignalProcessor : Processor {
 
     private val log = LoggerFactory.getLogger(SetPwmSignalProcessor::class.java)
 
     private var processingObject: SetPwmSignalObject? = null
 
+    private val dbService: DeviceDatabaseService? = null
+    private val service: PwmDeviceService? = null
+
     override fun process() {
         Thread {
-            val device = dbService.getOne(processingObject!!.deviceId)
-            val currSignal = service.getSignal(device.id, device.signalInversion).pwmSignal
+            val device = dbService?.getOne(processingObject!!.deviceId)
+            val currSignal = service?.getSignal(device?.id!!, device.signalInversion)?.pwmSignal
             if (currSignal != processingObject!!.targetSignal) {
                 log.info(String.format(" * Pwm signal (%d) will be set to device with id (%d) on GPIO " +
                         "(%d) for (%d) seconds",
-                        processingObject!!.targetSignal, device.id, device.gpio!!.gpioPin,
+                        processingObject!!.targetSignal, device!!.id, device.gpio!!.gpioPin,
                         processingObject!!.delay))
-                service.setSignal(device.id, device.signalInversion, processingObject!!.targetSignal)
+                service?.setSignal(device.id, device.signalInversion, processingObject!!.targetSignal)
                 if (processingObject!!.delay > 0) {
                     try {
                         Thread.sleep(processingObject!!.delay * 1000.toLong())
                     } catch (e: InterruptedException) {
                         log.error(e.message)
                     }
-                    service.setSignal(device.id, device.signalInversion, currSignal)
+                    if (currSignal != null) {
+                        service?.setSignal(device.id, device.signalInversion, currSignal)
+                    }
                     log.info(String.format("* Processing complete! Pwm signal (%d) will be set to device " +
                             "with id (%d) on GPIO (%d)",
                             currSignal, device.id, device.gpio.gpioPin))
@@ -43,7 +47,7 @@ class SetPwmSignalProcessor(private val dbService: DeviceDatabaseService,
             } else {
                 log.info(String.format(" * Pwm signal on device with id (%d) on gpio (%d) have been already " +
                         "(%d). Nothing to change",
-                        device.id, device.gpio!!.gpioPin, processingObject!!.targetSignal))
+                        device?.id, device?.gpio!!.gpioPin, processingObject!!.targetSignal))
             }
         }.start()
     }
