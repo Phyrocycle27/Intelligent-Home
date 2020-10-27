@@ -1,7 +1,6 @@
 package tk.hiddenname.smarthome.model.hardware
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.fasterxml.jackson.annotation.JsonProperty
 import tk.hiddenname.smarthome.model.AbstractJpaPersistable
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -23,12 +22,10 @@ abstract class Hardware(
 
         @Column(nullable = false, updatable = false, name = "creation_timestamp")
         @get:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-        @get:JsonProperty(access = JsonProperty.Access.READ_ONLY)
         var creationTimestamp: LocalDateTime? = null,
 
         @Column(nullable = false, updatable = true, name = "update_timestamp")
         @get:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-        @get:JsonProperty(access = JsonProperty.Access.READ_ONLY)
         var updateTimestamp: LocalDateTime? = null,
 
         @Embedded

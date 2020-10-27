@@ -43,5 +43,8 @@ class SensorDatabaseService(private val repo: SensorRepository) {
 
     fun getNextId() = repo.getNextId()
 
-    fun delete(id: Long) = repo.deleteById(id)
+    @Throws(SensorNotFoundException::class)
+    fun delete(id: Long) {
+        repo.delete(repo.findById(id).orElseThrow { SensorNotFoundException(id) })
+    }
 }

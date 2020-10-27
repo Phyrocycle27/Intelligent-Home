@@ -46,7 +46,7 @@ class DeviceRestController(private val dbService: DeviceDatabaseService,
 
     @PostMapping(value = ["/create"], produces = ["application/json"])
     @Throws(GpioBusyException::class, PinSignalSupportException::class, SignalTypeNotFoundException::class)
-    fun create(@RequestBody(required = true) device: @Valid Device): Device {
+    fun create(@Valid @RequestBody(required = true) device: Device): Device {
         device.creationTimestamp = LocalDateTime.now()
         device.updateTimestamp = LocalDateTime.now()
         device.id = dbService.getNextId()
@@ -57,7 +57,7 @@ class DeviceRestController(private val dbService: DeviceDatabaseService,
     }
 
     @PutMapping(value = ["/one/{id}"], produces = ["application/json"])
-    fun update(@RequestBody(required = true) device: @Valid Device, @PathVariable id: Long): Device {
+    fun update(@Valid @RequestBody(required = true) device: Device, @PathVariable id: Long): Device {
         var newDevice = device
         val oldDevice = dbService.getOne(id)
 

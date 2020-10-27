@@ -43,5 +43,8 @@ class DeviceDatabaseService(private val repo: DeviceRepository) {
 
     fun getNextId() = repo.getNextId()
 
-    fun delete(id: Long) = repo.deleteById(id)
+    @Throws(DeviceNotFoundException::class)
+    fun delete(id: Long) {
+        repo.delete(repo.findById(id).orElseThrow { DeviceNotFoundException(id) })
+    }
 }
