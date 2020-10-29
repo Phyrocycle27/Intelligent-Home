@@ -16,7 +16,7 @@ class GpioManager {
         private val log = LoggerFactory.getLogger(GpioManager::class.java)
         private val controller = GpioFactory.getInstance()
         private val pwmGPIO: MutableSet<Int> = mutableSetOf(13, 19, 18, 12)
-        private val digitalGPIO: MutableSet<Int> = mutableSetOf(
+        private val digitalGPIO: MutableSet<Int> = mutableSetOf(4,
                 2, 3, 17, 27, 22, 10, 9, 11, 14, 15, 18, 23, 24,
                 25, 8, 7, 1, 12, 16, 20, 21, 0, 5, 6, 13, 19, 26
         )
