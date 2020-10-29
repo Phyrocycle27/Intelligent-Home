@@ -1,10 +1,12 @@
 package tk.hiddenname.smarthome.service.hardware.impl.digital.output
 
 import com.pi4j.io.gpio.GpioPinDigitalOutput
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException
 import tk.hiddenname.smarthome.exception.GpioBusyException
 import tk.hiddenname.smarthome.exception.PinSignalSupportException
+import tk.hiddenname.smarthome.model.hardware.GPIO
 import tk.hiddenname.smarthome.model.signal.DigitalState
 import tk.hiddenname.smarthome.utils.gpio.GpioManager
 import tk.hiddenname.smarthome.utils.gpio.GpioSignalController
@@ -14,6 +16,7 @@ class DigitalDeviceServiceImpl(private val controller: GpioSignalController,
                                private val gpioManager: GpioManager) : DigitalDeviceService {
 
     private val digitalOutputsToDeviceId: MutableMap<Long, GpioPinDigitalOutput> = HashMap()
+    private val log = LoggerFactory.getLogger(DigitalDeviceService::class.java)
 
     @Throws(DeviceNotFoundException::class)
     override fun delete(id: Long) {
@@ -24,13 +27,15 @@ class DigitalDeviceServiceImpl(private val controller: GpioSignalController,
     }
 
     @Throws(GpioBusyException::class, PinSignalSupportException::class)
-    override fun save(id: Long, gpioPin: Int, reverse: Boolean) {
-        digitalOutputsToDeviceId[id] = gpioManager.createDigitalOutput(gpioPin, reverse)
+    override fun save(id: Long, gpio: GPIO, reverse: Boolean) {
+        digitalOutputsToDeviceId[id] = gpioManager.createDigitalOutput(gpio, reverse)
     }
 
     @Throws(DeviceNotFoundException::class)
     override fun update(id: Long, reverse: Boolean) {
-        setState(id, reverse, getState(id, reverse).isDigitalState)
+        log.info("Service's update")
+        setState(id, reverse, getState(id, reverse).digitalState!!)
+        log.info("Service's updating")
     }
 
     @Throws(DeviceNotFoundException::class)

@@ -1,5 +1,6 @@
 package tk.hiddenname.smarthome.service.database
 
+import org.slf4j.LoggerFactory
 import org.springframework.beans.BeanUtils
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
@@ -10,6 +11,8 @@ import tk.hiddenname.smarthome.repository.DeviceRepository
 
 @Service
 class DeviceDatabaseService(private val repo: DeviceRepository) {
+
+    private val log = LoggerFactory.getLogger(DeviceDatabaseService::class.java)
 
     fun getAll(): List<Device> = repo.findAll(Sort.by("id"))
 
@@ -36,7 +39,8 @@ class DeviceDatabaseService(private val repo: DeviceRepository) {
     fun update(id: Long, newDevice: Device): Device {
         return repo.findById(id)
                 .map { device: Device ->
-                    BeanUtils.copyProperties(newDevice, device, "id", "creationDate", "gpio")
+                    BeanUtils.copyProperties(newDevice, device, "id", "creationTimestamp", "gpio")
+                    device.gpio?.signalType = newDevice.gpio?.signalType
                     repo.save(device)
                 }.orElseThrow { DeviceNotFoundException(id) }
     }

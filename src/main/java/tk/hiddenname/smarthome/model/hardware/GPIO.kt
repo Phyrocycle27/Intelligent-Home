@@ -7,16 +7,23 @@ import tk.hiddenname.smarthome.model.signal.SignalType
 import javax.persistence.Embeddable
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
+import javax.validation.constraints.Max
+import javax.validation.constraints.Min
+import javax.validation.constraints.NotNull
 
 @Embeddable
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
 class GPIO(
-        var gpioPin: Int = 0,
+        @field:Max(30)
+        @field:Min(0)
+        @field:NotNull(message = "gpio pin should be specified")
+        val gpioPin: Int? = null,
 
         @Enumerated(EnumType.STRING)
-        var signalType: SignalType = SignalType.NOT_SPECIFIED,
+        @field:NotNull(message = "gpio signal type shouldn't be null")
+        var signalType: SignalType? = null,
 
         @Enumerated(EnumType.STRING)
-        @get:JsonProperty(access = JsonProperty.Access.READ_ONLY)
-        var pinMode: GPIOMode = GPIOMode.NOT_SPECIFIED
+        @field:JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        var pinMode: GpioMode? = null
 )

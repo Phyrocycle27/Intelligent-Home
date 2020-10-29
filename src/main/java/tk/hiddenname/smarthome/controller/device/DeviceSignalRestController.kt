@@ -1,6 +1,8 @@
 package tk.hiddenname.smarthome.controller.device
 
 import org.springframework.web.bind.annotation.*
+import tk.hiddenname.smarthome.exception.HardwareIdNotSpecifiedException
+import tk.hiddenname.smarthome.exception.SignalValueNotSpecifiedException
 import tk.hiddenname.smarthome.model.signal.DigitalState
 import tk.hiddenname.smarthome.model.signal.PwmSignal
 import tk.hiddenname.smarthome.service.database.DeviceDatabaseService
@@ -15,33 +17,34 @@ class DeviceSignalRestController(private val dbService: DeviceDatabaseService,
                                  private val pwmService: PwmDeviceServiceImpl) {
 
     // ******************************** PWM *************************************************
-    @GetMapping(value = ["/pwm"], produces = ["application/json"])
-    fun getPwmSignal(@RequestParam(name = "id", required = true) id: Long): PwmSignal {
+    @GetMapping(value = ["/pwm/{id}"], produces = ["application/json"])
+    fun getPwmSignal(@PathVariable(name = "id", required = true) id: Long): PwmSignal {
         val device = dbService.getOne(id)
         return pwmService.getSignal(device.id, device.signalInversion)
     }
 
     @PutMapping(value = ["/pwm"], produces = ["application/json"])
-    fun setPwmSignal(@RequestBody(required = true) signal: @Valid PwmSignal): PwmSignal {
-        val device = dbService.getOne(signal.id)
+    fun setPwmSignal(@Valid @RequestBody(required = true) signal: PwmSignal): PwmSignal {
+        val device = dbService.getOne(signal.hardwareId ?: throw HardwareIdNotSpecifiedException())
+        signal.pwmSignal ?: throw SignalValueNotSpecifiedException()
         return pwmService.setSignal(device.id,
                 device.signalInversion,
                 signal.pwmSignal)
     }
 
     // ***************************** DIGITAL **************************************************
-    @GetMapping(value = ["/digital"], produces = ["application/json"])
-    fun getState(@RequestParam(name = "id", required = true) id: Long): DigitalState {
+    @GetMapping(value = ["/digital/{id}"], produces = ["application/json"])
+    fun getState(@PathVariable(name = "id", required = true) id: Long): DigitalState {
         val device = dbService.getOne(id)
         return digitalService.getState(device.id, device.signalInversion)
     }
 
     @PutMapping(value = ["/digital"], produces = ["application/json"])
-    fun setState(@RequestBody(required = true) state: @Valid DigitalState): DigitalState {
-        val device = dbService.getOne(state.id)
+    fun setState(@Valid @RequestBody(required = true) state: DigitalState): DigitalState {
+        val device = dbService.getOne(state.hardwareId ?: throw HardwareIdNotSpecifiedException())
+        state.digitalState ?: throw SignalValueNotSpecifiedException()
         return digitalService.setState(device.id,
                 device.signalInversion,
-                state.isDigitalState
-        )
+                state.digitalState)
     }
 }

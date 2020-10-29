@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import tk.hiddenname.smarthome.exception.GpioBusyException
 import tk.hiddenname.smarthome.exception.PinSignalSupportException
 import tk.hiddenname.smarthome.exception.SensorNotFoundException
+import tk.hiddenname.smarthome.model.hardware.GPIO
 import tk.hiddenname.smarthome.model.signal.DigitalState
 import tk.hiddenname.smarthome.service.task.impl.listener.Listener
 import tk.hiddenname.smarthome.utils.gpio.GpioManager
@@ -25,8 +26,8 @@ class DigitalSensorServiceImpl(private val gpioManager: GpioManager) : DigitalSe
     }
 
     @Throws(GpioBusyException::class, PinSignalSupportException::class)
-    override fun save(id: Long, gpioPin: Int, reverse: Boolean) {
-        digitalInputsToSensorId[id] = gpioManager.createDigitalInput(gpioPin)
+    override fun save(id: Long, gpio: GPIO, reverse: Boolean) {
+        digitalInputsToSensorId[id] = gpioManager.createDigitalInput(gpio)
     }
 
     override fun update(id: Long, reverse: Boolean) {

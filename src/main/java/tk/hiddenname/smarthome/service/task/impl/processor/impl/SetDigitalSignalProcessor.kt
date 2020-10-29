@@ -24,7 +24,7 @@ class SetDigitalSignalProcessor : Processor {
     override fun process() {
         Thread {
             val device = dbService?.getOne(processingObject!!.deviceId)
-            val currState = service?.getState(device?.id!!, device.signalInversion)?.isDigitalState
+            val currState = service?.getState(device?.id!!, device.signalInversion)?.digitalState
             if (currState != processingObject!!.targetState) {
                 service!!.setState(device!!.id, device.signalInversion, processingObject!!.targetState)
                 log.info(java.lang.String.format(" * Digital state (%b) will be set to device with id (%d) on GPIO " +

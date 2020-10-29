@@ -8,8 +8,4 @@ import javax.persistence.Table
 @Entity
 @Table(name = "sensor")
 @JsonNaming(SnakeCaseStrategy::class)
-class Sensor : Hardware() {
-    init {
-        gpio?.pinMode = GPIOMode.OUTPUT
-    }
-}
+class Sensor : Hardware()

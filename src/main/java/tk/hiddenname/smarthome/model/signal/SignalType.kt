@@ -1,18 +1,23 @@
 package tk.hiddenname.smarthome.model.signal
 
-import tk.hiddenname.smarthome.exception.SignalTypeNotFoundException
+import com.fasterxml.jackson.annotation.JsonCreator
+import tk.hiddenname.smarthome.exception.InvalidSignalTypeException
 
 enum class SignalType {
     DIGITAL,
     PWM,
     ANALOG,
-    NOT_SPECIFIED
-}
+    NOT_SPECIFIED;
 
-fun getSignalType(signalTypeName: String): SignalType {
-    try {
-        return SignalType.valueOf(signalTypeName.toUpperCase())
-    } catch (e: IllegalArgumentException) {
-        throw SignalTypeNotFoundException(signalTypeName)
+    companion object {
+        @JvmStatic
+        @JsonCreator
+        fun getSignalType(signalTypeName: String): SignalType {
+            try {
+                return valueOf(signalTypeName.toUpperCase())
+            } catch (e: IllegalArgumentException) {
+                throw InvalidSignalTypeException(signalTypeName)
+            }
+        }
     }
 }

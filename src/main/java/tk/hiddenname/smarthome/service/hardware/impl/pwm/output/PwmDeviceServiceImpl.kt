@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import tk.hiddenname.smarthome.exception.DeviceNotFoundException
 import tk.hiddenname.smarthome.exception.GpioBusyException
 import tk.hiddenname.smarthome.exception.PinSignalSupportException
+import tk.hiddenname.smarthome.model.hardware.GPIO
 import tk.hiddenname.smarthome.model.signal.PwmSignal
 import tk.hiddenname.smarthome.utils.gpio.GpioManager
 import tk.hiddenname.smarthome.utils.gpio.GpioSignalController
@@ -25,13 +26,13 @@ class PwmDeviceServiceImpl(private val controller: GpioSignalController,
     }
 
     @Throws(GpioBusyException::class, PinSignalSupportException::class)
-    override fun save(id: Long, gpioPin: Int, reverse: Boolean) {
-        map[id] = gpioManager.createPwmOutput(gpioPin, reverse)
+    override fun save(id: Long, gpio: GPIO, reverse: Boolean) {
+        map[id] = gpioManager.createPwmOutput(gpio, reverse)
     }
 
     @Throws(DeviceNotFoundException::class)
     override fun update(id: Long, reverse: Boolean) {
-        setSignal(id, reverse, getSignal(id, reverse).pwmSignal)
+        setSignal(id, reverse, getSignal(id, reverse).pwmSignal!!)
     }
 
     @Throws(DeviceNotFoundException::class)

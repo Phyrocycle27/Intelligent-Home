@@ -2,36 +2,36 @@ package tk.hiddenname.smarthome.service.hardware.manager
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import tk.hiddenname.smarthome.exception.GpioBusyException
-import tk.hiddenname.smarthome.exception.GpioNotSpecifiedException
-import tk.hiddenname.smarthome.exception.PinSignalSupportException
-import tk.hiddenname.smarthome.exception.SignalTypeNotSupportsException
+import tk.hiddenname.smarthome.exception.*
 import tk.hiddenname.smarthome.model.hardware.Sensor
 import tk.hiddenname.smarthome.model.signal.SignalType
 import tk.hiddenname.smarthome.service.database.SensorDatabaseService
 import tk.hiddenname.smarthome.service.hardware.impl.GPIOService
 import tk.hiddenname.smarthome.service.hardware.impl.digital.input.DigitalSensorServiceImpl
+import tk.hiddenname.smarthome.utils.gpio.GpioManager
 
 @Component
-class SensorManager(private val service: SensorDatabaseService, private val digitalService: DigitalSensorServiceImpl) {
+class SensorManager(private val service: SensorDatabaseService,
+                    private val digitalService: DigitalSensorServiceImpl,
+                    private val gpioManager: GpioManager) {
 
     private val log = LoggerFactory.getLogger(SensorManager::class.java)
 
     @Throws(PinSignalSupportException::class, GpioBusyException::class)
-    fun create(sensor: Sensor) {
-        log.debug("Creating device $sensor")
-        val gpio = sensor.gpio ?: throw GpioNotSpecifiedException()
-        getService(gpio.signalType).save(
+    fun register(sensor: Sensor) {
+        log.debug("Creating sensor $sensor")
+        sensor.gpio ?: throw GpioNotSpecifiedException()
+        getService(sensor.gpio.signalType).save(
                 sensor.id,
-                gpio.gpioPin,
+                sensor.gpio,
                 sensor.signalInversion
         )
     }
 
-    fun delete(sensor: Sensor) {
+    fun unregister(sensor: Sensor) {
         log.debug("Deleting sensor $sensor")
-        val gpio = sensor.gpio ?: throw GpioNotSpecifiedException()
-        getService(gpio.signalType).delete(
+        sensor.gpio ?: throw GpioNotSpecifiedException()
+        getService(sensor.gpio.signalType).delete(
                 sensor.id
         )
     }
@@ -39,7 +39,7 @@ class SensorManager(private val service: SensorDatabaseService, private val digi
     fun loadSensors() {
         service.getAll().forEach {
             try {
-                create(it)
+                register(it)
             } catch (e: PinSignalSupportException) {
                 log.warn(e.message)
             } catch (e: GpioBusyException) {
@@ -48,10 +48,23 @@ class SensorManager(private val service: SensorDatabaseService, private val digi
         }
     }
 
-    private fun getService(type: SignalType): GPIOService {
+    @Suppress("DuplicatedCode")
+    fun changeSignalType(sensor: Sensor, newSignalType: SignalType?) {
+        newSignalType ?: throw SignalTypeNotSpecifiedException()
+        sensor.gpio ?: throw GpioNotSpecifiedException()
+        log.info("Validating")
+        if (gpioManager.checkGpioPinSignalTypeSupports(sensor.gpio, newSignalType)) {
+            log.info("Changing")
+            unregister(sensor)
+            sensor.gpio.signalType = newSignalType
+            register(sensor)
+        }
+    }
+
+    private fun getService(type: SignalType?): GPIOService {
         return when (type) {
             SignalType.DIGITAL -> digitalService
-            else -> throw SignalTypeNotSupportsException(type)
+            else -> throw SignalTypeNotSupportsException(type!!)
         }
     }
 }
