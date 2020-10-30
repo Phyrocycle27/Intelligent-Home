@@ -1,7 +1,7 @@
 package tk.hiddenname.smarthome.service.hardware.impl.digital.input
 
 import com.pi4j.io.gpio.event.GpioPinListenerDigital
-import tk.hiddenname.smarthome.exception.SensorNotFoundException
+import tk.hiddenname.smarthome.exception.not_found.SensorNotFoundException
 import tk.hiddenname.smarthome.model.signal.DigitalState
 import tk.hiddenname.smarthome.service.hardware.impl.GPIOService
 import tk.hiddenname.smarthome.service.task.impl.listener.Listener

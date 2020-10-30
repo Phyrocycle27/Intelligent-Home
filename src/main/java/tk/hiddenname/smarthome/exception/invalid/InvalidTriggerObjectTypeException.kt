@@ -1,4 +1,4 @@
-package tk.hiddenname.smarthome.exception
+package tk.hiddenname.smarthome.exception.invalid
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus

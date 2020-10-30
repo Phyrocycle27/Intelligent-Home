@@ -23,14 +23,14 @@ class SetPwmSignalProcessor : Processor {
 
     override fun process() {
         Thread {
-            val device = dbService?.getOne(processingObject!!.deviceId)
+            val device = dbService?.getOne(processingObject!!.deviceId!!)
             val currSignal = service?.getSignal(device?.id!!, device.signalInversion)?.pwmSignal
             if (currSignal != processingObject!!.targetSignal) {
                 log.info(String.format(" * Pwm signal (%d) will be set to device with id (%d) on GPIO " +
                         "(%d) for (%d) seconds",
                         processingObject!!.targetSignal, device!!.id, device.gpio!!.gpioPin,
                         processingObject!!.delay))
-                service?.setSignal(device.id, device.signalInversion, processingObject!!.targetSignal)
+                service?.setSignal(device.id, device.signalInversion, processingObject!!.targetSignal!!)
                 if (processingObject!!.delay > 0) {
                     try {
                         Thread.sleep(processingObject!!.delay * 1000.toLong())

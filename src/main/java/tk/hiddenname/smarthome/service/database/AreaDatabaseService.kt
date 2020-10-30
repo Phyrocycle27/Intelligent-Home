@@ -3,7 +3,7 @@ package tk.hiddenname.smarthome.service.database
 import org.springframework.beans.BeanUtils
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import tk.hiddenname.smarthome.exception.AreaNotFoundException
+import tk.hiddenname.smarthome.exception.not_found.AreaNotFoundException
 import tk.hiddenname.smarthome.model.Area
 import tk.hiddenname.smarthome.repository.AreaRepository
 

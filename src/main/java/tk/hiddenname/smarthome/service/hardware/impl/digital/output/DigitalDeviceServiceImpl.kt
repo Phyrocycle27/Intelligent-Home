@@ -3,9 +3,9 @@ package tk.hiddenname.smarthome.service.hardware.impl.digital.output
 import com.pi4j.io.gpio.GpioPinDigitalOutput
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import tk.hiddenname.smarthome.exception.DeviceNotFoundException
-import tk.hiddenname.smarthome.exception.GpioBusyException
+import tk.hiddenname.smarthome.exception.GpioPinBusyException
 import tk.hiddenname.smarthome.exception.PinSignalSupportException
+import tk.hiddenname.smarthome.exception.not_found.DeviceNotFoundException
 import tk.hiddenname.smarthome.model.hardware.GPIO
 import tk.hiddenname.smarthome.model.signal.DigitalState
 import tk.hiddenname.smarthome.utils.gpio.GpioManager
@@ -26,7 +26,7 @@ class DigitalDeviceServiceImpl(private val controller: GpioSignalController,
         digitalOutputsToDeviceId.remove(id)
     }
 
-    @Throws(GpioBusyException::class, PinSignalSupportException::class)
+    @Throws(GpioPinBusyException::class, PinSignalSupportException::class)
     override fun save(id: Long, gpio: GPIO, reverse: Boolean) {
         digitalOutputsToDeviceId[id] = gpioManager.createDigitalOutput(gpio, reverse)
     }

@@ -1,6 +1,6 @@
 package tk.hiddenname.smarthome.service.hardware.impl.digital.output
 
-import tk.hiddenname.smarthome.exception.DeviceNotFoundException
+import tk.hiddenname.smarthome.exception.not_found.DeviceNotFoundException
 import tk.hiddenname.smarthome.model.signal.DigitalState
 import tk.hiddenname.smarthome.service.hardware.impl.GPIOService
 

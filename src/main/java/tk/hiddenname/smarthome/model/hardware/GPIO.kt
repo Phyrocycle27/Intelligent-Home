@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
 class GPIO(
         @field:Max(30)
-        @field:Min(0)
+        @field:Min(1)
         @field:NotNull(message = "gpio pin should be specified")
         val gpioPin: Int? = null,
 
@@ -25,5 +25,5 @@ class GPIO(
 
         @Enumerated(EnumType.STRING)
         @field:JsonProperty(access = JsonProperty.Access.READ_ONLY)
-        var pinMode: GpioMode? = null
+        var pinMode: GpioMode = GpioMode.NOT_SPECIFIED
 )

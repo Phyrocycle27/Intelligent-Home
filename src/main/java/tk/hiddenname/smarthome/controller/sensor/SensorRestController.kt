@@ -2,10 +2,10 @@ package tk.hiddenname.smarthome.controller.sensor
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import tk.hiddenname.smarthome.exception.GpioBusyException
 import tk.hiddenname.smarthome.exception.GpioNotSpecifiedException
-import tk.hiddenname.smarthome.exception.InvalidSignalTypeException
+import tk.hiddenname.smarthome.exception.GpioPinBusyException
 import tk.hiddenname.smarthome.exception.PinSignalSupportException
+import tk.hiddenname.smarthome.exception.invalid.InvalidSignalTypeException
 import tk.hiddenname.smarthome.model.hardware.GpioMode
 import tk.hiddenname.smarthome.model.hardware.Sensor
 import tk.hiddenname.smarthome.model.signal.SignalType
@@ -45,7 +45,7 @@ class SensorRestController(private val dbService: SensorDatabaseService,
     fun getOne(@PathVariable(name = "id", required = true) id: Long): Sensor = dbService.getOne(id)
 
     @PostMapping(value = ["/create"], produces = ["application/json"])
-    @Throws(GpioBusyException::class, PinSignalSupportException::class, InvalidSignalTypeException::class)
+    @Throws(GpioPinBusyException::class, PinSignalSupportException::class, InvalidSignalTypeException::class)
     fun create(@Valid @RequestBody(required = true) sensor: Sensor): Sensor {
         initializeSensorFields(sensor)
 

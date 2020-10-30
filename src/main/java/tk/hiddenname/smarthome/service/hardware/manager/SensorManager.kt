@@ -17,7 +17,7 @@ class SensorManager(private val service: SensorDatabaseService,
 
     private val log = LoggerFactory.getLogger(SensorManager::class.java)
 
-    @Throws(PinSignalSupportException::class, GpioBusyException::class)
+    @Throws(PinSignalSupportException::class, GpioPinBusyException::class)
     fun register(sensor: Sensor) {
         log.debug("Creating sensor $sensor")
         sensor.gpio ?: throw GpioNotSpecifiedException()
@@ -42,7 +42,7 @@ class SensorManager(private val service: SensorDatabaseService,
                 register(it)
             } catch (e: PinSignalSupportException) {
                 log.warn(e.message)
-            } catch (e: GpioBusyException) {
+            } catch (e: GpioPinBusyException) {
                 log.warn(e.message)
             }
         }
@@ -52,9 +52,7 @@ class SensorManager(private val service: SensorDatabaseService,
     fun changeSignalType(sensor: Sensor, newSignalType: SignalType?) {
         newSignalType ?: throw SignalTypeNotSpecifiedException()
         sensor.gpio ?: throw GpioNotSpecifiedException()
-        log.info("Validating")
-        if (gpioManager.checkGpioPinSignalTypeSupports(sensor.gpio, newSignalType)) {
-            log.info("Changing")
+        if (gpioManager.validate(sensor.gpio.gpioPin, newSignalType, sensor.gpio.pinMode)) {
             unregister(sensor)
             sensor.gpio.signalType = newSignalType
             register(sensor)

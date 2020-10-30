@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull
 @JsonNaming(SnakeCaseStrategy::class)
 class DigitalState(
         @field:NotNull(message = "digital state should be specified")
-        val digitalState: Boolean? = null
+        val digitalState: Boolean?
 ) : Signal() {
 
     constructor (hardwareId: Long, digitalState: Boolean?) : this(digitalState) {

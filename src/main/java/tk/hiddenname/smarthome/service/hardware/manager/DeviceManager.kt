@@ -19,7 +19,7 @@ class DeviceManager(private val digitalService: DigitalDeviceService,
 
     private val log = LoggerFactory.getLogger(DeviceManager::class.java)
 
-    @Throws(PinSignalSupportException::class, GpioBusyException::class)
+    @Throws(PinSignalSupportException::class, GpioPinBusyException::class)
     fun register(device: Device) {
         log.info("Creating device $device")
         device.gpio ?: throw GpioNotSpecifiedException()
@@ -62,12 +62,9 @@ class DeviceManager(private val digitalService: DigitalDeviceService,
     fun changeSignalType(device: Device, newSignalType: SignalType?) {
         newSignalType ?: throw SignalTypeNotSpecifiedException()
         device.gpio ?: throw GpioNotSpecifiedException()
-        log.info("Validating")
-        if (gpioManager.checkGpioPinSignalTypeSupports(device.gpio, newSignalType)) {
-            log.info("Changing $newSignalType")
+        if (gpioManager.validate(device.gpio.gpioPin, newSignalType, device.gpio.pinMode)) {
             unregister(device)
             device.gpio.signalType = newSignalType
-            log.info("Device is $device")
             register(device)
         }
     }

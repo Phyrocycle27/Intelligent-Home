@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.BeanUtils
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import tk.hiddenname.smarthome.exception.DeviceNotFoundException
+import tk.hiddenname.smarthome.exception.not_found.DeviceNotFoundException
 import tk.hiddenname.smarthome.model.hardware.Device
 import tk.hiddenname.smarthome.model.signal.SignalType
 import tk.hiddenname.smarthome.repository.DeviceRepository

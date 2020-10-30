@@ -1,13 +1,12 @@
 package tk.hiddenname.smarthome.model.signal
 
 import com.fasterxml.jackson.annotation.JsonCreator
-import tk.hiddenname.smarthome.exception.InvalidSignalTypeException
+import tk.hiddenname.smarthome.exception.invalid.InvalidSignalTypeException
 
 enum class SignalType {
     DIGITAL,
     PWM,
-    ANALOG,
-    NOT_SPECIFIED;
+    ANALOG;
 
     companion object {
         @JvmStatic

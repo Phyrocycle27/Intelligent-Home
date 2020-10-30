@@ -3,5 +3,5 @@ package tk.hiddenname.smarthome.exception
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
-class DeviceNotFoundException(id: Long) : RuntimeException("The device with id '$id' not found")
+@ResponseStatus(value = HttpStatus.CONFLICT)
+class GpioPinBusyException(gpioPin: Int) : Exception("The GPIO pin '$gpioPin' has been already busied")

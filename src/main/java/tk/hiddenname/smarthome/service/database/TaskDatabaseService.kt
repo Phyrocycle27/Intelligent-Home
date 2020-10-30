@@ -2,8 +2,8 @@ package tk.hiddenname.smarthome.service.database
 
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import tk.hiddenname.smarthome.exception.DeviceNotFoundException
-import tk.hiddenname.smarthome.exception.TaskNotFoundException
+import tk.hiddenname.smarthome.exception.not_found.DeviceNotFoundException
+import tk.hiddenname.smarthome.exception.not_found.TaskNotFoundException
 import tk.hiddenname.smarthome.model.task.Task
 import tk.hiddenname.smarthome.repository.TaskRepository
 

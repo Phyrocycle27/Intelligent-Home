@@ -1,7 +1,7 @@
 package tk.hiddenname.smarthome.controller
 
 
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
+import com.fasterxml.jackson.databind.JsonMappingException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -26,8 +26,8 @@ class ExceptionHandlerRestContoller {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(InvalidDefinitionException::class)
-    fun catchInvalidSignalTypeException(ex: InvalidDefinitionException): ApiError {
+    @ExceptionHandler(JsonMappingException::class)
+    fun catchInvalidTypeIdException(ex: JsonMappingException): ApiError {
         return ApiError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), ex.cause?.message ?: "")
     }
 

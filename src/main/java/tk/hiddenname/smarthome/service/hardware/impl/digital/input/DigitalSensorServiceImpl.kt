@@ -3,10 +3,11 @@ package tk.hiddenname.smarthome.service.hardware.impl.digital.input
 import com.pi4j.io.gpio.GpioPinDigitalInput
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent
 import com.pi4j.io.gpio.event.GpioPinListenerDigital
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import tk.hiddenname.smarthome.exception.GpioBusyException
+import tk.hiddenname.smarthome.exception.GpioPinBusyException
 import tk.hiddenname.smarthome.exception.PinSignalSupportException
-import tk.hiddenname.smarthome.exception.SensorNotFoundException
+import tk.hiddenname.smarthome.exception.not_found.SensorNotFoundException
 import tk.hiddenname.smarthome.model.hardware.GPIO
 import tk.hiddenname.smarthome.model.signal.DigitalState
 import tk.hiddenname.smarthome.service.task.impl.listener.Listener
@@ -17,6 +18,7 @@ import java.util.*
 class DigitalSensorServiceImpl(private val gpioManager: GpioManager) : DigitalSensorService {
 
     private val digitalInputsToSensorId: MutableMap<Long, GpioPinDigitalInput> = HashMap()
+    private val log = LoggerFactory.getLogger(DigitalSensorServiceImpl::class.java)
 
     @Throws(SensorNotFoundException::class)
     override fun delete(id: Long) {
@@ -25,7 +27,7 @@ class DigitalSensorServiceImpl(private val gpioManager: GpioManager) : DigitalSe
         digitalInputsToSensorId.remove(id)
     }
 
-    @Throws(GpioBusyException::class, PinSignalSupportException::class)
+    @Throws(GpioPinBusyException::class, PinSignalSupportException::class)
     override fun save(id: Long, gpio: GPIO, reverse: Boolean) {
         digitalInputsToSensorId[id] = gpioManager.createDigitalInput(gpio)
     }

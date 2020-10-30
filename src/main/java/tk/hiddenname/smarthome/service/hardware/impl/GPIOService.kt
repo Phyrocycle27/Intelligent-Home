@@ -1,8 +1,8 @@
 package tk.hiddenname.smarthome.service.hardware.impl
 
-import tk.hiddenname.smarthome.exception.DeviceNotFoundException
-import tk.hiddenname.smarthome.exception.GpioBusyException
+import tk.hiddenname.smarthome.exception.GpioPinBusyException
 import tk.hiddenname.smarthome.exception.PinSignalSupportException
+import tk.hiddenname.smarthome.exception.not_found.DeviceNotFoundException
 import tk.hiddenname.smarthome.model.hardware.GPIO
 
 interface GPIOService {
@@ -10,7 +10,7 @@ interface GPIOService {
     @Throws(DeviceNotFoundException::class)
     fun delete(id: Long)
 
-    @Throws(GpioBusyException::class, PinSignalSupportException::class)
+    @Throws(GpioPinBusyException::class, PinSignalSupportException::class)
     fun save(id: Long, gpio: GPIO, reverse: Boolean)
 
     @Throws(DeviceNotFoundException::class)

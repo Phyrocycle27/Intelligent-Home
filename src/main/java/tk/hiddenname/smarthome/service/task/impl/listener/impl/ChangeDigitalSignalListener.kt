@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
-import tk.hiddenname.smarthome.exception.TriggerNotFoundException
 import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException
+import tk.hiddenname.smarthome.exception.not_found.TriggerNotFoundException
 import tk.hiddenname.smarthome.model.task.trigger.objects.ChangeDigitalSignalObject
 import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject
 import tk.hiddenname.smarthome.service.database.SensorDatabaseService
@@ -41,8 +41,8 @@ class ChangeDigitalSignalListener(private val listener: EventListener) : Listene
     override fun register(triggerObject: TriggerObject) {
         if (triggerObject is ChangeDigitalSignalObject) {
             this.triggerObject = triggerObject
-            val sensor = dbService?.getOne(this.triggerObject!!.id)
-            gpioListener = service?.addListener(this, sensor!!.id, this.triggerObject!!.targetState,
+            val sensor = dbService!!.getOne(this.triggerObject!!.sensorId!!)
+            gpioListener = service?.addListener(this, sensor.id, this.triggerObject!!.targetState!!,
                     sensor.signalInversion)
         } else {
             throw UnsupportedTriggerObjectTypeException(triggerObject.javaClass.simpleName)
@@ -56,7 +56,7 @@ class ChangeDigitalSignalListener(private val listener: EventListener) : Listene
     }
 
     override fun unregister() {
-        service!!.removeListener(gpioListener!!, triggerObject!!.sensorId)
+        service!!.removeListener(gpioListener!!, triggerObject!!.sensorId!!)
     }
 
     override fun trigger(flag: Boolean) {

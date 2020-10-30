@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver
 import tk.hiddenname.smarthome.model.AbstractJpaPersistable
 import tk.hiddenname.smarthome.model.task.trigger.TriggerAction
 import javax.persistence.*
+import javax.validation.constraints.NotNull
 
 @Entity
 @Table(name = "trigger_object")
@@ -12,7 +13,8 @@ import javax.persistence.*
 @JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "action", visible = true)
 @JsonTypeIdResolver(TriggerObjectTypeIdResolver::class)
 abstract class TriggerObject(
-        @Column(updatable = false, nullable = false)
         @Enumerated(EnumType.STRING)
-        open val action: TriggerAction = TriggerAction.NOT_SPECIFIED
+        @Column(updatable = false, nullable = false)
+        @field:NotNull(message = "processing action field can not be null")
+        open val action: TriggerAction? = null
 ) : AbstractJpaPersistable()

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver
 import tk.hiddenname.smarthome.model.AbstractJpaPersistable
 import tk.hiddenname.smarthome.model.task.processing.ProcessingAction
 import javax.persistence.*
+import javax.validation.constraints.NotNull
 
 @Entity
 @Table(name = "processing_object")
@@ -12,7 +13,8 @@ import javax.persistence.*
 @JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "action", visible = true)
 @JsonTypeIdResolver(ProcessingObjectTypeIdResolver::class)
 abstract class ProcessingObject(
-        @Column(nullable = false, updatable = false)
         @Enumerated(EnumType.STRING)
-        open val action: ProcessingAction = ProcessingAction.NOT_SPECIFIED
+        @Column(nullable = false, updatable = false)
+        @field:NotNull(message = "processing action field can not be null")
+        open val action: ProcessingAction? = null
 ) : AbstractJpaPersistable()

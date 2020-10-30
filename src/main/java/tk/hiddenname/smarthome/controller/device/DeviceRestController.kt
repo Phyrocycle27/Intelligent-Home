@@ -3,10 +3,10 @@ package tk.hiddenname.smarthome.controller.device
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import tk.hiddenname.smarthome.exception.GpioBusyException
 import tk.hiddenname.smarthome.exception.GpioNotSpecifiedException
-import tk.hiddenname.smarthome.exception.InvalidSignalTypeException
+import tk.hiddenname.smarthome.exception.GpioPinBusyException
 import tk.hiddenname.smarthome.exception.PinSignalSupportException
+import tk.hiddenname.smarthome.exception.invalid.InvalidSignalTypeException
 import tk.hiddenname.smarthome.model.hardware.Device
 import tk.hiddenname.smarthome.model.hardware.GpioMode
 import tk.hiddenname.smarthome.model.signal.SignalType
@@ -48,7 +48,7 @@ class DeviceRestController(private val dbService: DeviceDatabaseService,
     fun getOne(@PathVariable id: Long): Device = dbService.getOne(id)
 
     @PostMapping(value = ["/create"], produces = ["application/json"])
-    @Throws(GpioBusyException::class, PinSignalSupportException::class, InvalidSignalTypeException::class)
+    @Throws(GpioPinBusyException::class, PinSignalSupportException::class, InvalidSignalTypeException::class)
     fun create(@Valid @RequestBody(required = true) device: Device): Device {
         initializeDeviceFields(device)
 

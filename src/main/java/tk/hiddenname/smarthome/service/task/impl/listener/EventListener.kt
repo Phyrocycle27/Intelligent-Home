@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 import tk.hiddenname.smarthome.exception.NoSuchListenerException
 import tk.hiddenname.smarthome.exception.TriggerExistsException
-import tk.hiddenname.smarthome.exception.TriggerNotFoundException
 import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException
+import tk.hiddenname.smarthome.exception.not_found.TriggerNotFoundException
 import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject
 import tk.hiddenname.smarthome.service.task.impl.TaskManager
 import java.util.*

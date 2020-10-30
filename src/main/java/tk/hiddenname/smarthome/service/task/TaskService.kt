@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Service
 import tk.hiddenname.smarthome.exception.*
+import tk.hiddenname.smarthome.exception.not_found.TaskNotFoundException
 import tk.hiddenname.smarthome.model.task.Task
 import tk.hiddenname.smarthome.service.database.TaskDatabaseService
 import tk.hiddenname.smarthome.service.task.impl.TaskManager
