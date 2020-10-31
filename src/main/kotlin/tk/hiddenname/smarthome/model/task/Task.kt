@@ -7,7 +7,6 @@ import org.hibernate.annotations.LazyCollectionOption
 import tk.hiddenname.smarthome.model.AbstractJpaPersistableWithTimestamps
 import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
 import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject
-import java.util.*
 import javax.persistence.*
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank

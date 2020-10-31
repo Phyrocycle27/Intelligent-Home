@@ -9,7 +9,6 @@ import tk.hiddenname.smarthome.model.hardware.GPIO
 import tk.hiddenname.smarthome.model.signal.PwmSignal
 import tk.hiddenname.smarthome.utils.gpio.GpioManager
 import tk.hiddenname.smarthome.utils.gpio.GpioSignalController
-import java.util.*
 
 @Service
 class PwmDeviceServiceImpl(private val controller: GpioSignalController,

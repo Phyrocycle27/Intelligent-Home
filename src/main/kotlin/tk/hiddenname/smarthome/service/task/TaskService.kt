@@ -8,7 +8,6 @@ import tk.hiddenname.smarthome.exception.not_found.TaskNotFoundException
 import tk.hiddenname.smarthome.model.task.Task
 import tk.hiddenname.smarthome.service.database.TaskDatabaseService
 import tk.hiddenname.smarthome.service.task.impl.TaskManager
-import java.util.*
 
 @Service
 class TaskService(private val context: ApplicationContext,

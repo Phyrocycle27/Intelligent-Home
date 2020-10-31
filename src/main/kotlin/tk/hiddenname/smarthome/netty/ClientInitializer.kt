@@ -20,10 +20,10 @@ class ClientInitializer(private val sslCtx: SslContext, private val HOST: String
 
     private val log = LoggerFactory.getLogger(ClientInitializer::class.java.name)
 
-    override fun initChannel(ch: SocketChannel) {
+    override fun initChannel(sch: SocketChannel) {
         log.info("Channel initialization...")
-        val pipeline = ch.pipeline()
-        pipeline.addLast(sslCtx.newHandler(ch.alloc(), HOST, PORT))
+        val pipeline = sch.pipeline()
+        pipeline.addLast(sslCtx.newHandler(sch.alloc(), HOST, PORT))
                 .addLast("frameDecoder", LengthFieldBasedFrameDecoder(
                         1048576, 0, 4, 0, 4))
                 .addLast("frameEncoder", LengthFieldPrepender(4))
@@ -33,12 +33,12 @@ class ClientInitializer(private val sslCtx: SslContext, private val HOST: String
             private val enc = Encryption()
             override fun channelActive(ctx: ChannelHandlerContext) {
                 log.info("Channel active")
-                ctx.channel().writeAndFlush(enc.publicKey)
+                ctx.channel().writeAndFlush(enc.getPublicKey())
             }
 
             override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
                 val ch = ctx.channel()
-                if (!enc.isKeySet) {
+                if (!enc.isKeySet()) {
                     enc.createSharedKey(msg as ByteArray)
                     ch.pipeline().remove("bytesDecoder")
                     ch.pipeline().remove("bytesEncoder")

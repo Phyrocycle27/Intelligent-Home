@@ -8,7 +8,6 @@ import tk.hiddenname.smarthome.exception.ProcessorExistsException
 import tk.hiddenname.smarthome.exception.UnsupportedProcessingObjectTypeException
 import tk.hiddenname.smarthome.exception.not_found.ProcessorNotFoundException
 import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
-import java.util.*
 
 @Component
 @Scope("prototype")

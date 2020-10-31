@@ -12,7 +12,6 @@ import tk.hiddenname.smarthome.model.hardware.GPIO
 import tk.hiddenname.smarthome.model.signal.DigitalState
 import tk.hiddenname.smarthome.service.task.impl.listener.Listener
 import tk.hiddenname.smarthome.utils.gpio.GpioManager
-import java.util.*
 
 @Service
 class DigitalSensorServiceImpl(private val gpioManager: GpioManager) : DigitalSensorService {
