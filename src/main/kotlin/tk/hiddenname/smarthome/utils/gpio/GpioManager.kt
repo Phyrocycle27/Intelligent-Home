@@ -14,6 +14,7 @@ import tk.hiddenname.smarthome.model.signal.SignalType
 class GpioManager {
 
     companion object Configuration {
+        @Suppress("unused")
         private val log = LoggerFactory.getLogger(GpioManager::class.java)
         private val controller = GpioFactory.getInstance()
         private val pwmOutputs = mutableSetOf(13, 19, 18, 12)

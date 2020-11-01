@@ -22,6 +22,7 @@ class DeviceRestController(private val dbService: DeviceDatabaseService,
                            private val areaDbService: AreaDatabaseService,
                            private val manager: DeviceManager) {
 
+    @Suppress("unused")
     private val log = LoggerFactory.getLogger(DeviceRestController::class.java)
 
     @Suppress("DuplicatedCode")

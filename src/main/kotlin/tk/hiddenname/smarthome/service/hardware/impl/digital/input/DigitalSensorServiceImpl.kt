@@ -16,8 +16,10 @@ import tk.hiddenname.smarthome.utils.gpio.GpioManager
 @Service
 class DigitalSensorServiceImpl(private val gpioManager: GpioManager) : DigitalSensorService {
 
-    private val digitalInputsToSensorId: MutableMap<Long, GpioPinDigitalInput> = HashMap()
+    @Suppress("unused")
     private val log = LoggerFactory.getLogger(DigitalSensorServiceImpl::class.java)
+
+    private val digitalInputsToSensorId: MutableMap<Long, GpioPinDigitalInput> = HashMap()
 
     @Throws(SensorNotFoundException::class)
     override fun delete(id: Long) {

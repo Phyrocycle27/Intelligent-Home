@@ -44,16 +44,18 @@ class TaskManager(
         listener.registerListeners(triggerObjects)
     }
 
+    @Suppress("unused")
     @Throws(TriggerExistsException::class, UnsupportedTriggerObjectTypeException::class,
             NoSuchListenerException::class)
     fun registerListener(triggerObject: TriggerObject) {
         listener.registerListener(triggerObject)
     }
 
-    fun unregisterListeners() {
+    private fun unregisterListeners() {
         listener.unregisterListeners()
     }
 
+    @Suppress("unused")
     @Throws(TriggerNotFoundException::class)
     fun unregisterListener(id: Long) {
         listener.unregisterListener(id)
@@ -65,16 +67,18 @@ class TaskManager(
         processor.registerProcessors(processingObjects)
     }
 
+    @Suppress("unused")
     @Throws(NoSuchProcessorException::class, ProcessorExistsException::class,
             UnsupportedProcessingObjectTypeException::class)
     fun registerProcessor(processingObject: ProcessingObject) {
         processor.registerProcessor(processingObject)
     }
 
-    fun unregisterProcessors() {
+    private fun unregisterProcessors() {
         processor.unregisterProcessors()
     }
 
+    @Suppress("unused")
     @Throws(ProcessorNotFoundException::class)
     fun unregisterProcessor(id: Long) {
         processor.unregisterProcessor(id)

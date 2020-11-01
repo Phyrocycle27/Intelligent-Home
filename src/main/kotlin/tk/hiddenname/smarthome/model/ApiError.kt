@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 import java.time.LocalDateTime
 
+@Suppress("unused")
 @JsonNaming(SnakeCaseStrategy::class)
 class ApiError(
         @get:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -12,7 +13,7 @@ class ApiError(
         val status: Int,
         val error: String,
 ) {
-    val fieldErrors: MutableSet<CustomFieldError> = HashSet()
+    private val fieldErrors: MutableSet<CustomFieldError> = HashSet()
 
     fun addFieldError(fieldError: CustomFieldError) = fieldErrors.add(fieldError)
 }

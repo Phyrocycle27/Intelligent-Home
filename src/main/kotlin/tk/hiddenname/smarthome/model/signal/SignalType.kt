@@ -3,6 +3,7 @@ package tk.hiddenname.smarthome.model.signal
 import com.fasterxml.jackson.annotation.JsonCreator
 import tk.hiddenname.smarthome.exception.invalid.InvalidSignalTypeException
 
+@Suppress("unused")
 enum class SignalType {
     DIGITAL,
     PWM,

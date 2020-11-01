@@ -12,6 +12,7 @@ import tk.hiddenname.smarthome.repository.SensorRepository
 @Service
 class SensorDatabaseService(private val repo: SensorRepository) {
 
+    @Suppress("unused")
     private val log = LoggerFactory.getLogger(SensorDatabaseService::class.java)
 
     fun getAll(): List<Sensor> = repo.findAll(Sort.by("id"))

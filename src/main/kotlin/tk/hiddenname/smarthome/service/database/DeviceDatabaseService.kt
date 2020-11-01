@@ -12,6 +12,7 @@ import tk.hiddenname.smarthome.repository.DeviceRepository
 @Service
 class DeviceDatabaseService(private val repo: DeviceRepository) {
 
+    @Suppress("unused")
     private val log = LoggerFactory.getLogger(DeviceDatabaseService::class.java)
 
     fun getAll(): List<Device> = repo.findAll(Sort.by("id"))

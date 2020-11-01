@@ -2,7 +2,6 @@ package tk.hiddenname.smarthome.controller
 
 
 import com.fasterxml.jackson.databind.JsonMappingException
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.validation.FieldError
@@ -15,9 +14,10 @@ import tk.hiddenname.smarthome.model.CustomFieldError
 import java.time.LocalDateTime
 
 @RestControllerAdvice
-class ExceptionHandlerRestContoller {
+class ExceptionHandlerRestController {
 
-    private val log: Logger = LoggerFactory.getLogger(ExceptionHandlerRestContoller::class.java)
+    @Suppress("unused")
+    private val log = LoggerFactory.getLogger(ExceptionHandlerRestController::class.java)
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException::class)

@@ -24,7 +24,7 @@ data class SetPwmSignalObject(
         val delay: Int = 0,
 
         @field:NotNull(message = "target pwm signal should be specified")
-        @Column(name = "traget_signal", nullable = false)
+        @Column(name = "target_signal", nullable = false)
         val targetSignal: Int? = null
 ) : ProcessingObject() {
     override fun toString(): String {
