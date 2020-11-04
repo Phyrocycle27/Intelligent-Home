@@ -9,5 +9,5 @@ abstract class AbstractJpaPersistable {
     @Column(updatable = false, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @field:JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    var id: Long = 0L
+    open var id: Long = 0L
 }

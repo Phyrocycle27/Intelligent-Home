@@ -1,6 +1,7 @@
 package tk.hiddenname.smarthome.controller.sensor
 
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import tk.hiddenname.smarthome.exception.GpioNotSpecifiedException
 import tk.hiddenname.smarthome.exception.GpioPinBusyException
@@ -14,7 +15,9 @@ import tk.hiddenname.smarthome.service.database.SensorDatabaseService
 import tk.hiddenname.smarthome.service.hardware.manager.SensorManager
 import java.time.LocalDateTime
 import javax.validation.Valid
+import javax.validation.constraints.Min
 
+@Validated
 @RestController
 @RequestMapping(value = ["/sensors"])
 class SensorRestController(private val dbService: SensorDatabaseService,
@@ -25,7 +28,8 @@ class SensorRestController(private val dbService: SensorDatabaseService,
     @GetMapping(value = ["/all"], produces = ["application/json"])
     @Throws(InvalidSignalTypeException::class)
     fun getAll(@RequestParam(name = "type", defaultValue = "", required = false) t: String,
-               @RequestParam(name = "areaId", defaultValue = "-1", required = false) areaId: Long): List<Sensor> {
+               @Min(0) @RequestParam(name = "areaId", defaultValue = "-1", required = false) areaId: Long):
+            List<Sensor> {
 
         return if (t.isEmpty() && areaId == -1L) {
             dbService.getAll()
@@ -42,7 +46,7 @@ class SensorRestController(private val dbService: SensorDatabaseService,
     }
 
     @GetMapping(value = ["/one/{id}"], produces = ["application/json"])
-    fun getOne(@PathVariable(name = "id", required = true) id: Long): Sensor = dbService.getOne(id)
+    fun getOne(@Min(0) @PathVariable(name = "id", required = true) id: Long): Sensor = dbService.getOne(id)
 
     @PostMapping(value = ["/create"], produces = ["application/json"])
     @Throws(GpioPinBusyException::class, PinSignalSupportException::class, InvalidSignalTypeException::class)
@@ -54,7 +58,8 @@ class SensorRestController(private val dbService: SensorDatabaseService,
     }
 
     @PutMapping(value = ["/one/{id}"], produces = ["application/json"])
-    fun update(@Valid @RequestBody(required = true) newSensor: Sensor, @PathVariable id: Long): Sensor {
+    fun update(@Valid @RequestBody(required = true) newSensor: Sensor,
+               @Min(1) @PathVariable id: Long): Sensor {
         val oldSensor = dbService.getOne(id)
 
         if (oldSensor.gpio?.signalType != newSensor.gpio?.signalType) {
@@ -66,7 +71,7 @@ class SensorRestController(private val dbService: SensorDatabaseService,
     }
 
     @DeleteMapping(value = ["/one/{id}"], produces = ["application/json"])
-    fun delete(@PathVariable(name = "id", required = true) id: Long): ResponseEntity<Any> {
+    fun delete(@Min(1) @PathVariable(name = "id", required = true) id: Long): ResponseEntity<Any> {
         val sensor = dbService.getOne(id)
 
         manager.unregister(sensor)

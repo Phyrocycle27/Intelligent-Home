@@ -2,6 +2,7 @@ package tk.hiddenname.smarthome.controller.device
 
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import tk.hiddenname.smarthome.exception.GpioNotSpecifiedException
 import tk.hiddenname.smarthome.exception.GpioPinBusyException
@@ -15,7 +16,9 @@ import tk.hiddenname.smarthome.service.database.DeviceDatabaseService
 import tk.hiddenname.smarthome.service.hardware.manager.DeviceManager
 import java.time.LocalDateTime
 import javax.validation.Valid
+import javax.validation.constraints.Min
 
+@Validated
 @RestController
 @RequestMapping(value = ["/devices"])
 class DeviceRestController(private val dbService: DeviceDatabaseService,
@@ -29,7 +32,8 @@ class DeviceRestController(private val dbService: DeviceDatabaseService,
     @GetMapping(value = ["/all"], produces = ["application/json"])
     @Throws(InvalidSignalTypeException::class)
     fun getAll(@RequestParam(name = "type", defaultValue = "", required = false) t: String,
-               @RequestParam(name = "areaId", defaultValue = "-1", required = false) areaId: Long): List<Device> {
+               @Min(0) @RequestParam(name = "areaId", defaultValue = "-1", required = false) areaId: Long):
+            List<Device> {
 
         return if (t.isEmpty() && areaId == -1L) {
             dbService.getAll()
@@ -46,7 +50,7 @@ class DeviceRestController(private val dbService: DeviceDatabaseService,
     }
 
     @GetMapping(value = ["/one/{id}"], produces = ["application/json"])
-    fun getOne(@PathVariable id: Long): Device = dbService.getOne(id)
+    fun getOne(@Min(1) @PathVariable id: Long): Device = dbService.getOne(id)
 
     @PostMapping(value = ["/create"], produces = ["application/json"])
     @Throws(GpioPinBusyException::class, PinSignalSupportException::class, InvalidSignalTypeException::class)
@@ -58,7 +62,7 @@ class DeviceRestController(private val dbService: DeviceDatabaseService,
     }
 
     @PutMapping(value = ["/one/{id}"], produces = ["application/json"])
-    fun update(@Valid @RequestBody(required = true) newDevice: Device, @PathVariable id: Long): Device {
+    fun update(@Valid @RequestBody(required = true) newDevice: Device, @Min(1) @PathVariable id: Long): Device {
         val oldDevice = dbService.getOne(id)
 
         if (oldDevice.gpio?.signalType != newDevice.gpio?.signalType) {
@@ -73,7 +77,7 @@ class DeviceRestController(private val dbService: DeviceDatabaseService,
     }
 
     @DeleteMapping(value = ["/one/{id}"], produces = ["application/json"])
-    fun delete(@PathVariable id: Long): ResponseEntity<Any> {
+    fun delete(@Min(1) @PathVariable id: Long): ResponseEntity<Any> {
         val device = dbService.getOne(id)
 
         manager.unregister(device)

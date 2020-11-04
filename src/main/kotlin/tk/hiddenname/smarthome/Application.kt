@@ -25,13 +25,13 @@ open class Application {
             Runtime.getRuntime().addShutdownHook(Thread { ctx.getBean(GpioManager::class.java).shutdown() })
 
             // Run the Netty
-            if (allowConnectionToServer) {
-                Client(HOST, PORT)
-            }
+//            if (allowConnectionToServer) {
+//                Client(HOST, PORT)
+//            }
 
             ctx.getBean(DeviceManager::class.java).loadDevices()
             ctx.getBean(SensorManager::class.java).loadSensors()
-            ctx.getBean(TaskService::class.java).loadTasks()
+//            ctx.getBean(TaskService::class.java).loadTasks()
         }
     }
 }
