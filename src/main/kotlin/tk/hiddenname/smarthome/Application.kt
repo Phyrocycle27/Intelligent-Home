@@ -31,7 +31,7 @@ open class Application {
 
             ctx.getBean(DeviceManager::class.java).loadDevices()
             ctx.getBean(SensorManager::class.java).loadSensors()
-            ctx.getBean(TaskService::class.java).loadTasks()
+//            ctx.getBean(TaskService::class.java).loadTasks()
         }
     }
 }
