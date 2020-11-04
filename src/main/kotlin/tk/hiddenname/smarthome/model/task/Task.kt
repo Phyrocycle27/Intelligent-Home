@@ -32,7 +32,7 @@ class Task(
                 inverseJoinColumns = [JoinColumn(name = "fk_object", referencedColumnName = "id")])
         @OneToMany(cascade = [CascadeType.ALL])
         @LazyCollection(LazyCollectionOption.FALSE)
-        val triggerObjects: MutableSet<@Valid TriggerObject> = HashSet(),
+        val triggerObjects: Set<@Valid TriggerObject> = HashSet(),
 
         @field:NotEmpty(message = "processing objects list can not be empty")
         @JoinTable(name = "task_to_processing_object",
@@ -40,7 +40,7 @@ class Task(
                 inverseJoinColumns = [JoinColumn(name = "fk_object", referencedColumnName = "id")])
         @OneToMany(cascade = [CascadeType.ALL])
         @LazyCollection(LazyCollectionOption.FALSE)
-        val processingObjects: MutableSet<@Valid ProcessingObject> = HashSet(),
+        val processingObjects: Set<@Valid ProcessingObject> = HashSet(),
 ) : AbstractJpaPersistableWithTimestamps() {
 
     override fun toString(): String {
