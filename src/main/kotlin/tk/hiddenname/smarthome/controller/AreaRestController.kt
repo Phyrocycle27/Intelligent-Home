@@ -11,7 +11,7 @@ import javax.validation.constraints.Min
 @Validated
 @RestController
 @RequestMapping(value = ["/areas"])
-class AreaRestController(private val dbService: AreaDatabaseService) {
+open class AreaRestController(private val dbService: AreaDatabaseService) {
 
     @GetMapping(value = ["/all"], produces = ["application/json"])
     fun getAll() = dbService.getAll()

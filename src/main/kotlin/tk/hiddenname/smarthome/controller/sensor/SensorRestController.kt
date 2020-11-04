@@ -20,7 +20,7 @@ import javax.validation.constraints.Min
 @Validated
 @RestController
 @RequestMapping(value = ["/sensors"])
-class SensorRestController(private val dbService: SensorDatabaseService,
+open class SensorRestController(private val dbService: SensorDatabaseService,
                            private val areaDbService: AreaDatabaseService,
                            private val manager: SensorManager) {
 

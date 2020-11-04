@@ -13,7 +13,7 @@ import javax.validation.constraints.Min
 @Validated
 @RestController
 @RequestMapping(value = ["/sensors/reading"])
-class SensorSignalRestController(private val dbService: SensorDatabaseService,
+open class SensorSignalRestController(private val dbService: SensorDatabaseService,
                                  private val digitalService: DigitalSensorService) {
 
     @GetMapping(value = ["/digital/{id}"], produces = ["application/json"])

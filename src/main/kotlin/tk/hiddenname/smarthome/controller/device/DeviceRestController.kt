@@ -21,7 +21,7 @@ import javax.validation.constraints.Min
 @Validated
 @RestController
 @RequestMapping(value = ["/devices"])
-class DeviceRestController(private val dbService: DeviceDatabaseService,
+open class DeviceRestController(private val dbService: DeviceDatabaseService,
                            private val areaDbService: AreaDatabaseService,
                            private val manager: DeviceManager) {
 

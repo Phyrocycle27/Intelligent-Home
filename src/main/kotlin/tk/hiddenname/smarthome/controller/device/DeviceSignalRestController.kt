@@ -15,7 +15,7 @@ import javax.validation.constraints.Min
 @Validated
 @RestController
 @RequestMapping(value = ["/devices/control"])
-class DeviceSignalRestController(private val dbService: DeviceDatabaseService,
+open class DeviceSignalRestController(private val dbService: DeviceDatabaseService,
                                  private val digitalService: DigitalDeviceServiceImpl,
                                  private val pwmService: PwmDeviceServiceImpl) {
 

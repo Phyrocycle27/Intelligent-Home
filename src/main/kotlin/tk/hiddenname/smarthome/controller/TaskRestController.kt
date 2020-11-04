@@ -15,7 +15,7 @@ import javax.validation.constraints.Min
 @Validated
 @RestController
 @RequestMapping(value = ["/tasks"])
-class TaskRestController(private val dbService: TaskDatabaseService,
+open class TaskRestController(private val dbService: TaskDatabaseService,
                          private val taskService: TaskService) {
 
     private val log = LoggerFactory.getLogger(TaskRestController::class.java)

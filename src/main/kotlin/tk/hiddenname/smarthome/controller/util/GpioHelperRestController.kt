@@ -10,7 +10,7 @@ import tk.hiddenname.smarthome.utils.gpio.GpioManager
 
 @RestController
 @RequestMapping(value = ["/util"])
-class GpioHelperRestController(private val gpioManager: GpioManager) {
+open class GpioHelperRestController(private val gpioManager: GpioManager) {
 
     @GetMapping(value = ["/gpio/available"], produces = ["application/json"])
     fun getAvailableGpioPins(@RequestParam(name = "type", required = true) t: String): AvailableGpioPins {
