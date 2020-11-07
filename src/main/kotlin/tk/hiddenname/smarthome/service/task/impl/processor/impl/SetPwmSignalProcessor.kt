@@ -3,7 +3,6 @@ package tk.hiddenname.smarthome.service.task.impl.processor.impl
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
-import tk.hiddenname.smarthome.exception.UnsupportedProcessingObjectTypeException
 import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
 import tk.hiddenname.smarthome.model.task.processing.objects.SetPwmSignalObject
 import tk.hiddenname.smarthome.service.database.DeviceDatabaseService
@@ -52,12 +51,8 @@ class SetPwmSignalProcessor : Processor {
         }.start()
     }
 
-    @Throws(UnsupportedProcessingObjectTypeException::class)
+    // TODO: проверять, существует ли устройство с таким Id
     override fun register(processingObject: ProcessingObject) {
-        if (processingObject is SetPwmSignalObject) {
-            this.processingObject = processingObject
-        } else {
-            throw UnsupportedProcessingObjectTypeException(processingObject.javaClass.simpleName)
-        }
+        this.processingObject = processingObject as SetPwmSignalObject
     }
 }

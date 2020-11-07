@@ -3,8 +3,8 @@ package tk.hiddenname.smarthome.service.hardware.impl.digital.output
 import com.pi4j.io.gpio.GpioPinDigitalOutput
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import tk.hiddenname.smarthome.exception.GpioPinBusyException
-import tk.hiddenname.smarthome.exception.PinSignalSupportException
+import tk.hiddenname.smarthome.exception.exist.GpioPinBusyException
+import tk.hiddenname.smarthome.exception.support.PinSignalSupportException
 import tk.hiddenname.smarthome.exception.not_found.DeviceNotFoundException
 import tk.hiddenname.smarthome.model.hardware.GPIO
 import tk.hiddenname.smarthome.model.signal.DigitalState

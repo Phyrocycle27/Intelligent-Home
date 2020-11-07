@@ -1,5 +1,6 @@
 package tk.hiddenname.smarthome.model.task.processing.objects
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 import tk.hiddenname.smarthome.model.task.TaskValidationGroup
@@ -13,6 +14,7 @@ import javax.validation.constraints.NotNull
 @Entity
 @Table(name = "processing_set_pwm_signal")
 @JsonNaming(SnakeCaseStrategy::class)
+@JsonPropertyOrder(value = ["id", "action", "device_id", "delay", "target_signal"])
 data class SetPwmSignalObject(
         @field:Min(1, groups = [TaskValidationGroup::class])
         @field:NotNull(message = "device id should be specified", groups = [TaskValidationGroup::class])

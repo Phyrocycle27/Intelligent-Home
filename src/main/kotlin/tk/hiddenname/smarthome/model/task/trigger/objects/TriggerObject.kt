@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver
 import tk.hiddenname.smarthome.model.AbstractJpaPersistable
 import tk.hiddenname.smarthome.model.task.trigger.TriggerAction
 import javax.persistence.*
-import javax.validation.constraints.NotNull
 
 @Entity
 @Table(name = "trigger_object")

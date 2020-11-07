@@ -1,5 +1,6 @@
 package tk.hiddenname.smarthome.model.task.trigger.objects
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 import tk.hiddenname.smarthome.model.task.TaskValidationGroup
@@ -13,6 +14,7 @@ import javax.validation.constraints.NotNull
 @Entity
 @Table(name = "trigger_change_digital_signal")
 @JsonNaming(SnakeCaseStrategy::class)
+@JsonPropertyOrder(value = ["id", "action", "sensor_id", "delay", "target_state"])
 class ChangeDigitalSignalObject(
         @field:Min(1, groups = [TaskValidationGroup::class])
         @field:NotNull(message = "sensor id should be specified", groups = [TaskValidationGroup::class])

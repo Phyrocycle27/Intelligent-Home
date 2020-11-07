@@ -11,10 +11,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
-import tk.hiddenname.smarthome.exception.invalid.InvalidProcessingActionException
-import tk.hiddenname.smarthome.exception.invalid.InvalidTriggerActionException
-import tk.hiddenname.smarthome.model.ApiError
-import tk.hiddenname.smarthome.model.CustomFieldError
+import tk.hiddenname.smarthome.exception.ApiException
+import tk.hiddenname.smarthome.exception.exist.*
+import tk.hiddenname.smarthome.exception.invalid.*
+import tk.hiddenname.smarthome.exception.not_found.*
+import tk.hiddenname.smarthome.exception.not_specified.*
+import tk.hiddenname.smarthome.exception.support.*
+import tk.hiddenname.smarthome.model.error.*
 import java.time.LocalDateTime
 
 @RestControllerAdvice
@@ -25,14 +28,15 @@ open class ExceptionHandlerRestController {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun catchMethodArgumentNotValidException(ex: MethodArgumentNotValidException): ApiError {
+    fun catchMethodArgumentNotValidException(ex: MethodArgumentNotValidException): ValidationError {
         return processFieldErrors(ex.bindingResult.fieldErrors)
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(JsonMappingException::class)
-    fun catchInvalidTypeIdException(ex: JsonMappingException): ApiError {
+    fun catchJsonMappingException(ex: JsonMappingException): ValidationError {
         val message = when(ex.cause) {
+            is InvalidSignalTypeException,
             is InvalidTriggerActionException,
             is InvalidProcessingActionException -> ex.cause?.message ?: ""
             is JsonParseException -> "Json parse error. ${ex.cause?.message ?: ""}"
@@ -42,7 +46,7 @@ open class ExceptionHandlerRestController {
             }
         }
 
-        return ApiError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), message)
+        return ValidationError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), message)
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -51,8 +55,40 @@ open class ExceptionHandlerRestController {
         return ApiError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), "Type-id field is missing")
     }
 
-    private fun processFieldErrors(fieldErrors: List<FieldError>): ApiError {
-        val error = ApiError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), "Validation error")
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(AreaNotFoundException::class, DeviceNotFoundException::class, ProcessorNotFoundException::class,
+            SensorNotFoundException::class, TaskNotFoundException::class, TriggerNotFoundException::class,
+            GpioPinNotFoundException::class)
+    fun catchNotFoundException(ex: ApiException): ApiError {
+        return ApiError(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), ex.message ?: "Not found exception")
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(GpioNotSpecifiedException::class, GpioPinNotSpecifiedException::class,
+            HardwareIdNotSpecifiedException::class, SignalTypeNotSpecifiedException::class,
+            SignalValueNotSpecifiedException::class, TriggerObjectPropertyNotSpecifiedException::class)
+    fun catchNotSpecifiedException(ex: ApiException): ApiError {
+        return ApiError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
+                ex.message ?: "Not specified exception")
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(GpioModeNotSupportsException::class, GpioModeNotSupportsWithSignalTypeException::class,
+            NoSuchListenerException::class, NoSuchProcessorException::class, PinSignalSupportException::class,
+            UnsupportedSignalTypeException::class)
+    fun catchUnsupportedException(ex: ApiException): ApiError {
+        return ApiError(LocalDateTime.now(), HttpStatus.CONFLICT.value(), "Not supports exception")
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(GpioPinBusyException::class, ProcessorExistsException::class,
+            TriggerExistsException::class)
+    fun catchInvalidTypeIdException(ex: ApiException): ApiError {
+        return ApiError(LocalDateTime.now(), HttpStatus.CONFLICT.value(), "Existing exception")
+    }
+
+    private fun processFieldErrors(fieldErrors: List<FieldError>): ValidationError {
+        val error = ValidationError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), "Validation error")
 
         fieldErrors.forEach {
             val fieldError = CustomFieldError(it.defaultMessage ?: "", it.objectName, it.field)

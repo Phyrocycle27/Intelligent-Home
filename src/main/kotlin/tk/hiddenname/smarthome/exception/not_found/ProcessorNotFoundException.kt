@@ -1,7 +1,5 @@
 package tk.hiddenname.smarthome.exception.not_found
 
-import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ResponseStatus
+import tk.hiddenname.smarthome.exception.ApiException
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
-class ProcessorNotFoundException(id: Long) : Exception("The processor with id '$id' not found")
+class ProcessorNotFoundException(id: Long) : ApiException("The processor with id '$id' not found")

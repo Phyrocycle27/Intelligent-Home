@@ -2,8 +2,8 @@ package tk.hiddenname.smarthome.controller.device
 
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import tk.hiddenname.smarthome.exception.HardwareIdNotSpecifiedException
-import tk.hiddenname.smarthome.exception.SignalValueNotSpecifiedException
+import tk.hiddenname.smarthome.exception.not_specified.HardwareIdNotSpecifiedException
+import tk.hiddenname.smarthome.exception.not_specified.SignalValueNotSpecifiedException
 import tk.hiddenname.smarthome.model.signal.DigitalState
 import tk.hiddenname.smarthome.model.signal.PwmSignal
 import tk.hiddenname.smarthome.service.database.DeviceDatabaseService

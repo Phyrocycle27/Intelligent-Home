@@ -1,9 +1,9 @@
-package tk.hiddenname.smarthome.model
+package tk.hiddenname.smarthome.model.error
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 @JsonNaming(SnakeCaseStrategy::class)
 class CustomFieldError(
         val message: String,

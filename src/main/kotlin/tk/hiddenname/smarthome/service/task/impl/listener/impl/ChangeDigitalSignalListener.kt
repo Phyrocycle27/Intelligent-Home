@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
-import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException
+import tk.hiddenname.smarthome.exception.not_specified.TriggerObjectPropertyNotSpecifiedException
 import tk.hiddenname.smarthome.exception.not_found.TriggerNotFoundException
 import tk.hiddenname.smarthome.model.task.trigger.objects.ChangeDigitalSignalObject
 import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject
@@ -16,53 +16,48 @@ import tk.hiddenname.smarthome.service.task.impl.listener.Listener
 
 @Component
 @Scope("prototype")
-class ChangeDigitalSignalListener(private val listener: EventListener) : Listener {
+open class ChangeDigitalSignalListener(private val listener: EventListener) : Listener {
 
     private val log = LoggerFactory.getLogger(ChangeDigitalSignalListener::class.java)
 
-    private var triggerObject: ChangeDigitalSignalObject? = null
-    private var gpioListener: GpioPinListenerDigital? = null
+    @Autowired
+    open lateinit var service: DigitalSensorService
+
+    @Autowired
+    open lateinit var dbService: SensorDatabaseService
+
+    private lateinit var triggerObject: ChangeDigitalSignalObject
+    private lateinit var gpioListener: GpioPinListenerDigital
     private var delayCounter: DelayCounterThread? = null
 
-    private var service: DigitalSensorService? = null
-    private var dbService: SensorDatabaseService? = null
-
-    @Autowired
-    fun setService(service: DigitalSensorService) {
-        this.service = service
-    }
-
-    @Autowired
-    fun setDbService(dbService: SensorDatabaseService) {
-        this.dbService = dbService
-    }
-
-    @Throws(UnsupportedTriggerObjectTypeException::class)
     override fun register(triggerObject: TriggerObject) {
-        if (triggerObject is ChangeDigitalSignalObject) {
-            this.triggerObject = triggerObject
-            val sensor = dbService!!.getOne(this.triggerObject!!.sensorId!!)
-            gpioListener = service?.addListener(this, sensor.id, this.triggerObject!!.targetState!!,
-                    sensor.signalInversion)
-        } else {
-            throw UnsupportedTriggerObjectTypeException(triggerObject.javaClass.simpleName)
-        }
+        this.triggerObject = triggerObject as ChangeDigitalSignalObject
+
+        val sensorId = this.triggerObject.sensorId
+                ?: throw TriggerObjectPropertyNotSpecifiedException("sensorId")
+        val targetState = this.triggerObject.targetState
+                ?: throw TriggerObjectPropertyNotSpecifiedException("targetState")
+
+        val sensor = dbService.getOne(sensorId)
+        gpioListener = service.addListener(this, sensor.id, targetState, sensor.signalInversion)
     }
 
-    @Throws(UnsupportedTriggerObjectTypeException::class)
     override fun update(triggerObject: TriggerObject) {
         unregister()
         register(triggerObject)
     }
 
     override fun unregister() {
-        service!!.removeListener(gpioListener!!, triggerObject!!.sensorId!!)
+        val sensorId = this.triggerObject.sensorId
+                ?: throw TriggerObjectPropertyNotSpecifiedException("sensorId")
+
+        service.removeListener(gpioListener, sensorId)
     }
 
     override fun trigger(flag: Boolean) {
         if (delayCounter == null) {
             if (flag) {
-                delayCounter = DelayCounterThread(triggerObject!!.delay)
+                delayCounter = DelayCounterThread(triggerObject.delay)
                 delayCounter!!.isDaemon = true
                 delayCounter!!.start()
             }
@@ -77,7 +72,7 @@ class ChangeDigitalSignalListener(private val listener: EventListener) : Listene
 
     private fun setEventListenerFlag(flag: Boolean) {
         try {
-            listener.updateFlag(triggerObject!!.id, flag)
+            listener.updateFlag(triggerObject.id, flag)
         } catch (e: TriggerNotFoundException) {
             unregister()
         }

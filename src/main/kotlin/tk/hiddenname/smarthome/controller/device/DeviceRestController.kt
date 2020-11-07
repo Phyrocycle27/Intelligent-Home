@@ -4,9 +4,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import tk.hiddenname.smarthome.exception.GpioNotSpecifiedException
-import tk.hiddenname.smarthome.exception.GpioPinBusyException
-import tk.hiddenname.smarthome.exception.PinSignalSupportException
+import tk.hiddenname.smarthome.exception.not_specified.GpioNotSpecifiedException
+import tk.hiddenname.smarthome.exception.exist.GpioPinBusyException
+import tk.hiddenname.smarthome.exception.support.PinSignalSupportException
 import tk.hiddenname.smarthome.exception.invalid.InvalidSignalTypeException
 import tk.hiddenname.smarthome.model.hardware.Device
 import tk.hiddenname.smarthome.model.hardware.GpioMode

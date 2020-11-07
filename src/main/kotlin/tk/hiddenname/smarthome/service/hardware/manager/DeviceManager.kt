@@ -2,7 +2,11 @@ package tk.hiddenname.smarthome.service.hardware.manager
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import tk.hiddenname.smarthome.exception.*
+import tk.hiddenname.smarthome.exception.not_specified.GpioNotSpecifiedException
+import tk.hiddenname.smarthome.exception.exist.GpioPinBusyException
+import tk.hiddenname.smarthome.exception.not_specified.SignalTypeNotSpecifiedException
+import tk.hiddenname.smarthome.exception.support.PinSignalSupportException
+import tk.hiddenname.smarthome.exception.support.UnsupportedSignalTypeException
 import tk.hiddenname.smarthome.model.hardware.Device
 import tk.hiddenname.smarthome.model.signal.SignalType
 import tk.hiddenname.smarthome.service.database.DeviceDatabaseService
@@ -73,7 +77,7 @@ class DeviceManager(private val digitalService: DigitalDeviceService,
         return when (type) {
             SignalType.DIGITAL -> digitalService
             SignalType.PWM -> pwmService
-            else -> throw SignalTypeNotSupportsException(type!!)
+            else -> throw UnsupportedSignalTypeException(type!!)
         }
     }
 }

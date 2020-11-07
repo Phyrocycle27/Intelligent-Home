@@ -3,9 +3,7 @@ package tk.hiddenname.smarthome.service.task.impl
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
-import tk.hiddenname.smarthome.exception.*
 import tk.hiddenname.smarthome.exception.not_found.ProcessorNotFoundException
-import tk.hiddenname.smarthome.exception.not_found.TriggerNotFoundException
 import tk.hiddenname.smarthome.model.task.Task
 import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
 import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject
@@ -24,12 +22,9 @@ class TaskManager(
     private val listener = context.getBean(EventListener::class.java, this, listenerFactory)
     val processor: EventProcessor = context.getBean(EventProcessor::class.java, processorFactory)
 
-    @Throws(TriggerExistsException::class, UnsupportedTriggerObjectTypeException::class,
-            NoSuchListenerException::class, NoSuchProcessorException::class, ProcessorExistsException::class,
-            UnsupportedProcessingObjectTypeException::class)
     fun register(task: Task): TaskManager {
-        // registerListeners(task.triggerObjects)
-        // registerProcessors(task.processingObjects)
+        registerListeners(task.triggerObjects)
+        registerProcessors(task.processingObjects)
         return this
     }
 
@@ -38,15 +33,11 @@ class TaskManager(
         unregisterProcessors()
     }
 
-    @Throws(TriggerExistsException::class, UnsupportedTriggerObjectTypeException::class,
-            NoSuchListenerException::class)
-    fun registerListeners(triggerObjects: Set<TriggerObject>) {
+    private fun registerListeners(triggerObjects: List<TriggerObject>) {
         listener.registerListeners(triggerObjects)
     }
 
     @Suppress("unused")
-    @Throws(TriggerExistsException::class, UnsupportedTriggerObjectTypeException::class,
-            NoSuchListenerException::class)
     fun registerListener(triggerObject: TriggerObject) {
         listener.registerListener(triggerObject)
     }
@@ -56,20 +47,15 @@ class TaskManager(
     }
 
     @Suppress("unused")
-    @Throws(TriggerNotFoundException::class)
     fun unregisterListener(id: Long) {
         listener.unregisterListener(id)
     }
 
-    @Throws(NoSuchProcessorException::class, ProcessorExistsException::class,
-            UnsupportedProcessingObjectTypeException::class)
-    fun registerProcessors(processingObjects: Set<ProcessingObject>) {
+    private fun registerProcessors(processingObjects: List<ProcessingObject>) {
         processor.registerProcessors(processingObjects)
     }
 
     @Suppress("unused")
-    @Throws(NoSuchProcessorException::class, ProcessorExistsException::class,
-            UnsupportedProcessingObjectTypeException::class)
     fun registerProcessor(processingObject: ProcessingObject) {
         processor.registerProcessor(processingObject)
     }

@@ -3,9 +3,7 @@ package tk.hiddenname.smarthome.service.task.impl.listener
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
-import tk.hiddenname.smarthome.exception.NoSuchListenerException
-import tk.hiddenname.smarthome.exception.TriggerExistsException
-import tk.hiddenname.smarthome.exception.UnsupportedTriggerObjectTypeException
+import tk.hiddenname.smarthome.exception.exist.TriggerExistsException
 import tk.hiddenname.smarthome.exception.not_found.TriggerNotFoundException
 import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject
 import tk.hiddenname.smarthome.service.task.impl.TaskManager
@@ -20,16 +18,15 @@ class EventListener(private val taskManager: TaskManager,
     private val flags = HashMap<Long, Boolean>()
     private val listeners = HashMap<Long, Listener>()
 
-    @Throws(TriggerExistsException::class, UnsupportedTriggerObjectTypeException::class,
-            NoSuchListenerException::class)
-    fun registerListeners(triggerObjects: Set<TriggerObject>) {
+    fun registerListeners(triggerObjects: List<TriggerObject>) {
         triggerObjects.forEach {
             registerListener(it)
         }
     }
 
-    @Throws(TriggerExistsException::class, UnsupportedTriggerObjectTypeException::class,
-            NoSuchListenerException::class)
+    /**
+     * @throws TriggerExistsException if trigger object with same the id have been already existed
+     */
     fun registerListener(triggerObject: TriggerObject) {
         if (!listeners.containsKey(triggerObject.id)) {
             listeners[triggerObject.id] = listenerFactory.create(triggerObject, this)
@@ -49,14 +46,18 @@ class EventListener(private val taskManager: TaskManager,
         }
     }
 
-    @Throws(TriggerNotFoundException::class)
+    /**
+     * @throws TriggerNotFoundException if trigger object with specified id not found
+     */
     fun unregisterListener(id: Long) {
         listeners[id]?.unregister() ?: throw TriggerNotFoundException(id)
         listeners.remove(id)
         flags.remove(id)
     }
 
-    @Throws(TriggerNotFoundException::class)
+    /**
+     * @throws TriggerNotFoundException if trigger object with specified id not found
+     */
     fun updateFlag(id: Long, flag: Boolean) {
         if (listeners.containsKey(id)) {
             flags[id] = flag

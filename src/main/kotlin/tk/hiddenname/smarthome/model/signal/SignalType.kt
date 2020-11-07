@@ -16,7 +16,7 @@ enum class SignalType {
             try {
                 return valueOf(signalTypeName.toUpperCase())
             } catch (e: IllegalArgumentException) {
-                throw InvalidSignalTypeException(signalTypeName)
+                throw InvalidSignalTypeException(signalTypeName, values())
             }
         }
     }

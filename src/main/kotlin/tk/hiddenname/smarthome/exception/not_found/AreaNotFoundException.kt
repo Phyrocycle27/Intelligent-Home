@@ -1,7 +1,5 @@
 package tk.hiddenname.smarthome.exception.not_found
 
-import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ResponseStatus
+import tk.hiddenname.smarthome.exception.ApiException
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
-class AreaNotFoundException(id: Long) : RuntimeException("The area with id '$id' not found")
+class AreaNotFoundException(id: Long) : ApiException("The area with id '$id' not found")

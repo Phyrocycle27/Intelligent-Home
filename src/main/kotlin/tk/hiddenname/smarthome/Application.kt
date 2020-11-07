@@ -3,7 +3,6 @@ package tk.hiddenname.smarthome
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.ApplicationContext
-import tk.hiddenname.smarthome.netty.Client
 import tk.hiddenname.smarthome.service.hardware.manager.DeviceManager
 import tk.hiddenname.smarthome.service.hardware.manager.SensorManager
 import tk.hiddenname.smarthome.service.task.TaskService
@@ -11,6 +10,8 @@ import tk.hiddenname.smarthome.utils.gpio.GpioManager
 
 @SpringBootApplication
 open class Application {
+
+    @Suppress("unused")
     companion object {
         private const val HOST = "87.255.8.24"
         private const val PORT = 3141
@@ -31,7 +32,7 @@ open class Application {
 
             ctx.getBean(DeviceManager::class.java).loadDevices()
             ctx.getBean(SensorManager::class.java).loadSensors()
-//            ctx.getBean(TaskService::class.java).loadTasks()
+            ctx.getBean(TaskService::class.java).loadTasks()
         }
     }
 }

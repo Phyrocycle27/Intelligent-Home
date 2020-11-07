@@ -1,7 +1,7 @@
 package tk.hiddenname.smarthome.service.hardware.impl
 
-import tk.hiddenname.smarthome.exception.GpioPinBusyException
-import tk.hiddenname.smarthome.exception.PinSignalSupportException
+import tk.hiddenname.smarthome.exception.exist.GpioPinBusyException
+import tk.hiddenname.smarthome.exception.support.PinSignalSupportException
 import tk.hiddenname.smarthome.exception.not_found.DeviceNotFoundException
 import tk.hiddenname.smarthome.model.hardware.GPIO
 

@@ -1,5 +1,6 @@
 package tk.hiddenname.smarthome.model.task
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 import org.hibernate.annotations.LazyCollection
@@ -16,6 +17,8 @@ import javax.validation.constraints.Size
 @Entity
 @Table(name = "task")
 @JsonNaming(SnakeCaseStrategy::class)
+@JsonPropertyOrder(value = ["id", "name", "description", "creationTimestamp",
+        "updateTimestamp", "triggerObjects", "processingObjects"])
 class Task(
         @field:Size(min = 3, max = 25, groups = [TaskValidationGroup::class])
         @field:NotBlank(message = "name shouldn't be empty or null", groups = [TaskValidationGroup::class])

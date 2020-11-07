@@ -29,7 +29,6 @@ class SensorDatabaseService(private val repo: SensorRepository) {
         return repo.findAllByGpioSignalTypeAndAreaId(type, areaId)
     }
 
-    @Throws(SensorNotFoundException::class)
     fun getOne(id: Long): Sensor {
         return repo.findById(id).orElseThrow { SensorNotFoundException(id) }
     }

@@ -1,7 +1,7 @@
 package tk.hiddenname.smarthome.exception.invalid
 
-import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ResponseStatus
+import tk.hiddenname.smarthome.exception.ApiException
+import tk.hiddenname.smarthome.model.signal.SignalType
 
-@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-class InvalidSignalTypeException(type: String) : RuntimeException("The type '$type' is invalid!")
+class InvalidSignalTypeException(type: String, availableTypes: Array<SignalType>) :
+        ApiException("The type '$type' is invalid! Available types are: ${availableTypes.joinToString(", ")}")
