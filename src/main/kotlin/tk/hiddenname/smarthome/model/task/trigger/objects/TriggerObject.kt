@@ -15,6 +15,5 @@ import javax.validation.constraints.NotNull
 abstract class TriggerObject(
         @Enumerated(EnumType.STRING)
         @Column(updatable = false, nullable = false)
-        @field:NotNull(message = "processing action field can not be null")
         open val action: TriggerAction? = null
 ) : AbstractJpaPersistable()

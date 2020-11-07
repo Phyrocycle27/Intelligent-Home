@@ -2,6 +2,7 @@ package tk.hiddenname.smarthome.model.task.processing.objects
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy
 import com.fasterxml.jackson.databind.annotation.JsonNaming
+import tk.hiddenname.smarthome.model.task.TaskValidationGroup
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
@@ -13,17 +14,17 @@ import javax.validation.constraints.NotNull
 @Table(name = "processing_set_pwm_signal")
 @JsonNaming(SnakeCaseStrategy::class)
 data class SetPwmSignalObject(
-        @field:Min(1)
-        @field:NotNull(message = "device id should be specified")
+        @field:Min(1, groups = [TaskValidationGroup::class])
+        @field:NotNull(message = "device id should be specified", groups = [TaskValidationGroup::class])
         @Column(name = "device_id", nullable = false, updatable = false)
         val deviceId: Long? = null,
 
-        @field:Min(0)
-        @field:Max(86400)
+        @field:Min(0, groups = [TaskValidationGroup::class])
+        @field:Max(86400, groups = [TaskValidationGroup::class])
         @Column(nullable = false)
         val delay: Int = 0,
 
-        @field:NotNull(message = "target pwm signal should be specified")
+        @field:NotNull(message = "target pwm signal should be specified", groups = [TaskValidationGroup::class])
         @Column(name = "target_signal", nullable = false)
         val targetSignal: Int? = null
 ) : ProcessingObject() {

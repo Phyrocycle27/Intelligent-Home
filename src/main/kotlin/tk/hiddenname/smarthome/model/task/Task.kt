@@ -17,30 +17,30 @@ import javax.validation.constraints.Size
 @Table(name = "task")
 @JsonNaming(SnakeCaseStrategy::class)
 class Task(
-        @field:Size(min = 3, max = 25)
-        @field:NotBlank(message = "name shouldn't be empty or null ")
+        @field:Size(min = 3, max = 25, groups = [TaskValidationGroup::class])
+        @field:NotBlank(message = "name shouldn't be empty or null", groups = [TaskValidationGroup::class])
         @Column(nullable = false)
         val name: String = "",
 
-        @field:Size(max = 50)
+        @field:Size(max = 50, groups = [TaskValidationGroup::class])
         @Column(nullable = false, length = 50)
         val description: String = "",
 
-        @field:NotEmpty(message = "trigger objects list can not be empty")
         @JoinTable(name = "task_to_trigger_object",
                 joinColumns = [JoinColumn(name = "fk_task", referencedColumnName = "id")],
                 inverseJoinColumns = [JoinColumn(name = "fk_object", referencedColumnName = "id")])
         @OneToMany(cascade = [CascadeType.ALL])
         @LazyCollection(LazyCollectionOption.FALSE)
-        val triggerObjects: Set<@Valid TriggerObject> = HashSet(),
+        @field:NotEmpty(message = "trigger objects list can not be empty", groups = [TaskValidationGroup::class])
+        val triggerObjects: MutableList<@Valid TriggerObject> = mutableListOf(),
 
-        @field:NotEmpty(message = "processing objects list can not be empty")
         @JoinTable(name = "task_to_processing_object",
                 joinColumns = [JoinColumn(name = "fk_task", referencedColumnName = "id")],
                 inverseJoinColumns = [JoinColumn(name = "fk_object", referencedColumnName = "id")])
         @OneToMany(cascade = [CascadeType.ALL])
         @LazyCollection(LazyCollectionOption.FALSE)
-        val processingObjects: Set<@Valid ProcessingObject> = HashSet(),
+        @field:NotEmpty(message = "processing objects list can not be empty", groups = [TaskValidationGroup::class])
+        val processingObjects: MutableList<@Valid ProcessingObject> = mutableListOf(),
 ) : AbstractJpaPersistableWithTimestamps() {
 
     override fun toString(): String {

@@ -14,7 +14,7 @@ enum class TriggerAction {
             try {
                 return valueOf(triggerActionName.toUpperCase())
             } catch (e: IllegalArgumentException) {
-                throw InvalidTriggerActionException(triggerActionName)
+                throw InvalidTriggerActionException(triggerActionName, values())
             }
         }
     }

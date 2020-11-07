@@ -12,8 +12,8 @@ class ApiError(
         val timestamp: LocalDateTime,
         val status: Int,
         val error: String,
+        @Suppress("MemberVisibilityCanBePrivate")
+        val fieldErrors: MutableList<CustomFieldError> = mutableListOf()
 ) {
-    private val fieldErrors: MutableSet<CustomFieldError> = HashSet()
-
     fun addFieldError(fieldError: CustomFieldError) = fieldErrors.add(fieldError)
 }

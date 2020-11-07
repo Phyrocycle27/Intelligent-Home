@@ -9,4 +9,8 @@ class CustomFieldError(
         val message: String,
         val objectName: String,
         val fieldName: String
-)
+) {
+    override fun toString(): String {
+        return "CustomFieldError(message='$message', objectName='$objectName', fieldName='$fieldName')"
+    }
+}

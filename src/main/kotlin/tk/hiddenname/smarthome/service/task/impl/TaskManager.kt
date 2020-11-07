@@ -28,8 +28,8 @@ class TaskManager(
             NoSuchListenerException::class, NoSuchProcessorException::class, ProcessorExistsException::class,
             UnsupportedProcessingObjectTypeException::class)
     fun register(task: Task): TaskManager {
-        registerListeners(task.triggerObjects)
-        registerProcessors(task.processingObjects)
+        // registerListeners(task.triggerObjects)
+        // registerProcessors(task.processingObjects)
         return this
     }
 
