@@ -1,6 +1,5 @@
 package tk.hiddenname.smarthome.controller.device
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import tk.hiddenname.smarthome.exception.not_specified.HardwareIdNotSpecifiedException
 import tk.hiddenname.smarthome.exception.not_specified.SignalValueNotSpecifiedException
@@ -13,16 +12,9 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping(value = ["/devices/control"])
-open class DeviceSignalRestController {
-
-    @Autowired
-    open lateinit var dbService: DeviceDatabaseService
-
-    @Autowired
-    open lateinit var digitalService: DigitalDeviceServiceImpl
-
-    @Autowired
-    open lateinit var pwmService: PwmDeviceServiceImpl
+class DeviceSignalRestController(private val dbService: DeviceDatabaseService,
+                                 private val digitalService: DigitalDeviceServiceImpl,
+                                 private val pwmService: PwmDeviceServiceImpl) {
 
     // ******************************** PWM *************************************************
     @GetMapping(value = ["/pwm/{id}"], produces = ["application/json"])

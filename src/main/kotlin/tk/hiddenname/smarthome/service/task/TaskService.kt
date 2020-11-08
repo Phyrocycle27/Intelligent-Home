@@ -21,7 +21,6 @@ class TaskService(private val context: ApplicationContext,
         tasks[task.id] = taskManager.register(task)
     }
 
-    @Throws(TaskNotFoundException::class)
     fun removeTask(taskId: Long) {
         tasks[taskId]?.unregister() ?: throw TaskNotFoundException(taskId)
     }

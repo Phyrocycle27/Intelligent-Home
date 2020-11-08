@@ -1,7 +1,6 @@
 package tk.hiddenname.smarthome.controller
 
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -13,13 +12,8 @@ import java.time.LocalDateTime
 
 @RestController
 @RequestMapping(value = ["/tasks"])
-open class TaskRestController {
-
-    @Autowired
-    open lateinit var dbService: TaskDatabaseService
-
-    @Autowired
-    open lateinit var taskService: TaskService
+class TaskRestController(private val dbService: TaskDatabaseService,
+                         private val taskService: TaskService) {
 
     companion object {
         @Suppress("unused")

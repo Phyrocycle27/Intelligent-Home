@@ -1,6 +1,5 @@
 package tk.hiddenname.smarthome.controller.sensor
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tk.hiddenname.smarthome.exception.exist.GpioPinBusyException
@@ -18,16 +17,9 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping(value = ["/sensors"])
-open class SensorRestController {
-
-    @Autowired
-    open lateinit var dbService: SensorDatabaseService
-
-    @Autowired
-    open lateinit var manager: SensorManager
-
-    @Autowired
-    open lateinit var areaDbService: AreaDatabaseService
+class SensorRestController(private val dbService: SensorDatabaseService,
+                           private val manager: SensorManager,
+                           private val areaDbService: AreaDatabaseService) {
 
     @Suppress("DuplicatedCode")
     @GetMapping(value = ["/all"], produces = ["application/json"])

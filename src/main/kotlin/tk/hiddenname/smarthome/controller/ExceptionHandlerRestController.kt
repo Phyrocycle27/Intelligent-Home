@@ -21,7 +21,7 @@ import tk.hiddenname.smarthome.model.error.*
 import java.time.LocalDateTime
 
 @RestControllerAdvice
-open class ExceptionHandlerRestController {
+class ExceptionHandlerRestController {
 
     @Suppress("unused")
     private val log = LoggerFactory.getLogger(ExceptionHandlerRestController::class.java)

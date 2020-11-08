@@ -1,7 +1,6 @@
 package tk.hiddenname.smarthome.controller.device
 
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tk.hiddenname.smarthome.exception.not_specified.GpioNotSpecifiedException
@@ -16,16 +15,9 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping(value = ["/devices"])
-open class DeviceRestController {
-
-    @Autowired
-    open lateinit var dbService: DeviceDatabaseService
-
-    @Autowired
-    open lateinit var manager: DeviceManager
-
-    @Autowired
-    open lateinit var areaDbService: AreaDatabaseService
+class DeviceRestController(private val dbService: DeviceDatabaseService,
+                           private val manager: DeviceManager,
+                           private val areaDbService: AreaDatabaseService) {
 
     @Suppress("unused")
     private val log = LoggerFactory.getLogger(DeviceRestController::class.java)

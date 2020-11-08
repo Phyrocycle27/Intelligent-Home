@@ -16,21 +16,23 @@ import tk.hiddenname.smarthome.service.task.impl.listener.Listener
 
 @Component
 @Scope("prototype")
-open class ChangeDigitalSignalListener(private val listener: EventListener) : Listener {
+class ChangeDigitalSignalListener(private val listener: EventListener) : Listener {
 
     private val log = LoggerFactory.getLogger(ChangeDigitalSignalListener::class.java)
 
     @Autowired
-    open lateinit var service: DigitalSensorService
+    lateinit var service: DigitalSensorService
 
     @Autowired
-    open lateinit var dbService: SensorDatabaseService
+    lateinit var dbService: SensorDatabaseService
 
     private lateinit var triggerObject: ChangeDigitalSignalObject
     private lateinit var gpioListener: GpioPinListenerDigital
     private var delayCounter: DelayCounterThread? = null
 
     override fun register(triggerObject: TriggerObject) {
+        log.info("Registering triggerObject in ChangeDigitalSignalListener")
+
         this.triggerObject = triggerObject as ChangeDigitalSignalObject
 
         val sensorId = this.triggerObject.sensorId
@@ -40,6 +42,8 @@ open class ChangeDigitalSignalListener(private val listener: EventListener) : Li
 
         val sensor = dbService.getOne(sensorId)
         gpioListener = service.addListener(this, sensor.id, targetState, sensor.signalInversion)
+
+        log.info("Registered")
     }
 
     override fun update(triggerObject: TriggerObject) {

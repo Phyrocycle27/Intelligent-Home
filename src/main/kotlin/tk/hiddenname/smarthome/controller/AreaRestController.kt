@@ -1,6 +1,5 @@
 package tk.hiddenname.smarthome.controller
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tk.hiddenname.smarthome.model.Area
@@ -9,10 +8,7 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping(value = ["/areas"])
-open class AreaRestController {
-
-    @Autowired
-    open lateinit var dbService: AreaDatabaseService
+class AreaRestController(private val dbService: AreaDatabaseService) {
 
     @GetMapping(value = ["/all"], produces = ["application/json"])
     fun getAll() = dbService.getAll()

@@ -29,14 +29,12 @@ class DeviceDatabaseService(private val repo: DeviceRepository) {
         return repo.findAllByGpioSignalTypeAndAreaId(type, areaId)
     }
 
-    @Throws(DeviceNotFoundException::class)
     fun getOne(id: Long): Device {
         return repo.findById(id).orElseThrow { DeviceNotFoundException(id) }
     }
 
     fun create(newDevice: Device): Device = repo.save(newDevice)
 
-    @Throws(DeviceNotFoundException::class)
     fun update(id: Long, newDevice: Device): Device {
         return repo.findById(id)
                 .map { device: Device ->
@@ -48,7 +46,6 @@ class DeviceDatabaseService(private val repo: DeviceRepository) {
 
     fun getNextId() = repo.getNextId()
 
-    @Throws(DeviceNotFoundException::class)
     fun delete(id: Long) {
         repo.delete(repo.findById(id).orElseThrow { DeviceNotFoundException(id) })
     }
