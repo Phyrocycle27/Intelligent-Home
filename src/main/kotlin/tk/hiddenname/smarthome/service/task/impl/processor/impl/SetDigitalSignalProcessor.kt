@@ -1,8 +1,10 @@
 package tk.hiddenname.smarthome.service.task.impl.processor.impl
 
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
+import tk.hiddenname.smarthome.exception.not_specified.ProcessingObjectPropertyNotSpecifiedException
 import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
 import tk.hiddenname.smarthome.model.task.processing.objects.SetDigitalSignalObject
 import tk.hiddenname.smarthome.service.database.DeviceDatabaseService
@@ -15,24 +17,27 @@ class SetDigitalSignalProcessor : Processor {
 
     private val log = LoggerFactory.getLogger(SetDigitalSignalProcessor::class.java)
 
-    private var processingObject: SetDigitalSignalObject? = null
+    @Autowired
+    lateinit var service: DigitalDeviceService
 
-    private val service: DigitalDeviceService? = null
-    private val dbService: DeviceDatabaseService? = null
+    @Autowired
+    lateinit var  dbService: DeviceDatabaseService
+
+    private lateinit var processingObject: SetDigitalSignalObject
 
     override fun process() {
         Thread {
-            val device = dbService?.getOne(processingObject!!.deviceId!!)
-            val currState = service?.getState(device?.id!!, device.signalInversion)?.digitalState
-            if (currState != processingObject!!.targetState) {
-                service!!.setState(device!!.id, device.signalInversion, processingObject!!.targetState!!)
+            val device = dbService.getOne(processingObject.deviceId!!)
+            val currState = service.getState(device.id, device.signalInversion).digitalState
+            if (currState != processingObject.targetState) {
+                service.setState(device.id, device.signalInversion, processingObject.targetState!!)
                 log.info(java.lang.String.format(" * Digital state (%b) will be set to device with id (%d) on GPIO " +
                         "(%d) for (%d) seconds",
-                        processingObject!!.targetState, device.id, device.gpio!!.gpioPin,
-                        processingObject!!.delay))
-                if (processingObject!!.delay > 0) {
+                        processingObject.targetState, device.id, device.gpio!!.gpioPin,
+                        processingObject.delay))
+                if (processingObject.delay > 0) {
                     try {
-                        Thread.sleep(processingObject!!.delay * 1000.toLong())
+                        Thread.sleep(processingObject.delay * 1000L)
                     } catch (e: InterruptedException) {
                         log.error(e.message)
                     }
@@ -44,13 +49,16 @@ class SetDigitalSignalProcessor : Processor {
             } else {
                 log.info(java.lang.String.format(" * Digital state on device with id (%d) on gpio (%d) have been already " +
                         "(%b). Nothing to change",
-                        device!!.id, device.gpio!!.gpioPin, processingObject!!.targetState))
+                        device.id, device.gpio!!.gpioPin, processingObject.targetState))
             }
         }.start()
     }
 
-    // TODO: проверять, существует ли устройство с таким Id
     override fun register(processingObject: ProcessingObject) {
         this.processingObject = processingObject as SetDigitalSignalObject
+        val deviceId = processingObject.deviceId
+                ?: throw ProcessingObjectPropertyNotSpecifiedException("deviceId")
+
+        dbService.getOne(deviceId)
     }
 }

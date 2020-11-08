@@ -6,10 +6,12 @@ import org.springframework.stereotype.Component
 import tk.hiddenname.smarthome.exception.exist.ProcessorExistsException
 import tk.hiddenname.smarthome.exception.not_found.ProcessorNotFoundException
 import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
+import tk.hiddenname.smarthome.service.task.impl.TaskManager
 
 @Component
 @Scope("prototype")
-class EventProcessor(private val processorFactory: ProcessorFactory) {
+class EventProcessor(private val processorFactory: ProcessorFactory,
+                     private val taskManager: TaskManager) {
 
     private val log = LoggerFactory.getLogger(EventProcessor::class.java)
 
@@ -25,7 +27,15 @@ class EventProcessor(private val processorFactory: ProcessorFactory) {
         if (processors.containsKey(processingObject.id)) {
             throw ProcessorExistsException(processingObject.id)
         } else {
+            registerProcessorIfNotExist(processingObject)
+        }
+    }
+
+    private fun registerProcessorIfNotExist(processingObject: ProcessingObject) {
+        try {
             processors[processingObject.id] = processorFactory.create(processingObject)
+        } catch (ex: Exception) {
+            taskManager.unregister()
         }
     }
 

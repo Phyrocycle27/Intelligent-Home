@@ -25,11 +25,19 @@ class EventListener(private val taskManager: TaskManager,
     }
 
     fun registerListener(triggerObject: TriggerObject) {
-        if (!listeners.containsKey(triggerObject.id)) {
+        if (listeners.containsKey(triggerObject.id)) {
+            throw TriggerExistsException(triggerObject.id)
+        } else {
+            registerListenerIfNotExist(triggerObject)
+        }
+    }
+
+    private fun registerListenerIfNotExist(triggerObject: TriggerObject) {
+        try {
             listeners[triggerObject.id] = listenerFactory.create(triggerObject, this)
             flags[triggerObject.id] = false
-        } else {
-            throw TriggerExistsException(triggerObject.id)
+        } catch (ex: Exception) {
+            taskManager.unregister()
         }
     }
 

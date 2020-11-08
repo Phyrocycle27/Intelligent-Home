@@ -66,7 +66,8 @@ class ExceptionHandlerRestController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(GpioNotSpecifiedException::class, GpioPinNotSpecifiedException::class,
             HardwareIdNotSpecifiedException::class, SignalTypeNotSpecifiedException::class,
-            SignalValueNotSpecifiedException::class, TriggerObjectPropertyNotSpecifiedException::class)
+            SignalValueNotSpecifiedException::class, TriggerObjectPropertyNotSpecifiedException::class,
+            ProcessingObjectPropertyNotSpecifiedException::class)
     fun catchNotSpecifiedException(ex: ApiException): ApiError {
         return ApiError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
                 ex.message ?: "Not specified exception")
