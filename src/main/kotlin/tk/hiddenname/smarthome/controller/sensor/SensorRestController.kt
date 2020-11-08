@@ -1,12 +1,12 @@
 package tk.hiddenname.smarthome.controller.sensor
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import tk.hiddenname.smarthome.exception.not_specified.GpioNotSpecifiedException
 import tk.hiddenname.smarthome.exception.exist.GpioPinBusyException
-import tk.hiddenname.smarthome.exception.support.PinSignalSupportException
 import tk.hiddenname.smarthome.exception.invalid.InvalidSignalTypeException
+import tk.hiddenname.smarthome.exception.not_specified.GpioNotSpecifiedException
+import tk.hiddenname.smarthome.exception.support.PinSignalSupportException
 import tk.hiddenname.smarthome.model.hardware.GpioMode
 import tk.hiddenname.smarthome.model.hardware.Sensor
 import tk.hiddenname.smarthome.model.signal.SignalType
@@ -15,20 +15,24 @@ import tk.hiddenname.smarthome.service.database.SensorDatabaseService
 import tk.hiddenname.smarthome.service.hardware.manager.SensorManager
 import java.time.LocalDateTime
 import javax.validation.Valid
-import javax.validation.constraints.Min
 
-@Validated
 @RestController
 @RequestMapping(value = ["/sensors"])
-open class SensorRestController(private val dbService: SensorDatabaseService,
-                           private val areaDbService: AreaDatabaseService,
-                           private val manager: SensorManager) {
+open class SensorRestController {
+
+    @Autowired
+    open lateinit var dbService: SensorDatabaseService
+
+    @Autowired
+    open lateinit var manager: SensorManager
+
+    @Autowired
+    open lateinit var areaDbService: AreaDatabaseService
 
     @Suppress("DuplicatedCode")
     @GetMapping(value = ["/all"], produces = ["application/json"])
-    @Throws(InvalidSignalTypeException::class)
-    fun getAll(@RequestParam(name = "type", defaultValue = "", required = false) t: String,
-               @Min(0) @RequestParam(name = "areaId", defaultValue = "-1", required = false) areaId: Long):
+    fun getAll(@RequestParam(name = "signalType", defaultValue = "", required = false) t: String,
+               @RequestParam(name = "areaId", defaultValue = "-1", required = false) areaId: Long):
             List<Sensor> {
 
         return if (t.isEmpty() && areaId == -1L) {
@@ -46,7 +50,7 @@ open class SensorRestController(private val dbService: SensorDatabaseService,
     }
 
     @GetMapping(value = ["/one/{id}"], produces = ["application/json"])
-    fun getOne(@Min(0) @PathVariable(name = "id", required = true) id: Long): Sensor = dbService.getOne(id)
+    fun getOne(@PathVariable(name = "id", required = true) id: Long): Sensor = dbService.getOne(id)
 
     @PostMapping(value = ["/create"], produces = ["application/json"])
     @Throws(GpioPinBusyException::class, PinSignalSupportException::class, InvalidSignalTypeException::class)
@@ -59,11 +63,15 @@ open class SensorRestController(private val dbService: SensorDatabaseService,
 
     @PutMapping(value = ["/one/{id}"], produces = ["application/json"])
     fun update(@Valid @RequestBody(required = true) newSensor: Sensor,
-               @Min(1) @PathVariable id: Long): Sensor {
+               @PathVariable id: Long): Sensor {
         val oldSensor = dbService.getOne(id)
 
         if (oldSensor.gpio?.signalType != newSensor.gpio?.signalType) {
             manager.changeSignalType(oldSensor, newSensor.gpio?.signalType)
+        }
+        if (oldSensor.areaId != newSensor.areaId) {
+            areaDbService.getOne(newSensor.areaId)
+            oldSensor.areaId = newSensor.areaId
         }
 
         newSensor.updateTimestamp = LocalDateTime.now()
@@ -71,7 +79,7 @@ open class SensorRestController(private val dbService: SensorDatabaseService,
     }
 
     @DeleteMapping(value = ["/one/{id}"], produces = ["application/json"])
-    fun delete(@Min(1) @PathVariable(name = "id", required = true) id: Long): ResponseEntity<Any> {
+    fun delete(@PathVariable(name = "id", required = true) id: Long): ResponseEntity<Any> {
         val sensor = dbService.getOne(id)
 
         manager.unregister(sensor)

@@ -12,19 +12,16 @@ class AreaDatabaseService(private val repo: AreaRepository) {
 
     fun getAll(): List<Area> = repo.findAll(Sort.by("id"))
 
-    @Throws(AreaNotFoundException::class)
     fun getOne(id: Long): Area {
         return repo.findById(id).orElseThrow { AreaNotFoundException(id) }
     }
 
     fun create(newArea: Area): Area = repo.save(newArea)
 
-    @Throws(AreaNotFoundException::class)
     fun delete(id: Long) {
         repo.delete(repo.findById(id).orElseThrow { AreaNotFoundException(id) })
     }
 
-    @Throws(AreaNotFoundException::class)
     fun update(id: Long, newArea: Area): Area {
         return repo.findById(id)
                 .map { area: Area ->

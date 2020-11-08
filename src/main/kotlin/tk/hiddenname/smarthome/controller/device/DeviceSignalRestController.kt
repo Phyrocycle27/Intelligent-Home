@@ -1,6 +1,6 @@
 package tk.hiddenname.smarthome.controller.device
 
-import org.springframework.validation.annotation.Validated
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import tk.hiddenname.smarthome.exception.not_specified.HardwareIdNotSpecifiedException
 import tk.hiddenname.smarthome.exception.not_specified.SignalValueNotSpecifiedException
@@ -10,18 +10,23 @@ import tk.hiddenname.smarthome.service.database.DeviceDatabaseService
 import tk.hiddenname.smarthome.service.hardware.impl.digital.output.DigitalDeviceServiceImpl
 import tk.hiddenname.smarthome.service.hardware.impl.pwm.output.PwmDeviceServiceImpl
 import javax.validation.Valid
-import javax.validation.constraints.Min
 
-@Validated
 @RestController
 @RequestMapping(value = ["/devices/control"])
-open class DeviceSignalRestController(private val dbService: DeviceDatabaseService,
-                                 private val digitalService: DigitalDeviceServiceImpl,
-                                 private val pwmService: PwmDeviceServiceImpl) {
+open class DeviceSignalRestController {
+
+    @Autowired
+    open lateinit var dbService: DeviceDatabaseService
+
+    @Autowired
+    open lateinit var digitalService: DigitalDeviceServiceImpl
+
+    @Autowired
+    open lateinit var pwmService: PwmDeviceServiceImpl
 
     // ******************************** PWM *************************************************
     @GetMapping(value = ["/pwm/{id}"], produces = ["application/json"])
-    fun getPwmSignal(@Min(1) @PathVariable(name = "id", required = true) id: Long): PwmSignal {
+    fun getPwmSignal(@PathVariable(name = "id", required = true) id: Long): PwmSignal {
         val device = dbService.getOne(id)
         return pwmService.getSignal(device.id, device.signalInversion)
     }
@@ -37,7 +42,7 @@ open class DeviceSignalRestController(private val dbService: DeviceDatabaseServi
 
     // ***************************** DIGITAL **************************************************
     @GetMapping(value = ["/digital/{id}"], produces = ["application/json"])
-    fun getState(@Min(1) @PathVariable(name = "id", required = true) id: Long): DigitalState {
+    fun getState(@PathVariable(name = "id", required = true) id: Long): DigitalState {
         val device = dbService.getOne(id)
         return digitalService.getState(device.id, device.signalInversion)
     }

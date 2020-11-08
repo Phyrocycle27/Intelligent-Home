@@ -34,7 +34,7 @@ open class ExceptionHandlerRestController {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(JsonMappingException::class)
-    fun catchJsonMappingException(ex: JsonMappingException): ValidationError {
+    fun catchJsonMappingException(ex: JsonMappingException): ApiError {
         val message = when(ex.cause) {
             is InvalidSignalTypeException,
             is InvalidTriggerActionException,
@@ -46,7 +46,7 @@ open class ExceptionHandlerRestController {
             }
         }
 
-        return ValidationError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), message)
+        return ApiError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), message)
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -77,14 +77,23 @@ open class ExceptionHandlerRestController {
             NoSuchListenerException::class, NoSuchProcessorException::class, PinSignalSupportException::class,
             UnsupportedSignalTypeException::class)
     fun catchUnsupportedException(ex: ApiException): ApiError {
-        return ApiError(LocalDateTime.now(), HttpStatus.CONFLICT.value(), "Not supports exception")
+        return ApiError(LocalDateTime.now(), HttpStatus.CONFLICT.value(),
+                ex.message ?: "Not supports exception")
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(GpioPinBusyException::class, ProcessorExistsException::class,
             TriggerExistsException::class)
-    fun catchInvalidTypeIdException(ex: ApiException): ApiError {
-        return ApiError(LocalDateTime.now(), HttpStatus.CONFLICT.value(), "Existing exception")
+    fun catchExistingConflictException(ex: ApiException): ApiError {
+        return ApiError(LocalDateTime.now(), HttpStatus.CONFLICT.value(),
+                ex.message ?: "Existing conflict exception")
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidSignalTypeException::class)
+    fun catchInvalidSignalTypeException(ex: ApiException): ApiError {
+        return ApiError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
+                ex.message ?: "Invalid signal type")
     }
 
     private fun processFieldErrors(fieldErrors: List<FieldError>): ValidationError {

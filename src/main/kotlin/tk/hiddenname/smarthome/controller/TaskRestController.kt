@@ -5,24 +5,21 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import tk.hiddenname.smarthome.exception.not_found.TaskNotFoundException
 import tk.hiddenname.smarthome.model.task.Task
 import tk.hiddenname.smarthome.model.task.TaskValidationGroup
 import tk.hiddenname.smarthome.service.database.TaskDatabaseService
 import tk.hiddenname.smarthome.service.task.TaskService
 import java.time.LocalDateTime
-import javax.validation.Valid
-import javax.validation.constraints.Min
 
 @RestController
 @RequestMapping(value = ["/tasks"])
 open class TaskRestController {
 
     @Autowired
-    open lateinit var taskService: TaskService
+    open lateinit var dbService: TaskDatabaseService
 
     @Autowired
-    open lateinit var dbService: TaskDatabaseService
+    open lateinit var taskService: TaskService
 
     companion object {
         @Suppress("unused")
@@ -33,8 +30,7 @@ open class TaskRestController {
     fun getAll(): List<Task> = dbService.getAll()
 
     @GetMapping(value = ["/one/{id}"], produces = ["application/json"])
-    @Throws(TaskNotFoundException::class)
-    fun getOne(@Valid @PathVariable(name = "id") @Min(1) id: Long) = dbService.getOne(id)
+    fun getOne(@PathVariable(name = "id") id: Long) = dbService.getOne(id)
 
     @PostMapping(value = ["/create"], produces = ["application/json"])
     fun create(@RequestBody(required = true) @Validated(TaskValidationGroup::class) task: Task): Task {
