@@ -19,8 +19,9 @@ class TaskManager(
         listenerFactory: ListenerFactory,
         processorFactory: ProcessorFactory) {
 
-    private val listener = context.getBean(EventListener::class.java, this, listenerFactory)
-    val processor: EventProcessor = context.getBean(EventProcessor::class.java, processorFactory)
+    private val listener = context.getBean(EventListener::class.java, listenerFactory, this)
+
+    val processor: EventProcessor = context.getBean(EventProcessor::class.java, processorFactory, this)
 
     fun register(task: Task): TaskManager {
         registerListeners(task.triggerObjects)
