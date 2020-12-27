@@ -3,6 +3,7 @@ package tk.hiddenname.smarthome
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.ApplicationContext
+import tk.hiddenname.smarthome.netty.Client
 import tk.hiddenname.smarthome.service.hardware.manager.DeviceManager
 import tk.hiddenname.smarthome.service.hardware.manager.SensorManager
 import tk.hiddenname.smarthome.service.task.TaskService
@@ -13,7 +14,7 @@ open class Application {
 
     @Suppress("unused")
     companion object {
-        private const val HOST = "87.255.8.24"
+        private const val HOST = "192.168.1.100"
         private const val PORT = 3141
         private const val allowConnectionToServer = true
 
@@ -26,9 +27,9 @@ open class Application {
             Runtime.getRuntime().addShutdownHook(Thread { ctx.getBean(GpioManager::class.java).shutdown() })
 
             // Run the Netty
-//            if (allowConnectionToServer) {
-//                Client(HOST, PORT)
-//            }
+            if (allowConnectionToServer) {
+                Client(HOST, PORT)
+            }
 
             ctx.getBean(DeviceManager::class.java).loadDevices()
             ctx.getBean(SensorManager::class.java).loadSensors()

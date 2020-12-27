@@ -10,8 +10,8 @@ import tk.hiddenname.smarthome.service.task.impl.TaskManager
 
 @Component
 @Scope("prototype")
-class EventProcessor(private val processorFactory: ProcessorFactory,
-                     private val taskManager: TaskManager) {
+class EventProcessor(private val taskManager: TaskManager,
+                     private val processorFactory: ProcessorFactory) {
 
     private val log = LoggerFactory.getLogger(EventProcessor::class.java)
 

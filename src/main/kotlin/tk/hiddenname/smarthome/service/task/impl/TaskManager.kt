@@ -20,7 +20,7 @@ class TaskManager(
         processorFactory: ProcessorFactory) {
 
     private val listener = context.getBean(EventListener::class.java, this, listenerFactory)
-    val processor: EventProcessor = context.getBean(EventProcessor::class.java, processorFactory)
+    val processor: EventProcessor = context.getBean(EventProcessor::class.java, this, processorFactory)
 
     fun register(task: Task): TaskManager {
         registerListeners(task.triggerObjects)
@@ -68,5 +68,6 @@ class TaskManager(
     @Throws(ProcessorNotFoundException::class)
     fun unregisterProcessor(id: Long) {
         processor.unregisterProcessor(id)
+
     }
 }
