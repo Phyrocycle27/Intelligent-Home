@@ -1,0 +1,3 @@
+package tk.hiddenname.smarthome.model.timetable
+
+interface TimetableValidationGroup
