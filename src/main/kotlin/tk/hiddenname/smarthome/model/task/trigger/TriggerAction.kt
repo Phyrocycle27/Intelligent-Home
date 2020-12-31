@@ -9,7 +9,6 @@ enum class TriggerAction {
     companion object {
         @JvmStatic
         @JsonCreator
-        @Throws(InvalidTriggerActionException::class)
         fun getTriggerAction(triggerActionName: String): TriggerAction {
             try {
                 return valueOf(triggerActionName.toUpperCase())

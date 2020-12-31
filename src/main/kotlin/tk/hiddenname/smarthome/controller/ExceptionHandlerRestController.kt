@@ -37,6 +37,7 @@ class ExceptionHandlerRestController {
     fun catchJsonMappingException(ex: JsonMappingException): ApiError {
         val message = when(ex.cause) {
             is InvalidSignalTypeException,
+            is InvalidTimetableModeException,
             is InvalidTriggerActionException,
             is InvalidProcessingActionException -> ex.cause?.message ?: ""
             is JsonParseException -> "Json parse error. ${ex.cause?.message ?: ""}"

@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.www.DigestAuthenticationF
 @Configuration
 open class SecurityConfiguration: WebSecurityConfigurerAdapter() {
 
-    override fun configure(http: HttpSecurity) {
+    /*override fun configure(http: HttpSecurity) {
         http.addFilter(digestAuthenticationFilter())
                 .exceptionHandling().authenticationEntryPoint(digestEntryPoint())
                 .and()
@@ -23,7 +23,7 @@ open class SecurityConfiguration: WebSecurityConfigurerAdapter() {
                 .and()
                 .authorizeRequests()
                 .anyRequest().authenticated()
-    }
+    }*/
 
     private fun digestAuthenticationFilter(): DigestAuthenticationFilter {
         val digestAuthenticationFilter = DigestAuthenticationFilter()

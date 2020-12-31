@@ -14,6 +14,7 @@ open class Application {
 
     @Suppress("unused")
     companion object {
+
         private const val HOST = "192.168.1.100"
         private const val PORT = 3141
         private const val allowConnectionToServer = true
