@@ -16,14 +16,19 @@ import javax.validation.constraints.NotNull
 @Entity
 @Table(name = "day_of_week_with_time_intervals")
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
-@JsonPropertyOrder(value = ["day_of_week", "time_intervals"])
+@JsonPropertyOrder(value = ["id", "day_of_week", "time_intervals"])
 class DayOfWeekWithTimeIntervals(
-    @field:NotNull(message = "day of week should be specified", groups = [TimetableValidationGroup::class])
     @Enumerated(EnumType.STRING)
+    @field:NotNull(message = "day_of_week should be specified", groups = [TimetableValidationGroup::class])
     val dayOfWeek: DayOfWeek? = null,
 
-    @field:NotEmpty(message = "time intervals list can not be empty", groups = [TimetableValidationGroup::class])
-    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
+    @JoinTable(
+        name = "day_of_week_with_time_intervals_time_interval",
+        joinColumns = [JoinColumn(name = "fk_day_of_week_with_time_intervals", referencedColumnName = "id")],
+        inverseJoinColumns = [JoinColumn(name = "fk_time_interval", referencedColumnName = "id")]
+    )
+    @OneToMany(cascade = [CascadeType.ALL])
     @LazyCollection(LazyCollectionOption.FALSE)
+    @field:NotEmpty(message = "time_intervals list can not be empty", groups = [TimetableValidationGroup::class])
     val timeIntervals: MutableList<@Valid TimeInterval> = mutableListOf()
 ): AbstractJpaPersistable()

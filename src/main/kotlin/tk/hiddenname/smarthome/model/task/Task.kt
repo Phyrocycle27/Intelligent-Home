@@ -9,6 +9,7 @@ import tk.hiddenname.smarthome.model.AbstractJpaPersistableWithTimestamps
 import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
 import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject
 import tk.hiddenname.smarthome.model.timetable.Timetable
+import tk.hiddenname.smarthome.model.timetable.TimetableValidationGroup
 import javax.persistence.*
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
@@ -21,11 +22,11 @@ import javax.validation.constraints.Size
 @JsonNaming(SnakeCaseStrategy::class)
 @JsonPropertyOrder(
     value = ["id", "name", "description", "creationTimestamp",
-        "updateTimestamp", "triggerObjects", "processingObjects"]
+        "updateTimestamp", "timetable", "triggerObjects", "processingObjects"]
 )
 class Task(
+    @field:NotBlank(message = "name field shouldn't be empty or null", groups = [TaskValidationGroup::class])
     @field:Size(min = 3, max = 25, groups = [TaskValidationGroup::class])
-    @field:NotBlank(message = "name shouldn't be empty or null", groups = [TaskValidationGroup::class])
     @Column(nullable = false)
     val name: String = "",
 
@@ -40,7 +41,7 @@ class Task(
     )
     @OneToMany(cascade = [CascadeType.ALL])
     @LazyCollection(LazyCollectionOption.FALSE)
-    @field:NotEmpty(message = "trigger objects list can not be empty", groups = [TaskValidationGroup::class])
+    @field:NotEmpty(message = "trigge_objects list can not be empty", groups = [TaskValidationGroup::class])
     val triggerObjects: MutableList<@Valid TriggerObject> = mutableListOf(),
 
     @JoinTable(
@@ -50,14 +51,15 @@ class Task(
     )
     @OneToMany(cascade = [CascadeType.ALL])
     @LazyCollection(LazyCollectionOption.FALSE)
-    @field:NotEmpty(message = "processing objects list can not be empty", groups = [TaskValidationGroup::class])
+    @field:NotEmpty(message = "processing_objects list can not be empty", groups = [TaskValidationGroup::class])
     val processingObjects: MutableList<@Valid ProcessingObject> = mutableListOf(),
 
     @field:Valid
-    @field:NotNull(message = "timetable object shouldn't be null")
     @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "timetable_id", referencedColumnName = "id")
+    @field:NotNull(message = "timetable_object shouldn't be null", groups = [TimetableValidationGroup::class])
     val timetable: Timetable? = null
+
 ) : AbstractJpaPersistableWithTimestamps() {
 
     override fun toString(): String {

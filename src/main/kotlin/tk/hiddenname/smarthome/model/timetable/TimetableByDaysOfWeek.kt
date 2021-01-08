@@ -19,14 +19,12 @@ import javax.validation.constraints.NotEmpty
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
 @JsonPropertyOrder(value = ["id", "mode", "days_of_week"])
 class TimetableByDaysOfWeek(
-    timetableMode: TimetableMode? = null,
-
-    @field:NotEmpty(message = "days of week list can not be empty", groups = [TimetableValidationGroup::class])
     @Type(
         type = "com.vladmihalcea.hibernate.type.array.ListArrayType",
         parameters = [Parameter(value = "day_of_week", name = ListArrayType.SQL_ARRAY_TYPE)]
     )
     @Column(name = "days_of_week", columnDefinition = "day_of_week[]")
     @LazyCollection(LazyCollectionOption.FALSE)
+    @field:NotEmpty(message = "days_of_week list can not be empty", groups = [TimetableValidationGroup::class])
     val daysOfWeek: MutableList<DayOfWeek> = mutableListOf()
-) : Timetable(timetableMode)
+) : Timetable()

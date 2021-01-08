@@ -3,6 +3,7 @@ package tk.hiddenname.smarthome.controller
 
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.JsonMappingException
+import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.fasterxml.jackson.databind.exc.InvalidTypeIdException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -18,6 +19,9 @@ import tk.hiddenname.smarthome.exception.not_found.*
 import tk.hiddenname.smarthome.exception.not_specified.*
 import tk.hiddenname.smarthome.exception.support.*
 import tk.hiddenname.smarthome.model.error.*
+import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
+import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject
+import tk.hiddenname.smarthome.model.timetable.Timetable
 import java.time.LocalDateTime
 
 @RestControllerAdvice
@@ -30,6 +34,12 @@ class ExceptionHandlerRestController {
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun catchMethodArgumentNotValidException(ex: MethodArgumentNotValidException): ValidationError {
         return processFieldErrors(ex.bindingResult.fieldErrors)
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidFormatException::class)
+    fun catchInvalidFormatException(ex: InvalidFormatException): ApiError {
+        return ApiError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), ex.message ?: "Bad request")
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -53,7 +63,14 @@ class ExceptionHandlerRestController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidTypeIdException::class)
     fun catchInvalidTypeIdException(ex: InvalidTypeIdException): ApiError {
-        return ApiError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), "Type-id field is missing")
+        val msg = "Type-id field${
+            when(ex.baseType.rawClass.kotlin) {
+                Timetable::class -> " 'mode'"
+                ProcessingObject::class, TriggerObject::class -> " 'action'"
+                else -> ""
+            }
+        } is missing for ${ex.baseType.rawClass.simpleName}"
+        return ApiError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), msg)
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -99,7 +116,8 @@ class ExceptionHandlerRestController {
     }
 
     private fun processFieldErrors(fieldErrors: List<FieldError>): ValidationError {
-        val error = ValidationError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), "Validation error")
+        val error = ValidationError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
+            "Validation error. Errors count: ${fieldErrors.size}")
 
         fieldErrors.forEach {
             val fieldError = CustomFieldError(it.defaultMessage ?: "", it.objectName, it.field)

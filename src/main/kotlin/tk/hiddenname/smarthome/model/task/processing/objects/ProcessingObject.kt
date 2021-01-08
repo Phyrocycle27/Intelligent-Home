@@ -9,10 +9,15 @@ import javax.persistence.*
 @Entity
 @Table(name = "processing_object")
 @Inheritance(strategy = InheritanceType.JOINED)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "action", visible = true)
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.CUSTOM,
+    include = JsonTypeInfo.As.EXISTING_PROPERTY,
+    property = "action",
+    visible = true
+)
 @JsonTypeIdResolver(ProcessingObjectTypeIdResolver::class)
 abstract class ProcessingObject(
-        @Enumerated(EnumType.STRING)
-        @Column(nullable = false, updatable = false)
-        open val action: ProcessingAction? = null
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, updatable = false)
+    open val action: ProcessingAction? = null
 ) : AbstractJpaPersistable()

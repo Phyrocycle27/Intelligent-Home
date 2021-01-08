@@ -15,10 +15,13 @@ import javax.validation.constraints.NotEmpty
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
 @JsonPropertyOrder(value = ["id", "mode", "time_intervals"])
 class TimetableByTimeIntervals(
-    timetableMode: TimetableMode? = null,
-
-    @field:NotEmpty(message = "time intervals list can not be empty", groups = [TimetableValidationGroup::class])
-    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
+    @JoinTable(
+        name = "timetable_by_time_intervals_time_intervals",
+        joinColumns = [JoinColumn(name = "fk_timetable", referencedColumnName = "id")],
+        inverseJoinColumns = [JoinColumn(name = "fk_time_interval", referencedColumnName = "id")]
+    )
+    @OneToMany(cascade = [CascadeType.ALL])
     @LazyCollection(LazyCollectionOption.FALSE)
+    @field:NotEmpty(message = "time_intervals list can not be empty", groups = [TimetableValidationGroup::class])
     val timeIntervals: MutableList<@Valid TimeInterval> = mutableListOf()
-) : Timetable(timetableMode)
+) : Timetable()

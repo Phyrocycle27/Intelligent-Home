@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import tk.hiddenname.smarthome.model.task.Task
 import tk.hiddenname.smarthome.model.task.TaskValidationGroup
+import tk.hiddenname.smarthome.model.timetable.TimetableValidationGroup
 import tk.hiddenname.smarthome.service.database.TaskDatabaseService
 import tk.hiddenname.smarthome.service.task.TaskService
 import java.time.LocalDateTime
@@ -27,12 +28,13 @@ class TaskRestController(private val dbService: TaskDatabaseService,
     fun getOne(@PathVariable(name = "id") id: Long) = dbService.getOne(id)
 
     @PostMapping(value = ["/create"], produces = ["application/json"])
-    fun create(@RequestBody(required = true) @Validated(TaskValidationGroup::class) task: Task): Task {
+    fun create(@RequestBody(required = true) @Validated(value = [TaskValidationGroup::class, TimetableValidationGroup::class])
+               task: Task): Task {
         task.id = dbService.getNextId()
         task.creationTimestamp = LocalDateTime.now()
         task.updateTimestamp = task.creationTimestamp
 
-        taskService.addTask(task)
+        // taskService.addTask(task)
 
         return dbService.create(task)
     }
