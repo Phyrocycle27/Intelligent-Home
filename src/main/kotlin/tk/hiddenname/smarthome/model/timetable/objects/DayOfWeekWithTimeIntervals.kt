@@ -7,6 +7,7 @@ import org.hibernate.annotations.LazyCollection
 import org.hibernate.annotations.LazyCollectionOption
 import tk.hiddenname.smarthome.model.AbstractJpaPersistable
 import tk.hiddenname.smarthome.model.timetable.TimetableValidationGroup
+import tk.hiddenname.smarthome.model.timetable.validators.TimeIntervalConstraint
 import java.time.DayOfWeek
 import javax.persistence.*
 import javax.validation.Valid
@@ -29,6 +30,7 @@ class DayOfWeekWithTimeIntervals(
     )
     @OneToMany(cascade = [CascadeType.ALL])
     @LazyCollection(LazyCollectionOption.FALSE)
+    @field:TimeIntervalConstraint(groups = [TimetableValidationGroup::class])
     @field:NotEmpty(message = "time_intervals list can not be empty", groups = [TimetableValidationGroup::class])
     val timeIntervals: MutableList<@Valid TimeInterval> = mutableListOf()
 ): AbstractJpaPersistable()

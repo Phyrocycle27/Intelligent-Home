@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming
 import org.hibernate.annotations.LazyCollection
 import org.hibernate.annotations.LazyCollectionOption
 import tk.hiddenname.smarthome.model.timetable.objects.TimeInterval
+import tk.hiddenname.smarthome.model.timetable.validators.TimeIntervalConstraint
 import javax.persistence.*
 import javax.validation.Valid
 import javax.validation.constraints.NotEmpty
@@ -22,6 +23,7 @@ class TimetableByTimeIntervals(
     )
     @OneToMany(cascade = [CascadeType.ALL])
     @LazyCollection(LazyCollectionOption.FALSE)
+    @field:TimeIntervalConstraint(groups = [TimetableValidationGroup::class])
     @field:NotEmpty(message = "time_intervals list can not be empty", groups = [TimetableValidationGroup::class])
     val timeIntervals: MutableList<@Valid TimeInterval> = mutableListOf()
 ) : Timetable()

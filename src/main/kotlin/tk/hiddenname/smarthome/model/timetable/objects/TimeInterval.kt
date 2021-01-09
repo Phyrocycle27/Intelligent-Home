@@ -19,10 +19,10 @@ class TimeInterval(
     @field:Min(0, groups = [TimetableValidationGroup::class])
     @field:Max(86400, groups = [TimetableValidationGroup::class])
     @field:NotNull(message = "start_time should be specified", groups = [TimetableValidationGroup::class])
-    var startTime: Long? = null,
+    val startTime: Int? = null,
 
     @field:Min(0, groups = [TimetableValidationGroup::class])
     @field:Max(86400, groups = [TimetableValidationGroup::class])
     @field:NotNull(message = "finish_time should be specified", groups = [TimetableValidationGroup::class])
-    var finishTime: Long? = null
+    val finishTime: Int? = null
 ) : AbstractJpaPersistable()

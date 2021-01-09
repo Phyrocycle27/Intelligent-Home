@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming
 import org.hibernate.annotations.LazyCollection
 import org.hibernate.annotations.LazyCollectionOption
 import tk.hiddenname.smarthome.model.timetable.objects.DayOfWeekWithTimeIntervals
+import tk.hiddenname.smarthome.model.timetable.validators.DayOfWeekWithTimeIntervalsConstraint
 import javax.persistence.*
 import javax.validation.Valid
 import javax.validation.constraints.NotEmpty
@@ -22,6 +23,7 @@ class TimetableByDaysOfWeekAndTimeIntervals(
     )
     @OneToMany(cascade = [CascadeType.ALL])
     @LazyCollection(LazyCollectionOption.FALSE)
+    @field:DayOfWeekWithTimeIntervalsConstraint(groups = [TimetableValidationGroup::class])
     @field:NotEmpty(message = "days_of_week_with_time_intervals list can not be empty", groups = [TimetableValidationGroup::class])
     val daysOfWeekWithTimeIntervals: MutableList<@Valid DayOfWeekWithTimeIntervals> = mutableListOf()
 ) : Timetable()

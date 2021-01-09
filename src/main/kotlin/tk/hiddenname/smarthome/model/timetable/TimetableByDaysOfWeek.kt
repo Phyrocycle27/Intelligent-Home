@@ -8,6 +8,7 @@ import org.hibernate.annotations.LazyCollection
 import org.hibernate.annotations.LazyCollectionOption
 import org.hibernate.annotations.Parameter
 import org.hibernate.annotations.Type
+import tk.hiddenname.smarthome.model.timetable.validators.DayOfWeekListConstraint
 import java.time.DayOfWeek
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -25,6 +26,7 @@ class TimetableByDaysOfWeek(
     )
     @Column(name = "days_of_week", columnDefinition = "day_of_week[]")
     @LazyCollection(LazyCollectionOption.FALSE)
+    @field:DayOfWeekListConstraint(groups = [TimetableValidationGroup::class])
     @field:NotEmpty(message = "days_of_week list can not be empty", groups = [TimetableValidationGroup::class])
     val daysOfWeek: MutableList<DayOfWeek> = mutableListOf()
 ) : Timetable()

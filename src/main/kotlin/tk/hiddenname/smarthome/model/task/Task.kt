@@ -41,7 +41,7 @@ class Task(
     )
     @OneToMany(cascade = [CascadeType.ALL])
     @LazyCollection(LazyCollectionOption.FALSE)
-    @field:NotEmpty(message = "trigge_objects list can not be empty", groups = [TaskValidationGroup::class])
+    @field:NotEmpty(message = "trigger_objects list can not be empty", groups = [TaskValidationGroup::class])
     val triggerObjects: MutableList<@Valid TriggerObject> = mutableListOf(),
 
     @JoinTable(

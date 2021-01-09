@@ -15,14 +15,17 @@ import tk.hiddenname.smarthome.service.task.impl.processor.ProcessorFactory
 @Component
 @Scope("prototype")
 class TaskManager(
-        context: ApplicationContext,
-        listenerFactory: ListenerFactory,
-        processorFactory: ProcessorFactory) {
+        val context: ApplicationContext,
+        val listenerFactory: ListenerFactory,
+        val processorFactory: ProcessorFactory) {
 
-    private val listener = context.getBean(EventListener::class.java, this, listenerFactory)
-    val processor: EventProcessor = context.getBean(EventProcessor::class.java, this, processorFactory)
+    private lateinit var listener: EventListener
+    lateinit var processor: EventProcessor
 
     fun register(task: Task): TaskManager {
+        listener = context.getBean(EventListener::class.java, this, listenerFactory)
+        processor = context.getBean(EventProcessor::class.java, this, processorFactory)
+
         registerListeners(task.triggerObjects)
         registerProcessors(task.processingObjects)
         return this
