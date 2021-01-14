@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
-import tk.hiddenname.smarthome.exception.not_specified.TriggerObjectPropertyNotSpecifiedException
 import tk.hiddenname.smarthome.exception.not_found.TriggerNotFoundException
+import tk.hiddenname.smarthome.exception.not_specified.TriggerObjectPropertyNotSpecifiedException
 import tk.hiddenname.smarthome.model.task.trigger.objects.ChangeDigitalSignalObject
 import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject
 import tk.hiddenname.smarthome.service.database.SensorDatabaseService
@@ -31,19 +31,19 @@ class ChangeDigitalSignalListener(private val listener: EventListener) : Listene
     private var delayCounter: DelayCounterThread? = null
 
     override fun register(triggerObject: TriggerObject) {
-        log.info("Registering triggerObject in ChangeDigitalSignalListener")
+        log.info("Registering triggerObject in ChangeDigitalSignalListener...")
 
         this.triggerObject = triggerObject as ChangeDigitalSignalObject
 
         val sensorId = this.triggerObject.sensorId
-                ?: throw TriggerObjectPropertyNotSpecifiedException("sensorId")
+            ?: throw TriggerObjectPropertyNotSpecifiedException("sensorId")
         val targetState = this.triggerObject.targetState
-                ?: throw TriggerObjectPropertyNotSpecifiedException("targetState")
+            ?: throw TriggerObjectPropertyNotSpecifiedException("targetState")
 
         val sensor = dbService.getOne(sensorId)
         gpioListener = service.addListener(this, sensor.id, targetState, sensor.signalInversion)
 
-        log.info("Registered")
+        log.info("Trigger registered!")
     }
 
     override fun update(triggerObject: TriggerObject) {
@@ -53,9 +53,10 @@ class ChangeDigitalSignalListener(private val listener: EventListener) : Listene
 
     override fun unregister() {
         val sensorId = this.triggerObject.sensorId
-                ?: throw TriggerObjectPropertyNotSpecifiedException("sensorId")
 
-        service.removeListener(gpioListener, sensorId)
+        if (sensorId != null) {
+            service.removeListener(gpioListener, sensorId)
+        }
     }
 
     override fun trigger(flag: Boolean) {

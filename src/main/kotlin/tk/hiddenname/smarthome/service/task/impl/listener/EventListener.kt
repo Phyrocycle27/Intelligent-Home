@@ -38,6 +38,8 @@ class EventListener(private val taskManager: TaskManager,
             flags[triggerObject.id] = false
         } catch (ex: Exception) {
             taskManager.unregister()
+            log.error(ex.message)
+            throw ex
         }
     }
 

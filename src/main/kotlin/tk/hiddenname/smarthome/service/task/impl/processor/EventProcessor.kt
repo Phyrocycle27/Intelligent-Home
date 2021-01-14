@@ -36,6 +36,8 @@ class EventProcessor(private val taskManager: TaskManager,
             processors[processingObject.id] = processorFactory.create(processingObject)
         } catch (ex: Exception) {
             taskManager.unregister()
+            log.error(ex.message)
+            throw ex
         }
     }
 

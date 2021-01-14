@@ -34,7 +34,7 @@ class TaskRestController(private val dbService: TaskDatabaseService,
         task.creationTimestamp = LocalDateTime.now()
         task.updateTimestamp = task.creationTimestamp
 
-        // taskService.addTask(task)
+        taskService.addTask(task)
 
         return dbService.create(task)
     }
