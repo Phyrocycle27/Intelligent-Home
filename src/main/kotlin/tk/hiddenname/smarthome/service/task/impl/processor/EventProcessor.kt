@@ -66,4 +66,6 @@ class EventProcessor(
             it.process()
         }
     }
+
+    fun getProcessorsCount() = processors.size
 }

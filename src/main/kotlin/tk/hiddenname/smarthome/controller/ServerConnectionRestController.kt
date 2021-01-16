@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping(value = ["/config/client"])
 class ServerConnectionRestController {
 
+    @Suppress("unused")
     private val log = LoggerFactory.getLogger(ServerConnectionRestController::class.java)
 
     @PostMapping(value = ["/edit"], produces = ["multipart/form-data"])

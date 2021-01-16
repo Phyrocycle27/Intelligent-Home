@@ -74,6 +74,8 @@ class EventListener(
         }
     }
 
+    fun listenersCount() = listeners.size
+
     private fun check(): Boolean {
         return !flags.containsValue(false)
     }

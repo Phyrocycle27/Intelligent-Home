@@ -2,7 +2,6 @@ package tk.hiddenname.smarthome.service.hardware.manager
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import tk.hiddenname.smarthome.exception.exist.GpioPinBusyException
 import tk.hiddenname.smarthome.exception.not_specified.GpioNotSpecifiedException
 import tk.hiddenname.smarthome.exception.not_specified.SignalTypeNotSpecifiedException
 import tk.hiddenname.smarthome.exception.support.PinSignalSupportException
@@ -25,7 +24,6 @@ class DeviceManager(
 
     private val log = LoggerFactory.getLogger(DeviceManager::class.java)
 
-    @Throws(PinSignalSupportException::class, GpioPinBusyException::class)
     fun register(device: Device) {
         log.info("Creating device $device")
         device.gpio ?: throw GpioNotSpecifiedException()

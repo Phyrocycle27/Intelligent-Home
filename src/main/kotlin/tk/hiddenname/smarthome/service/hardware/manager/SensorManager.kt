@@ -23,7 +23,6 @@ class SensorManager(
 
     private val log = LoggerFactory.getLogger(SensorManager::class.java)
 
-    @Throws(PinSignalSupportException::class, GpioPinBusyException::class)
     fun register(sensor: Sensor) {
         log.debug("Creating sensor $sensor")
         sensor.gpio ?: throw GpioNotSpecifiedException()

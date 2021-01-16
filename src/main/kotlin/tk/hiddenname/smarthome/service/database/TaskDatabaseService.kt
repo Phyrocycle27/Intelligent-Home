@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service
 import tk.hiddenname.smarthome.exception.not_found.DeviceNotFoundException
 import tk.hiddenname.smarthome.exception.not_found.TaskNotFoundException
 import tk.hiddenname.smarthome.model.task.Task
+import tk.hiddenname.smarthome.model.task.processing.ProcessingAction
+import tk.hiddenname.smarthome.model.task.trigger.TriggerAction
 import tk.hiddenname.smarthome.repository.TaskRepository
 
 @Service
@@ -23,4 +25,10 @@ class TaskDatabaseService(private val repo: TaskRepository) {
     }
 
     fun getNextId() = repo.getNextId()
+
+    fun getAllByTriggerObjectsAction(triggerAction: TriggerAction) =
+        repo.getAllByTriggerObjectsAction(triggerAction)
+
+    fun getAllByProcessingObjectsAction(processingAction: ProcessingAction) =
+        repo.getAllByProcessingObjectsAction(processingAction)
 }

@@ -3,7 +3,6 @@ package tk.hiddenname.smarthome.model.task.trigger.objects
 import com.fasterxml.jackson.databind.DatabindContext
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase
-import tk.hiddenname.smarthome.exception.invalid.InvalidTriggerActionException
 import tk.hiddenname.smarthome.model.task.trigger.TriggerAction
 
 class TriggerObjectTypeIdResolver : TypeIdResolverBase() {
@@ -20,7 +19,6 @@ class TriggerObjectTypeIdResolver : TypeIdResolverBase() {
 
     override fun getMechanism() = null
 
-    @Throws(InvalidTriggerActionException::class)
     override fun typeFromId(context: DatabindContext, id: String): JavaType {
         val subType = when (TriggerAction.getTriggerAction(id)) {
             TriggerAction.CHANGE_DIGITAL_SIGNAL -> ChangeDigitalSignalObject::class.java

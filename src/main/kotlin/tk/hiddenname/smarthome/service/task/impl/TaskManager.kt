@@ -3,10 +3,10 @@ package tk.hiddenname.smarthome.service.task.impl
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
-import tk.hiddenname.smarthome.exception.not_found.ProcessorNotFoundException
 import tk.hiddenname.smarthome.model.task.Task
 import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
 import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject
+import tk.hiddenname.smarthome.service.task.TaskService
 import tk.hiddenname.smarthome.service.task.impl.listener.EventListener
 import tk.hiddenname.smarthome.service.task.impl.listener.ListenerFactory
 import tk.hiddenname.smarthome.service.task.impl.processor.EventProcessor
@@ -15,13 +15,13 @@ import tk.hiddenname.smarthome.service.task.impl.processor.ProcessorFactory
 @Component
 @Scope("prototype")
 class TaskManager(
-    val context: ApplicationContext,
-    val listenerFactory: ListenerFactory,
-    val processorFactory: ProcessorFactory
+    private val context: ApplicationContext,
+    private val listenerFactory: ListenerFactory,
+    private val processorFactory: ProcessorFactory
 ) {
 
-    private lateinit var listener: EventListener
-    lateinit var processor: EventProcessor
+    private final lateinit var listener: EventListener
+    final lateinit var processor: EventProcessor
 
     fun register(task: Task): TaskManager {
         listener = context.getBean(EventListener::class.java, this, listenerFactory)
@@ -50,7 +50,6 @@ class TaskManager(
         listener.unregisterListeners()
     }
 
-    @Suppress("unused")
     fun unregisterListener(id: Long) {
         listener.unregisterListener(id)
     }
@@ -68,10 +67,11 @@ class TaskManager(
         processor.unregisterProcessors()
     }
 
-    @Suppress("unused")
-    @Throws(ProcessorNotFoundException::class)
     fun unregisterProcessor(id: Long) {
         processor.unregisterProcessor(id)
-
     }
+
+    fun getListenersCount() = listener.listenersCount()
+
+    fun getProcessorsCount() = processor.getProcessorsCount()
 }

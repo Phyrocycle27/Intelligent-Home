@@ -77,20 +77,17 @@ class ClientHandler(private val client: Client) : ChannelInboundHandlerAdapter()
         }
     }
 
-    @Throws(Exception::class)
     override fun channelUnregistered(ctx: ChannelHandlerContext) {
         log.info("Unregistering")
         super.channelInactive(ctx)
         reconnect(ctx)
     }
 
-    @Throws(Exception::class)
     override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
         log.error("ClientHandler Error: " + cause.message)
-        super.exceptionCaught(ctx, cause)
     }
 
-    @Throws(Exception::class)
+
     override fun channelInactive(ctx: ChannelHandlerContext) {
         log.info("channel inactive")
         super.channelInactive(ctx)

@@ -38,9 +38,7 @@ class TaskRestController(
         task.creationTimestamp = LocalDateTime.now()
         task.updateTimestamp = task.creationTimestamp
 
-        taskService.addTask(task)
-
-        return dbService.create(task)
+        return taskService.addTask(task)
     }
 
     @DeleteMapping(value = ["/one/{id}"], produces = ["application/json"])

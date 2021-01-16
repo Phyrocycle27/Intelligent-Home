@@ -38,12 +38,11 @@ class GpioManager {
     }
 
     fun deletePin(pin: GpioPin) {
+        pin.removeAllListeners()
         controller.unprovisionPin(pin)
         usedGpio.remove(Integer.valueOf(Gpio.wpiPinToGpio(pin.pin.address)))
-        pin.removeAllListeners()
     }
 
-    @Throws(GpioPinBusyException::class, GpioPinNotSpecifiedException::class)
     fun checkAvailability(gpioPin: Int?) {
         gpioPin ?: throw GpioPinNotSpecifiedException()
         if (isExists(gpioPin)) {
@@ -51,11 +50,6 @@ class GpioManager {
         }
     }
 
-    @Throws(
-        GpioPinNotFoundException::class, UnsupportedSignalTypeException::class,
-        GpioPinNotSpecifiedException::class, PinSignalSupportException::class,
-        GpioModeNotSupportsException::class, GpioModeNotSupportsWithSignalTypeException::class
-    )
     fun validate(gpioPin: Int?, signalType: SignalType?, pinMode: GpioMode): Boolean {
         gpioPin ?: throw GpioPinNotSpecifiedException()
         signalType ?: throw SignalTypeNotSpecifiedException()
@@ -74,7 +68,6 @@ class GpioManager {
         return true
     }
 
-    @Throws(UnsupportedSignalTypeException::class, PinSignalSupportException::class)
     private fun checkGpioPinSupportsSignalType(gpioPin: Int, signalType: SignalType) {
         val supportsSignalType = when (signalType) {
             SignalType.DIGITAL -> digitalOutputs.contains(gpioPin)
@@ -91,7 +84,6 @@ class GpioManager {
         return usedGpio.contains(gpio)
     }
 
-    @Throws(GpioPinNotFoundException::class)
     private fun getPinByGpioPinNumber(gpioNumber: Int): Pin {
         return when (gpioNumber) {
             2 -> RaspiPin.GPIO_08
@@ -126,10 +118,6 @@ class GpioManager {
         }
     }
 
-    @Throws(
-        GpioPinBusyException::class, PinSignalSupportException::class, GpioPinNotSpecifiedException::class,
-        UnsupportedSignalTypeException::class, GpioPinNotFoundException::class
-    )
     fun createDigitalOutput(gpio: GPIO, reverse: Boolean?): GpioPinDigitalOutput {
         validate(gpio.gpioPin, gpio.signalType, gpio.pinMode)
         checkAvailability(gpio.gpioPin)
@@ -141,10 +129,6 @@ class GpioManager {
         return pin
     }
 
-    @Throws(
-        GpioPinBusyException::class, PinSignalSupportException::class, GpioPinNotSpecifiedException::class,
-        UnsupportedSignalTypeException::class, GpioPinNotFoundException::class
-    )
     fun createDigitalInput(gpio: GPIO): GpioPinDigitalInput {
         validate(gpio.gpioPin, gpio.signalType, gpio.pinMode)
         checkAvailability(gpio.gpioPin)
@@ -156,10 +140,6 @@ class GpioManager {
         return pin
     }
 
-    @Throws(
-        GpioPinBusyException::class, PinSignalSupportException::class, GpioPinNotSpecifiedException::class,
-        UnsupportedSignalTypeException::class, GpioPinNotFoundException::class
-    )
     fun createPwmOutput(gpio: GPIO, reverse: Boolean): GpioPinPwmOutput {
         validate(gpio.gpioPin, gpio.signalType, gpio.pinMode)
         checkAvailability(gpio.gpioPin)

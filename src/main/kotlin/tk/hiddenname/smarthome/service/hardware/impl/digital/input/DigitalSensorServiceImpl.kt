@@ -5,9 +5,7 @@ import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent
 import com.pi4j.io.gpio.event.GpioPinListenerDigital
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import tk.hiddenname.smarthome.exception.exist.GpioPinBusyException
 import tk.hiddenname.smarthome.exception.not_found.SensorNotFoundException
-import tk.hiddenname.smarthome.exception.support.PinSignalSupportException
 import tk.hiddenname.smarthome.model.hardware.GPIO
 import tk.hiddenname.smarthome.model.signal.DigitalState
 import tk.hiddenname.smarthome.service.task.impl.listener.Listener
@@ -21,14 +19,12 @@ class DigitalSensorServiceImpl(private val gpioManager: GpioManager) : DigitalSe
 
     private val digitalInputsToSensorId: MutableMap<Long, GpioPinDigitalInput> = HashMap()
 
-    @Throws(SensorNotFoundException::class)
     override fun delete(id: Long) {
         val pin = digitalInputsToSensorId[id] ?: throw SensorNotFoundException(id)
         gpioManager.deletePin(pin)
         digitalInputsToSensorId.remove(id)
     }
 
-    @Throws(GpioPinBusyException::class, PinSignalSupportException::class)
     override fun save(id: Long, gpio: GPIO, reverse: Boolean) {
         digitalInputsToSensorId[id] = gpioManager.createDigitalInput(gpio)
     }
@@ -37,13 +33,11 @@ class DigitalSensorServiceImpl(private val gpioManager: GpioManager) : DigitalSe
         TODO("Not yet implemented")
     }
 
-    @Throws(SensorNotFoundException::class)
     override fun getState(id: Long, reverse: Boolean): DigitalState {
         val pin = digitalInputsToSensorId[id] ?: throw SensorNotFoundException(id)
         return DigitalState(id, reverse xor pin.isHigh)
     }
 
-    @Throws(SensorNotFoundException::class)
     override fun addListener(
         listener: Listener, sensorId: Long,
         targetSignal: Boolean, reverse: Boolean
@@ -57,7 +51,6 @@ class DigitalSensorServiceImpl(private val gpioManager: GpioManager) : DigitalSe
             pinListener
         }
     }
-
 
     override fun removeListener(listener: GpioPinListenerDigital, sensorId: Long) {
         digitalInputsToSensorId[sensorId]?.removeListener(listener) ?: throw SensorNotFoundException(sensorId)

@@ -9,6 +9,5 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.RUNTIME)
 annotation class TimeIntervalConstraint(
     val message: String = "Time intervals overlap or start time is lower than finish time",
-    val groups: Array<KClass<out Any>> = [],
-    val payload: Array<KClass<out Any>> = []
+    val groups: Array<KClass<out Any>> = []
 )

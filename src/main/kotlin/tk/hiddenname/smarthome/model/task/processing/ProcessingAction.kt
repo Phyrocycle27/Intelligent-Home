@@ -10,7 +10,6 @@ enum class ProcessingAction {
     companion object {
         @JvmStatic
         @JsonCreator
-        @Throws(InvalidProcessingActionException::class)
         fun getProcessingAction(processingActionName: String): ProcessingAction {
             try {
                 return valueOf(processingActionName.toUpperCase())
