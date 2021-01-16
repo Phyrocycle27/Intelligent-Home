@@ -8,8 +8,8 @@ import javax.validation.constraints.NotNull
 @JsonNaming(SnakeCaseStrategy::class)
 @JsonPropertyOrder(value = ["hardwareId", "digitalState"])
 class DigitalState(
-        @field:NotNull(message = "digital state should be specified")
-        val digitalState: Boolean?
+    @field:NotNull(message = "digital state should be specified")
+    val digitalState: Boolean?
 ) : Signal() {
 
     constructor (hardwareId: Long, digitalState: Boolean?) : this(digitalState) {

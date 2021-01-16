@@ -12,8 +12,10 @@ interface DigitalSensorService : GPIOService {
     fun getState(id: Long, reverse: Boolean): DigitalState
 
     @Throws(SensorNotFoundException::class)
-    fun addListener(listener: Listener, sensorId: Long, targetSignal: Boolean,
-                    reverse: Boolean): GpioPinListenerDigital
+    fun addListener(
+        listener: Listener, sensorId: Long, targetSignal: Boolean,
+        reverse: Boolean
+    ): GpioPinListenerDigital
 
     @Throws(SensorNotFoundException::class)
     fun removeListener(listener: GpioPinListenerDigital, sensorId: Long)

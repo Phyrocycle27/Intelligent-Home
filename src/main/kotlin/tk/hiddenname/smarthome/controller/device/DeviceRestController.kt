@@ -10,22 +10,28 @@ import tk.hiddenname.smarthome.model.signal.SignalType
 import tk.hiddenname.smarthome.service.database.AreaDatabaseService
 import tk.hiddenname.smarthome.service.database.DeviceDatabaseService
 import tk.hiddenname.smarthome.service.hardware.manager.DeviceManager
+import tk.hiddenname.smarthome.service.task.TaskService
 import java.time.LocalDateTime
 import javax.validation.Valid
 
 @RestController
 @RequestMapping(value = ["/devices"])
-class DeviceRestController(private val dbService: DeviceDatabaseService,
-                           private val manager: DeviceManager,
-                           private val areaDbService: AreaDatabaseService) {
+class DeviceRestController(
+    private val dbService: DeviceDatabaseService,
+    private val manager: DeviceManager,
+    private val areaDbService: AreaDatabaseService,
+    private val taskService: TaskService
+) {
 
     @Suppress("unused")
     private val log = LoggerFactory.getLogger(DeviceRestController::class.java)
 
     @Suppress("DuplicatedCode")
     @GetMapping(value = ["/all"], produces = ["application/json"])
-    fun getAll(@RequestParam(name = "signalType", defaultValue = "", required = false) t: String,
-               @RequestParam(name = "areaId", defaultValue = "-1", required = false) areaId: Long):
+    fun getAll(
+        @RequestParam(name = "signalType", defaultValue = "", required = false) t: String,
+        @RequestParam(name = "areaId", defaultValue = "-1", required = false) areaId: Long
+    ):
             List<Device> {
 
         return if (t.isEmpty() && areaId == -1L) {

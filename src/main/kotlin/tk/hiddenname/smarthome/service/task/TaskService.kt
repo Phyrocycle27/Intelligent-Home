@@ -9,8 +9,10 @@ import tk.hiddenname.smarthome.service.database.TaskDatabaseService
 import tk.hiddenname.smarthome.service.task.impl.TaskManager
 
 @Service
-class TaskService(private val context: ApplicationContext,
-                  private val service: TaskDatabaseService) {
+class TaskService(
+    private val context: ApplicationContext,
+    private val service: TaskDatabaseService
+) {
 
     private val log = LoggerFactory.getLogger(TaskService::class.java)
 

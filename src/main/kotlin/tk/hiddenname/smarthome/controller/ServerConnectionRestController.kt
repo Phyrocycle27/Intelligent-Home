@@ -14,9 +14,11 @@ class ServerConnectionRestController {
     private val log = LoggerFactory.getLogger(ServerConnectionRestController::class.java)
 
     @PostMapping(value = ["/edit"], produces = ["multipart/form-data"])
-    fun edit(@RequestParam(value = "allowConnection", required = false) allowConnection: Boolean?,
-             @RequestParam(value = "token", required = false) token: String?,
-             @RequestParam(value = "serverHost", required = false) serverHost: String?) {
+    fun edit(
+        @RequestParam(value = "allowConnection", required = false) allowConnection: Boolean?,
+        @RequestParam(value = "token", required = false) token: String?,
+        @RequestParam(value = "serverHost", required = false) serverHost: String?
+    ) {
 
     }
 }

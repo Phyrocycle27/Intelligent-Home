@@ -27,12 +27,12 @@ class Client(private val HOST: String, private val PORT: Int) : Runnable {
         val sslCtx: SslContext
         try {
             sslCtx = SslContextBuilder.forClient()
-                    .trustManager(InsecureTrustManagerFactory.INSTANCE).build()
+                .trustManager(InsecureTrustManagerFactory.INSTANCE).build()
             bootstrap.group(group)
-                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
-                    .option(ChannelOption.SO_KEEPALIVE, true)
-                    .channel(NioSocketChannel::class.java)
-                    .handler(ClientInitializer(sslCtx, HOST, PORT, this))
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
+                .option(ChannelOption.SO_KEEPALIVE, true)
+                .channel(NioSocketChannel::class.java)
+                .handler(ClientInitializer(sslCtx, HOST, PORT, this))
             bootstrap.connect(HOST, PORT).addListener(ConnectionListener(this))
         } catch (e: SSLException) {
             log.error(e.message)

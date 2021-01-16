@@ -2,8 +2,8 @@ package tk.hiddenname.smarthome.service.hardware.manager
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import tk.hiddenname.smarthome.exception.not_specified.GpioNotSpecifiedException
 import tk.hiddenname.smarthome.exception.exist.GpioPinBusyException
+import tk.hiddenname.smarthome.exception.not_specified.GpioNotSpecifiedException
 import tk.hiddenname.smarthome.exception.not_specified.SignalTypeNotSpecifiedException
 import tk.hiddenname.smarthome.exception.support.PinSignalSupportException
 import tk.hiddenname.smarthome.exception.support.UnsupportedSignalTypeException
@@ -16,10 +16,12 @@ import tk.hiddenname.smarthome.service.hardware.impl.pwm.output.PwmDeviceService
 import tk.hiddenname.smarthome.utils.gpio.GpioManager
 
 @Component
-class DeviceManager(private val digitalService: DigitalDeviceService,
-                    private val pwmService: PwmDeviceServiceImpl,
-                    private val service: DeviceDatabaseService,
-                    private val gpioManager: GpioManager) {
+class DeviceManager(
+    private val digitalService: DigitalDeviceService,
+    private val pwmService: PwmDeviceServiceImpl,
+    private val service: DeviceDatabaseService,
+    private val gpioManager: GpioManager
+) {
 
     private val log = LoggerFactory.getLogger(DeviceManager::class.java)
 
@@ -28,9 +30,9 @@ class DeviceManager(private val digitalService: DigitalDeviceService,
         log.info("Creating device $device")
         device.gpio ?: throw GpioNotSpecifiedException()
         getService(device.gpio.signalType).save(
-                device.id,
-                device.gpio,
-                device.signalInversion
+            device.id,
+            device.gpio,
+            device.signalInversion
         )
     }
 
@@ -38,8 +40,8 @@ class DeviceManager(private val digitalService: DigitalDeviceService,
         log.info("Updating device $device")
         device.gpio ?: throw GpioNotSpecifiedException()
         getService(device.gpio.signalType).update(
-                device.id,
-                device.signalInversion
+            device.id,
+            device.signalInversion
         )
     }
 
@@ -47,7 +49,7 @@ class DeviceManager(private val digitalService: DigitalDeviceService,
         log.info("Deleting device $device")
         device.gpio ?: throw GpioNotSpecifiedException()
         getService(device.gpio.signalType).delete(
-                device.id
+            device.id
         )
     }
 

@@ -26,11 +26,13 @@ class GpioManager {
         private val controller = GpioFactory.getInstance()
         private val pwmOutputs = mutableSetOf(13, 19, 18, 12)
         private val digitalOutputs = mutableSetOf(
-                4, 2, 3, 17, 27, 22, 10, 9, 11, 14, 15, 18, 23, 24,
-                25, 8, 7, 1, 12, 16, 20, 21, 0, 5, 6, 13, 19, 26)
+            4, 2, 3, 17, 27, 22, 10, 9, 11, 14, 15, 18, 23, 24,
+            25, 8, 7, 1, 12, 16, 20, 21, 0, 5, 6, 13, 19, 26
+        )
         private val digitalInputs = mutableSetOf(
-                4, 2, 3, 17, 27, 22, 10, 9, 11, 14, 15, 18, 23, 24,
-                25, 8, 7, 1, 12, 16, 20, 21, 0, 5, 6, 13, 19, 26)
+            4, 2, 3, 17, 27, 22, 10, 9, 11, 14, 15, 18, 23, 24,
+            25, 8, 7, 1, 12, 16, 20, 21, 0, 5, 6, 13, 19, 26
+        )
         private val usedGpio = ArrayList<Int>()
         const val pwmRange = 1024
     }
@@ -49,9 +51,11 @@ class GpioManager {
         }
     }
 
-    @Throws(GpioPinNotFoundException::class, UnsupportedSignalTypeException::class,
-            GpioPinNotSpecifiedException::class, PinSignalSupportException::class,
-            GpioModeNotSupportsException::class, GpioModeNotSupportsWithSignalTypeException::class)
+    @Throws(
+        GpioPinNotFoundException::class, UnsupportedSignalTypeException::class,
+        GpioPinNotSpecifiedException::class, PinSignalSupportException::class,
+        GpioModeNotSupportsException::class, GpioModeNotSupportsWithSignalTypeException::class
+    )
     fun validate(gpioPin: Int?, signalType: SignalType?, pinMode: GpioMode): Boolean {
         gpioPin ?: throw GpioPinNotSpecifiedException()
         signalType ?: throw SignalTypeNotSpecifiedException()
@@ -122,32 +126,40 @@ class GpioManager {
         }
     }
 
-    @Throws(GpioPinBusyException::class, PinSignalSupportException::class, GpioPinNotSpecifiedException::class,
-            UnsupportedSignalTypeException::class, GpioPinNotFoundException::class)
+    @Throws(
+        GpioPinBusyException::class, PinSignalSupportException::class, GpioPinNotSpecifiedException::class,
+        UnsupportedSignalTypeException::class, GpioPinNotFoundException::class
+    )
     fun createDigitalOutput(gpio: GPIO, reverse: Boolean?): GpioPinDigitalOutput {
         validate(gpio.gpioPin, gpio.signalType, gpio.pinMode)
         checkAvailability(gpio.gpioPin)
 
-        val pin = controller.provisionDigitalOutputPin(getPinByGpioPinNumber(gpio.gpioPin!!), PinState.getState(reverse!!))
+        val pin =
+            controller.provisionDigitalOutputPin(getPinByGpioPinNumber(gpio.gpioPin!!), PinState.getState(reverse!!))
         pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF, PinMode.DIGITAL_OUTPUT)
         usedGpio.add(gpio.gpioPin)
         return pin
     }
 
-    @Throws(GpioPinBusyException::class, PinSignalSupportException::class, GpioPinNotSpecifiedException::class,
-            UnsupportedSignalTypeException::class, GpioPinNotFoundException::class)
+    @Throws(
+        GpioPinBusyException::class, PinSignalSupportException::class, GpioPinNotSpecifiedException::class,
+        UnsupportedSignalTypeException::class, GpioPinNotFoundException::class
+    )
     fun createDigitalInput(gpio: GPIO): GpioPinDigitalInput {
         validate(gpio.gpioPin, gpio.signalType, gpio.pinMode)
         checkAvailability(gpio.gpioPin)
 
-        val pin = controller.provisionDigitalInputPin(getPinByGpioPinNumber(gpio.gpioPin!!), PinPullResistance.PULL_DOWN)
+        val pin =
+            controller.provisionDigitalInputPin(getPinByGpioPinNumber(gpio.gpioPin!!), PinPullResistance.PULL_DOWN)
         pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.PULL_DOWN, PinMode.DIGITAL_INPUT)
         usedGpio.add(gpio.gpioPin)
         return pin
     }
 
-    @Throws(GpioPinBusyException::class, PinSignalSupportException::class, GpioPinNotSpecifiedException::class,
-            UnsupportedSignalTypeException::class, GpioPinNotFoundException::class)
+    @Throws(
+        GpioPinBusyException::class, PinSignalSupportException::class, GpioPinNotSpecifiedException::class,
+        UnsupportedSignalTypeException::class, GpioPinNotFoundException::class
+    )
     fun createPwmOutput(gpio: GPIO, reverse: Boolean): GpioPinPwmOutput {
         validate(gpio.gpioPin, gpio.signalType, gpio.pinMode)
         checkAvailability(gpio.gpioPin)

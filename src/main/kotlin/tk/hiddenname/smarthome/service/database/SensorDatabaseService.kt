@@ -37,11 +37,11 @@ class SensorDatabaseService(private val repo: SensorRepository) {
 
     fun update(id: Long, newSensor: Sensor): Sensor {
         return repo.findById(id)
-                .map { sensor: Sensor ->
-                    BeanUtils.copyProperties(newSensor, sensor, "id", "creationTimestamp", "gpio")
-                    sensor.gpio?.signalType = newSensor.gpio?.signalType
-                    repo.save(sensor)
-                }.orElseThrow { SensorNotFoundException(id) }
+            .map { sensor: Sensor ->
+                BeanUtils.copyProperties(newSensor, sensor, "id", "creationTimestamp", "gpio")
+                sensor.gpio?.signalType = newSensor.gpio?.signalType
+                repo.save(sensor)
+            }.orElseThrow { SensorNotFoundException(id) }
     }
 
     fun getNextId() = repo.getNextId()

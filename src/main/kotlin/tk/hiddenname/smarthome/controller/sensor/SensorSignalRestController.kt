@@ -10,8 +10,10 @@ import tk.hiddenname.smarthome.service.hardware.impl.digital.input.DigitalSensor
 
 @RestController
 @RequestMapping(value = ["/sensors/reading"])
-class SensorSignalRestController(private val dbService: SensorDatabaseService,
-                                 private val digitalService: DigitalSensorService) {
+class SensorSignalRestController(
+    private val dbService: SensorDatabaseService,
+    private val digitalService: DigitalSensorService
+) {
 
     @GetMapping(value = ["/digital/{id}"], produces = ["application/json"])
     fun getState(@PathVariable(name = "id", required = true) id: Long): DigitalState {

@@ -30,10 +30,14 @@ class SetPwmSignalProcessor : Processor {
             val device = dbService.getOne(processingObject.deviceId!!)
             val currSignal = service.getSignal(device.id, device.signalInversion).pwmSignal
             if (currSignal != processingObject.targetSignal) {
-                log.info(String.format(" * Pwm signal (%d) will be set to device with id (%d) on GPIO " +
-                        "(%d) for (%d) seconds",
+                log.info(
+                    String.format(
+                        " * Pwm signal (%d) will be set to device with id (%d) on GPIO " +
+                                "(%d) for (%d) seconds",
                         processingObject.targetSignal, device.id, device.gpio!!.gpioPin,
-                        processingObject.delay))
+                        processingObject.delay
+                    )
+                )
                 service.setSignal(device.id, device.signalInversion, processingObject.targetSignal!!)
                 if (processingObject.delay > 0) {
                     try {
@@ -44,14 +48,22 @@ class SetPwmSignalProcessor : Processor {
                     if (currSignal != null) {
                         service.setSignal(device.id, device.signalInversion, currSignal)
                     }
-                    log.info(String.format("* Processing complete! Pwm signal (%d) will be set to device " +
-                            "with id (%d) on GPIO (%d)",
-                            currSignal, device.id, device.gpio.gpioPin))
+                    log.info(
+                        String.format(
+                            "* Processing complete! Pwm signal (%d) will be set to device " +
+                                    "with id (%d) on GPIO (%d)",
+                            currSignal, device.id, device.gpio.gpioPin
+                        )
+                    )
                 }
             } else {
-                log.info(String.format(" * Pwm signal on device with id (%d) on gpio (%d) have been already " +
-                        "(%d). Nothing to change",
-                        device.id, device.gpio!!.gpioPin, processingObject.targetSignal))
+                log.info(
+                    String.format(
+                        " * Pwm signal on device with id (%d) on gpio (%d) have been already " +
+                                "(%d). Nothing to change",
+                        device.id, device.gpio!!.gpioPin, processingObject.targetSignal
+                    )
+                )
             }
         }.start()
     }
@@ -59,7 +71,7 @@ class SetPwmSignalProcessor : Processor {
     override fun register(processingObject: ProcessingObject) {
         this.processingObject = processingObject as SetPwmSignalObject
         val deviceId = processingObject.deviceId
-                ?: throw ProcessingObjectPropertyNotSpecifiedException("deviceId")
+            ?: throw ProcessingObjectPropertyNotSpecifiedException("deviceId")
 
         dbService.getOne(deviceId)
     }

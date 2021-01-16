@@ -2,8 +2,8 @@ package tk.hiddenname.smarthome.service.hardware.manager
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import tk.hiddenname.smarthome.exception.not_specified.GpioNotSpecifiedException
 import tk.hiddenname.smarthome.exception.exist.GpioPinBusyException
+import tk.hiddenname.smarthome.exception.not_specified.GpioNotSpecifiedException
 import tk.hiddenname.smarthome.exception.not_specified.SignalTypeNotSpecifiedException
 import tk.hiddenname.smarthome.exception.support.PinSignalSupportException
 import tk.hiddenname.smarthome.exception.support.UnsupportedSignalTypeException
@@ -15,9 +15,11 @@ import tk.hiddenname.smarthome.service.hardware.impl.digital.input.DigitalSensor
 import tk.hiddenname.smarthome.utils.gpio.GpioManager
 
 @Component
-class SensorManager(private val service: SensorDatabaseService,
-                    private val digitalService: DigitalSensorServiceImpl,
-                    private val gpioManager: GpioManager) {
+class SensorManager(
+    private val service: SensorDatabaseService,
+    private val digitalService: DigitalSensorServiceImpl,
+    private val gpioManager: GpioManager
+) {
 
     private val log = LoggerFactory.getLogger(SensorManager::class.java)
 
@@ -26,9 +28,9 @@ class SensorManager(private val service: SensorDatabaseService,
         log.debug("Creating sensor $sensor")
         sensor.gpio ?: throw GpioNotSpecifiedException()
         getService(sensor.gpio.signalType).save(
-                sensor.id,
-                sensor.gpio,
-                sensor.signalInversion
+            sensor.id,
+            sensor.gpio,
+            sensor.signalInversion
         )
     }
 
@@ -36,7 +38,7 @@ class SensorManager(private val service: SensorDatabaseService,
         log.debug("Deleting sensor $sensor")
         sensor.gpio ?: throw GpioNotSpecifiedException()
         getService(sensor.gpio.signalType).delete(
-                sensor.id
+            sensor.id
         )
     }
 

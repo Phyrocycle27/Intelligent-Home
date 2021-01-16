@@ -12,9 +12,11 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping(value = ["/devices/control"])
-class DeviceSignalRestController(private val dbService: DeviceDatabaseService,
-                                 private val digitalService: DigitalDeviceServiceImpl,
-                                 private val pwmService: PwmDeviceServiceImpl) {
+class DeviceSignalRestController(
+    private val dbService: DeviceDatabaseService,
+    private val digitalService: DigitalDeviceServiceImpl,
+    private val pwmService: PwmDeviceServiceImpl
+) {
 
     // ******************************** PWM *************************************************
     @GetMapping(value = ["/pwm/{id}"], produces = ["application/json"])
@@ -27,9 +29,11 @@ class DeviceSignalRestController(private val dbService: DeviceDatabaseService,
     fun setPwmSignal(@Valid @RequestBody(required = true) signal: PwmSignal): PwmSignal {
         val device = dbService.getOne(signal.hardwareId ?: throw HardwareIdNotSpecifiedException())
         signal.pwmSignal ?: throw SignalValueNotSpecifiedException()
-        return pwmService.setSignal(device.id,
-                device.signalInversion,
-                signal.pwmSignal)
+        return pwmService.setSignal(
+            device.id,
+            device.signalInversion,
+            signal.pwmSignal
+        )
     }
 
     // ***************************** DIGITAL **************************************************
@@ -43,8 +47,10 @@ class DeviceSignalRestController(private val dbService: DeviceDatabaseService,
     fun setState(@Valid @RequestBody(required = true) state: DigitalState): DigitalState {
         val device = dbService.getOne(state.hardwareId ?: throw HardwareIdNotSpecifiedException())
         state.digitalState ?: throw SignalValueNotSpecifiedException()
-        return digitalService.setState(device.id,
-                device.signalInversion,
-                state.digitalState)
+        return digitalService.setState(
+            device.id,
+            device.signalInversion,
+            state.digitalState
+        )
     }
 }

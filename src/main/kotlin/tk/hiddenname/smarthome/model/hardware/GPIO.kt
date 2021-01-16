@@ -14,16 +14,16 @@ import javax.validation.constraints.NotNull
 @Embeddable
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
 class GPIO(
-        @field:Max(30)
-        @field:Min(1)
-        @field:NotNull(message = "gpio pin should be specified")
-        val gpioPin: Int? = null,
+    @field:Max(30)
+    @field:Min(1)
+    @field:NotNull(message = "gpio pin should be specified")
+    val gpioPin: Int? = null,
 
-        @Enumerated(EnumType.STRING)
-        @field:NotNull(message = "gpio signal type shouldn't be null")
-        var signalType: SignalType? = null,
+    @Enumerated(EnumType.STRING)
+    @field:NotNull(message = "gpio signal type shouldn't be null")
+    var signalType: SignalType? = null,
 
-        @Enumerated(EnumType.STRING)
-        @field:JsonProperty(access = JsonProperty.Access.READ_ONLY)
-        var pinMode: GpioMode = GpioMode.NOT_SPECIFIED
+    @Enumerated(EnumType.STRING)
+    @field:JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    var pinMode: GpioMode = GpioMode.NOT_SPECIFIED
 )

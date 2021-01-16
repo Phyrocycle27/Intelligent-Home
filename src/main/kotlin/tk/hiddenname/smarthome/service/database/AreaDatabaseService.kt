@@ -24,9 +24,9 @@ class AreaDatabaseService(private val repo: AreaRepository) {
 
     fun update(id: Long, newArea: Area): Area {
         return repo.findById(id)
-                .map { area: Area ->
-                    BeanUtils.copyProperties(newArea, area, "id")
-                    repo.save(area)
-                }.orElseThrow { AreaNotFoundException(id) }
+            .map { area: Area ->
+                BeanUtils.copyProperties(newArea, area, "id")
+                repo.save(area)
+            }.orElseThrow { AreaNotFoundException(id) }
     }
 }

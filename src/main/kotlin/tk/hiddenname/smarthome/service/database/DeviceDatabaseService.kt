@@ -37,11 +37,11 @@ class DeviceDatabaseService(private val repo: DeviceRepository) {
 
     fun update(id: Long, newDevice: Device): Device {
         return repo.findById(id)
-                .map { device: Device ->
-                    BeanUtils.copyProperties(newDevice, device, "id", "creationTimestamp", "gpio")
-                    device.gpio?.signalType = newDevice.gpio?.signalType
-                    repo.save(device)
-                }.orElseThrow { DeviceNotFoundException(id) }
+            .map { device: Device ->
+                BeanUtils.copyProperties(newDevice, device, "id", "creationTimestamp", "gpio")
+                device.gpio?.signalType = newDevice.gpio?.signalType
+                repo.save(device)
+            }.orElseThrow { DeviceNotFoundException(id) }
     }
 
     fun getNextId() = repo.getNextId()

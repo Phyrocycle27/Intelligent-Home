@@ -4,16 +4,18 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import tk.hiddenname.smarthome.exception.exist.GpioPinBusyException
-import tk.hiddenname.smarthome.exception.support.PinSignalSupportException
 import tk.hiddenname.smarthome.exception.not_found.DeviceNotFoundException
+import tk.hiddenname.smarthome.exception.support.PinSignalSupportException
 import tk.hiddenname.smarthome.model.hardware.GPIO
 import tk.hiddenname.smarthome.model.signal.DigitalState
 import tk.hiddenname.smarthome.utils.gpio.GpioManager
 import tk.hiddenname.smarthome.utils.gpio.GpioSignalController
 
 @Service
-class DigitalDeviceServiceImpl(private val controller: GpioSignalController,
-                               private val gpioManager: GpioManager) : DigitalDeviceService {
+class DigitalDeviceServiceImpl(
+    private val controller: GpioSignalController,
+    private val gpioManager: GpioManager
+) : DigitalDeviceService {
 
     private val digitalOutputsToDeviceId: MutableMap<Long, GpioPinDigitalOutput> = HashMap()
     private val log = LoggerFactory.getLogger(DigitalDeviceService::class.java)

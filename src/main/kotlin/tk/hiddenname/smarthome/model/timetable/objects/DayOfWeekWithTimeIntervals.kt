@@ -33,4 +33,4 @@ class DayOfWeekWithTimeIntervals(
     @field:TimeIntervalConstraint(groups = [TimetableValidationGroup::class])
     @field:NotEmpty(message = "time_intervals list can not be empty", groups = [TimetableValidationGroup::class])
     val timeIntervals: MutableList<@Valid TimeInterval> = mutableListOf()
-): AbstractJpaPersistable()
+) : AbstractJpaPersistable()

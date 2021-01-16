@@ -9,11 +9,11 @@ import java.time.LocalDateTime
 @JsonNaming(SnakeCaseStrategy::class)
 @JsonPropertyOrder(value = ["timestamp", "status", "error", "fieldErrors"])
 class ValidationError(
-        timestamp: LocalDateTime,
-        status: Int,
-        error: String,
-        @Suppress("MemberVisibilityCanBePrivate")
-        val fieldErrors: MutableList<CustomFieldError> = mutableListOf()
+    timestamp: LocalDateTime,
+    status: Int,
+    error: String,
+    @Suppress("MemberVisibilityCanBePrivate")
+    val fieldErrors: MutableList<CustomFieldError> = mutableListOf()
 ) : ApiError(timestamp, status, error) {
     fun addFieldError(fieldError: CustomFieldError) = fieldErrors.add(fieldError)
 }

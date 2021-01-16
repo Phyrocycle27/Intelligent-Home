@@ -12,19 +12,25 @@ import tk.hiddenname.smarthome.model.signal.SignalType
 import tk.hiddenname.smarthome.service.database.AreaDatabaseService
 import tk.hiddenname.smarthome.service.database.SensorDatabaseService
 import tk.hiddenname.smarthome.service.hardware.manager.SensorManager
+import tk.hiddenname.smarthome.service.task.TaskService
 import java.time.LocalDateTime
 import javax.validation.Valid
 
 @RestController
 @RequestMapping(value = ["/sensors"])
-class SensorRestController(private val dbService: SensorDatabaseService,
-                           private val manager: SensorManager,
-                           private val areaDbService: AreaDatabaseService) {
+class SensorRestController(
+    private val dbService: SensorDatabaseService,
+    private val manager: SensorManager,
+    private val areaDbService: AreaDatabaseService,
+    private val taskService: TaskService
+) {
 
     @Suppress("DuplicatedCode")
     @GetMapping(value = ["/all"], produces = ["application/json"])
-    fun getAll(@RequestParam(name = "signalType", defaultValue = "", required = false) t: String,
-               @RequestParam(name = "areaId", defaultValue = "-1", required = false) areaId: Long):
+    fun getAll(
+        @RequestParam(name = "signalType", defaultValue = "", required = false) t: String,
+        @RequestParam(name = "areaId", defaultValue = "-1", required = false) areaId: Long
+    ):
             List<Sensor> {
 
         return if (t.isEmpty() && areaId == -1L) {
@@ -54,8 +60,10 @@ class SensorRestController(private val dbService: SensorDatabaseService,
     }
 
     @PutMapping(value = ["/one/{id}"], produces = ["application/json"])
-    fun update(@Valid @RequestBody(required = true) newSensor: Sensor,
-               @PathVariable id: Long): Sensor {
+    fun update(
+        @Valid @RequestBody(required = true) newSensor: Sensor,
+        @PathVariable id: Long
+    ): Sensor {
         val oldSensor = dbService.getOne(id)
 
         if (oldSensor.gpio?.signalType != newSensor.gpio?.signalType) {

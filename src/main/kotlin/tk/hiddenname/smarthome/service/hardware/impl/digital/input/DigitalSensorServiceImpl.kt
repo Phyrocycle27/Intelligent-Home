@@ -6,8 +6,8 @@ import com.pi4j.io.gpio.event.GpioPinListenerDigital
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import tk.hiddenname.smarthome.exception.exist.GpioPinBusyException
-import tk.hiddenname.smarthome.exception.support.PinSignalSupportException
 import tk.hiddenname.smarthome.exception.not_found.SensorNotFoundException
+import tk.hiddenname.smarthome.exception.support.PinSignalSupportException
 import tk.hiddenname.smarthome.model.hardware.GPIO
 import tk.hiddenname.smarthome.model.signal.DigitalState
 import tk.hiddenname.smarthome.service.task.impl.listener.Listener
@@ -44,8 +44,10 @@ class DigitalSensorServiceImpl(private val gpioManager: GpioManager) : DigitalSe
     }
 
     @Throws(SensorNotFoundException::class)
-    override fun addListener(listener: Listener, sensorId: Long,
-                             targetSignal: Boolean, reverse: Boolean): GpioPinListenerDigital {
+    override fun addListener(
+        listener: Listener, sensorId: Long,
+        targetSignal: Boolean, reverse: Boolean
+    ): GpioPinListenerDigital {
         val pin = digitalInputsToSensorId[sensorId] ?: throw SensorNotFoundException(sensorId)
         return run {
             val pinListener = GpioPinListenerDigital { event: GpioPinDigitalStateChangeEvent ->

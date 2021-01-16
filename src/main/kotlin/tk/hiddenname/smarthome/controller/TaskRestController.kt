@@ -13,8 +13,10 @@ import java.time.LocalDateTime
 
 @RestController
 @RequestMapping(value = ["/tasks"])
-class TaskRestController(private val dbService: TaskDatabaseService,
-                         private val taskService: TaskService) {
+class TaskRestController(
+    private val dbService: TaskDatabaseService,
+    private val taskService: TaskService
+) {
 
     companion object {
         @Suppress("unused")
@@ -28,8 +30,10 @@ class TaskRestController(private val dbService: TaskDatabaseService,
     fun getOne(@PathVariable(name = "id") id: Long) = dbService.getOne(id)
 
     @PostMapping(value = ["/create"], produces = ["application/json"])
-    fun create(@RequestBody(required = true) @Validated(value = [TaskValidationGroup::class, TimetableValidationGroup::class])
-               task: Task): Task {
+    fun create(
+        @RequestBody(required = true) @Validated(value = [TaskValidationGroup::class, TimetableValidationGroup::class])
+        task: Task
+    ): Task {
         task.id = dbService.getNextId()
         task.creationTimestamp = LocalDateTime.now()
         task.updateTimestamp = task.creationTimestamp

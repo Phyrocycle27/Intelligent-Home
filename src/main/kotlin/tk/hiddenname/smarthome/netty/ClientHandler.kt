@@ -26,8 +26,10 @@ class ClientHandler(private val client: Client) : ChannelInboundHandlerAdapter()
                 "PUT" -> {
                     val put = HttpPut(jsonRequest.getString("uri"))
                     if (jsonRequest.keySet().contains("request_body")) {
-                        val ent = StringEntity(jsonRequest.getJSONObject("request_body").toString(),
-                                StandardCharsets.UTF_8)
+                        val ent = StringEntity(
+                            jsonRequest.getJSONObject("request_body").toString(),
+                            StandardCharsets.UTF_8
+                        )
                         put.entity = ent
                     }
                     put.addHeader("Content-Type", "application/json")
@@ -36,8 +38,10 @@ class ClientHandler(private val client: Client) : ChannelInboundHandlerAdapter()
                 "POST" -> {
                     val post = HttpPost(jsonRequest.getString("uri"))
                     if (jsonRequest.keySet().contains("request_body")) {
-                        val ent = StringEntity(jsonRequest.getJSONObject("request_body").toString(),
-                                StandardCharsets.UTF_8)
+                        val ent = StringEntity(
+                            jsonRequest.getJSONObject("request_body").toString(),
+                            StandardCharsets.UTF_8
+                        )
                         post.entity = ent
                     }
                     post.addHeader("Content-Type", "application/json")
@@ -61,8 +65,8 @@ class ClientHandler(private val client: Client) : ChannelInboundHandlerAdapter()
                             } else responseBody = JSONObject()
                             responseBody.put("code", response.statusLine.statusCode)
                             val responseObj = JSONObject()
-                                    .put("type", "data")
-                                    .put("body", responseBody)
+                                .put("type", "data")
+                                .put("body", responseBody)
                             ch.writeAndFlush(responseObj.toString())
                         }
                     }

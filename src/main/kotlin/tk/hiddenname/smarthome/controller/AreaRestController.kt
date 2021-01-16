@@ -26,6 +26,8 @@ class AreaRestController(private val dbService: AreaDatabaseService) {
     }
 
     @PutMapping(value = ["/one/{id}"], produces = ["application/json"])
-    fun update(@Valid @RequestBody(required = true) newArea: Area,
-               @PathVariable(name = "id", required = true) id: Long) = dbService.update(id, newArea)
+    fun update(
+        @Valid @RequestBody(required = true) newArea: Area,
+        @PathVariable(name = "id", required = true) id: Long
+    ) = dbService.update(id, newArea)
 }

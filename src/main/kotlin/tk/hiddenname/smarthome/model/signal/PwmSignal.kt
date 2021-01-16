@@ -10,10 +10,10 @@ import javax.validation.constraints.NotNull
 @JsonNaming(SnakeCaseStrategy::class)
 @JsonPropertyOrder(value = ["hardwareId", "pwmSignal"])
 class PwmSignal(
-        @field:Max(1024)
-        @field:Min(0)
-        @field:NotNull(message = "pwm signal should be specified")
-        val pwmSignal: Int? = null
+    @field:Max(1024)
+    @field:Min(0)
+    @field:NotNull(message = "pwm signal should be specified")
+    val pwmSignal: Int? = null
 ) : Signal() {
 
     constructor (hardwareId: Long, pwmSignal: Int?) : this(pwmSignal) {

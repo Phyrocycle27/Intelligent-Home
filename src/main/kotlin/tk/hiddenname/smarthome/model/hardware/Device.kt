@@ -9,6 +9,8 @@ import javax.persistence.Table
 @Entity
 @Table(name = "device")
 @JsonNaming(SnakeCaseStrategy::class)
-@JsonPropertyOrder(value = ["id", "area_id", "name", "description", "creationTimestamp", "updateTimestamp",
-    "signalInversion"])
+@JsonPropertyOrder(
+    value = ["id", "area_id", "name", "description", "creationTimestamp", "updateTimestamp",
+        "signalInversion"]
+)
 class Device : Hardware()

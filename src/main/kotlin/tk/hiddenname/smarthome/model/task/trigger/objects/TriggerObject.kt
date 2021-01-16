@@ -9,10 +9,15 @@ import javax.persistence.*
 @Entity
 @Table(name = "trigger_object")
 @Inheritance(strategy = InheritanceType.JOINED)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "action", visible = true)
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.CUSTOM,
+    include = JsonTypeInfo.As.EXISTING_PROPERTY,
+    property = "action",
+    visible = true
+)
 @JsonTypeIdResolver(TriggerObjectTypeIdResolver::class)
 abstract class TriggerObject(
-        @Enumerated(EnumType.STRING)
-        @Column(updatable = false, nullable = false)
-        open val action: TriggerAction? = null
+    @Enumerated(EnumType.STRING)
+    @Column(updatable = false, nullable = false)
+    open val action: TriggerAction? = null
 ) : AbstractJpaPersistable()

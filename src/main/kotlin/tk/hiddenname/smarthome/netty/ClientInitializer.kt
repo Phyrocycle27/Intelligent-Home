@@ -16,7 +16,12 @@ import tk.hiddenname.smarthome.netty.security.CipherDecoder
 import tk.hiddenname.smarthome.netty.security.CipherEncoder
 import tk.hiddenname.smarthome.netty.security.Encryption
 
-class ClientInitializer(private val sslCtx: SslContext, private val HOST: String, private val PORT: Int, private val client: Client) : ChannelInitializer<SocketChannel>() {
+class ClientInitializer(
+    private val sslCtx: SslContext,
+    private val HOST: String,
+    private val PORT: Int,
+    private val client: Client
+) : ChannelInitializer<SocketChannel>() {
 
     private val log = LoggerFactory.getLogger(ClientInitializer::class.java.name)
 
@@ -24,11 +29,14 @@ class ClientInitializer(private val sslCtx: SslContext, private val HOST: String
         log.info("Channel initialization...")
         val pipeline = sch.pipeline()
         pipeline.addLast(sslCtx.newHandler(sch.alloc(), HOST, PORT))
-                .addLast("frameDecoder", LengthFieldBasedFrameDecoder(
-                        1048576, 0, 4, 0, 4))
-                .addLast("frameEncoder", LengthFieldPrepender(4))
-                .addLast("bytesDecoder", ByteArrayDecoder())
-                .addLast("bytesEncoder", ByteArrayEncoder())
+            .addLast(
+                "frameDecoder", LengthFieldBasedFrameDecoder(
+                    1048576, 0, 4, 0, 4
+                )
+            )
+            .addLast("frameEncoder", LengthFieldPrepender(4))
+            .addLast("bytesDecoder", ByteArrayDecoder())
+            .addLast("bytesEncoder", ByteArrayEncoder())
         pipeline.addLast("auth", object : ChannelInboundHandlerAdapter() {
             private val enc = Encryption()
             override fun channelActive(ctx: ChannelHandlerContext) {
@@ -50,8 +58,10 @@ class ClientInitializer(private val sslCtx: SslContext, private val HOST: String
                     // получать в ответ прошли мы аутентификацию или нет
                     try {
                         f.sync()
-                        ch.pipeline().addAfter("cipherEncoder", "idleHandler",
-                                IdleStateHandler(0, 0, 120))
+                        ch.pipeline().addAfter(
+                            "cipherEncoder", "idleHandler",
+                            IdleStateHandler(0, 0, 120)
+                        )
                         ch.pipeline().addAfter("idleHandler", "eventHandler", EventHandler())
                         ch.pipeline().addAfter("eventHandler", "sessionHandler", ClientHandler(client))
                         ch.pipeline().remove("auth")

@@ -24,6 +24,9 @@ class TimetableByDaysOfWeekAndTimeIntervals(
     @OneToMany(cascade = [CascadeType.ALL])
     @LazyCollection(LazyCollectionOption.FALSE)
     @field:DayOfWeekWithTimeIntervalsConstraint(groups = [TimetableValidationGroup::class])
-    @field:NotEmpty(message = "days_of_week_with_time_intervals list can not be empty", groups = [TimetableValidationGroup::class])
+    @field:NotEmpty(
+        message = "days_of_week_with_time_intervals list can not be empty",
+        groups = [TimetableValidationGroup::class]
+    )
     val daysOfWeekWithTimeIntervals: MutableList<@Valid DayOfWeekWithTimeIntervals> = mutableListOf()
 ) : Timetable()

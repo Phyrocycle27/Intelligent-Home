@@ -15,9 +15,10 @@ import tk.hiddenname.smarthome.service.task.impl.processor.ProcessorFactory
 @Component
 @Scope("prototype")
 class TaskManager(
-        val context: ApplicationContext,
-        val listenerFactory: ListenerFactory,
-        val processorFactory: ProcessorFactory) {
+    val context: ApplicationContext,
+    val listenerFactory: ListenerFactory,
+    val processorFactory: ProcessorFactory
+) {
 
     private lateinit var listener: EventListener
     lateinit var processor: EventProcessor

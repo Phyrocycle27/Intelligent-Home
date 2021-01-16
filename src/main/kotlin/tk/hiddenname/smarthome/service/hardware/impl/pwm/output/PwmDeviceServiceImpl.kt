@@ -3,16 +3,18 @@ package tk.hiddenname.smarthome.service.hardware.impl.pwm.output
 import com.pi4j.io.gpio.GpioPinPwmOutput
 import org.springframework.stereotype.Service
 import tk.hiddenname.smarthome.exception.exist.GpioPinBusyException
-import tk.hiddenname.smarthome.exception.support.PinSignalSupportException
 import tk.hiddenname.smarthome.exception.not_found.DeviceNotFoundException
+import tk.hiddenname.smarthome.exception.support.PinSignalSupportException
 import tk.hiddenname.smarthome.model.hardware.GPIO
 import tk.hiddenname.smarthome.model.signal.PwmSignal
 import tk.hiddenname.smarthome.utils.gpio.GpioManager
 import tk.hiddenname.smarthome.utils.gpio.GpioSignalController
 
 @Service
-class PwmDeviceServiceImpl(private val controller: GpioSignalController,
-                           private val gpioManager: GpioManager) : PwmDeviceService {
+class PwmDeviceServiceImpl(
+    private val controller: GpioSignalController,
+    private val gpioManager: GpioManager
+) : PwmDeviceService {
 
     private val map: MutableMap<Long, GpioPinPwmOutput> = HashMap()
 
