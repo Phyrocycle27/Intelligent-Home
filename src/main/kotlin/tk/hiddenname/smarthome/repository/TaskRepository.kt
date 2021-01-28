@@ -10,12 +10,13 @@ import tk.hiddenname.smarthome.model.task.trigger.TriggerAction
 @Repository
 interface TaskRepository : JpaRepository<Task, Long> {
 
-    @Query(value = "SELECT nextval('task_id_seq') + 1", nativeQuery = true)
+    @Query(value = "SELECT currval('task_id_seq') + 1", nativeQuery = true)
     fun getNextId(): Long
 
-    @Suppress("unused")
+    @Query(value = "SELECT nextval('task_id_seq')", nativeQuery = true)
+    fun startIdSequence()
+
     fun getAllByProcessingObjectsAction(processingAction: ProcessingAction): MutableList<Task>
 
-    @Suppress("unused")
     fun getAllByTriggerObjectsAction(triggerAction: TriggerAction): MutableList<Task>
 }

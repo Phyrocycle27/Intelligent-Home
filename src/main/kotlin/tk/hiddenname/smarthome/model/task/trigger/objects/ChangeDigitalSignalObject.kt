@@ -32,6 +32,6 @@ class ChangeDigitalSignalObject(
 ) : TriggerObject() {
 
     override fun toString(): String {
-        return "ChangeDigitalSignalObject(sensorId=$sensorId, delay=$delay, targetState=$targetState)"
+        return "ChangeDigitalSignalObject(id=$id sensorId=$sensorId, delay=$delay, targetState=$targetState)"
     }
 }

@@ -85,7 +85,7 @@ class DeviceRestController(
         manager.unregister(device)
         dbService.delete(id)
 
-        taskService.removeProcessorByDevice(id)
+        taskService.removeProcessorByDevice(device)
 
         return ResponseEntity.noContent().build()
     }

@@ -16,6 +16,9 @@ interface SensorRepository : JpaRepository<Sensor, Long> {
 
     fun findAllByGpioSignalTypeAndAreaId(type: @NotNull SignalType, areaId: @NotNull Long): List<Sensor>
 
-    @Query(value = "SELECT nextval('sensor_id_seq') + 1", nativeQuery = true)
+    @Query(value = "SELECT currval('sensor_id_seq') + 1", nativeQuery = true)
     fun getNextId(): Long
+
+    @Query(value = "SELECT nextval('sensor_id_seq')", nativeQuery = true)
+    fun startIdSequence()
 }

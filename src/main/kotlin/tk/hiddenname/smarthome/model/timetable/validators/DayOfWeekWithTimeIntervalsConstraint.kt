@@ -9,5 +9,6 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.RUNTIME)
 annotation class DayOfWeekWithTimeIntervalsConstraint(
     val message: String = "One day of the week repeats several times",
-    val groups: Array<KClass<out Any>> = []
+    val groups: Array<KClass<out Any>> = [],
+    val payload: Array<KClass<out Any>> = []
 )

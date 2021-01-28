@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component
 import tk.hiddenname.smarthome.model.task.Task
 import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
 import tk.hiddenname.smarthome.model.task.trigger.objects.TriggerObject
-import tk.hiddenname.smarthome.service.task.TaskService
 import tk.hiddenname.smarthome.service.task.impl.listener.EventListener
 import tk.hiddenname.smarthome.service.task.impl.listener.ListenerFactory
 import tk.hiddenname.smarthome.service.task.impl.processor.EventProcessor
@@ -37,7 +36,7 @@ class TaskManager(
         unregisterProcessors()
     }
 
-    private fun registerListeners(triggerObjects: List<TriggerObject>) {
+    private fun registerListeners(triggerObjects: List<TriggerObject?>) {
         listener.registerListeners(triggerObjects)
     }
 
@@ -54,7 +53,7 @@ class TaskManager(
         listener.unregisterListener(id)
     }
 
-    private fun registerProcessors(processingObjects: List<ProcessingObject>) {
+    private fun registerProcessors(processingObjects: List<ProcessingObject?>) {
         processor.registerProcessors(processingObjects)
     }
 

@@ -78,10 +78,10 @@ class SensorRestController(
     fun delete(@PathVariable(name = "id", required = true) id: Long): ResponseEntity<Any> {
         val sensor = dbService.getOne(id)
 
+        taskService.removeTriggerBySensorId(id)
+
         manager.unregister(sensor)
         dbService.delete(id)
-
-        taskService.removeTriggerBySensorId(id)
 
         return ResponseEntity.noContent().build()
     }

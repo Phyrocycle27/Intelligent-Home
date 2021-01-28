@@ -18,13 +18,15 @@ class TaskDatabaseService(private val repo: TaskRepository) {
         return repo.findById(id).orElseThrow { TaskNotFoundException(id) }
     }
 
-    fun create(newTask: Task): Task = repo.save(newTask)
+    fun save(newTask: Task): Task = repo.save(newTask)
 
     fun delete(id: Long) {
         repo.delete(repo.findById(id).orElseThrow { DeviceNotFoundException(id) })
     }
 
     fun getNextId() = repo.getNextId()
+
+    fun startIdSequence() = repo.startIdSequence()
 
     fun getAllByTriggerObjectsAction(triggerAction: TriggerAction) =
         repo.getAllByTriggerObjectsAction(triggerAction)

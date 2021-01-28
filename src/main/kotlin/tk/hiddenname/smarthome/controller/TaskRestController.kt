@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.*
 import tk.hiddenname.smarthome.model.task.Task
 import tk.hiddenname.smarthome.model.task.TaskValidationGroup
 import tk.hiddenname.smarthome.model.timetable.TimetableValidationGroup
+import tk.hiddenname.smarthome.service.database.ProcessingObjectDatabaseService
 import tk.hiddenname.smarthome.service.database.TaskDatabaseService
+import tk.hiddenname.smarthome.service.database.TriggerObjectDatabaseService
 import tk.hiddenname.smarthome.service.task.TaskService
 import java.time.LocalDateTime
 
@@ -15,6 +17,8 @@ import java.time.LocalDateTime
 @RequestMapping(value = ["/tasks"])
 class TaskRestController(
     private val dbService: TaskDatabaseService,
+    private val triggerObjectDBService: TriggerObjectDatabaseService,
+    private val processingObjectDBService: ProcessingObjectDatabaseService,
     private val taskService: TaskService
 ) {
 
@@ -37,6 +41,14 @@ class TaskRestController(
         task.id = dbService.getNextId()
         task.creationTimestamp = LocalDateTime.now()
         task.updateTimestamp = task.creationTimestamp
+
+        var nextProcessingObjectId = processingObjectDBService.getNextId()
+        task.processingObjects.forEach { it?.id = nextProcessingObjectId++ }
+
+        var nextTriggerObjectId = triggerObjectDBService.getNextId()
+        task.triggerObjects.forEach { it?.id = nextTriggerObjectId++ }
+
+        // TODO: setup the timetable ids
 
         return taskService.addTask(task)
     }
