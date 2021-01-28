@@ -19,11 +19,9 @@ class EventProcessor(
 
     private val processors = HashMap<Long, Processor>()
 
-    fun registerProcessors(processingObjects: List<ProcessingObject?>) {
+    fun registerProcessors(processingObjects: List<ProcessingObject>) {
         processingObjects.forEach {
-            if (it != null) {
-                registerProcessor(it)
-            }
+            registerProcessor(it)
         }
     }
 

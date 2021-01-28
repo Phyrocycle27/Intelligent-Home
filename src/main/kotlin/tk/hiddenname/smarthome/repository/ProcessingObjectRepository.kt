@@ -11,6 +11,6 @@ interface ProcessingObjectRepository : JpaRepository<ProcessingObject, Long> {
     @Query(value = "SELECT currval('processing_object_id_seq') + 1", nativeQuery = true)
     fun getNextId(): Long
 
-    @Query(value = "SELECT nextval('processing_object_id_seq')", nativeQuery = true)
-    fun startIdSequence()
+    @Query(value = "SELECT nextval('processing_object_id_seq') + 1", nativeQuery = true)
+    fun startIdSequence(): Long
 }

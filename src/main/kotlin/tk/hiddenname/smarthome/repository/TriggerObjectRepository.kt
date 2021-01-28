@@ -12,5 +12,5 @@ interface TriggerObjectRepository : JpaRepository<TriggerObject, Long> {
     fun getNextId(): Long
 
     @Query(value = "SELECT nextval('trigger_object_id_seq')", nativeQuery = true)
-    fun startIdSequence()
+    fun startIdSequence(): Long
 }

@@ -19,6 +19,6 @@ interface DeviceRepository : JpaRepository<Device, Long> {
     @Query(value = "SELECT currval('device_id_seq') + 1", nativeQuery = true)
     fun getNextId(): Long
 
-    @Query(value = "SELECT nextval('device_id_seq')", nativeQuery = true)
-    fun startIdSequence()
+    @Query(value = "SELECT nextval('device_id_seq') + 1", nativeQuery = true)
+    fun startIdSequence(): Long
 }

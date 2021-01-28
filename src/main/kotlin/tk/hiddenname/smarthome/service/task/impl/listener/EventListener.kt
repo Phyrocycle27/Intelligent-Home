@@ -20,11 +20,8 @@ class EventListener(
     private val flags = HashMap<Long, Boolean>()
     private val listeners = HashMap<Long, Listener>()
 
-    fun registerListeners(triggerObjects: List<TriggerObject?>) {
-        triggerObjects.forEach {
-            if (it != null) {
-                registerListener(it)
-            }
+    fun registerListeners(triggerObjects: List<TriggerObject>) {
+        triggerObjects.forEach { registerListener(it)
         }
     }
 

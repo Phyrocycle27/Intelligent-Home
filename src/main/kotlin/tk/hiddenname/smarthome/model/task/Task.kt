@@ -42,7 +42,7 @@ class Task(
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.FALSE)
     @field:NotEmpty(message = "trigger_objects list can not be empty", groups = [TaskValidationGroup::class])
-    val triggerObjects: MutableList<@Valid TriggerObject?> = mutableListOf(),
+    val triggerObjects: MutableList<@Valid TriggerObject> = mutableListOf(),
 
     @JoinTable(
         name = "task_to_processing_object",
@@ -52,7 +52,7 @@ class Task(
     @OneToMany(cascade = [CascadeType.ALL])
     @LazyCollection(LazyCollectionOption.FALSE)
     @field:NotEmpty(message = "processing_objects list can not be empty", groups = [TaskValidationGroup::class])
-    val processingObjects: MutableList<@Valid ProcessingObject?> = mutableListOf(),
+    val processingObjects: MutableList<@Valid ProcessingObject> = mutableListOf(),
 
     @field:Valid
     @OneToOne(cascade = [CascadeType.ALL])

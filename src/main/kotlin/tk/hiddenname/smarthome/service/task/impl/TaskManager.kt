@@ -36,7 +36,7 @@ class TaskManager(
         unregisterProcessors()
     }
 
-    private fun registerListeners(triggerObjects: List<TriggerObject?>) {
+    private fun registerListeners(triggerObjects: List<TriggerObject>) {
         listener.registerListeners(triggerObjects)
     }
 
@@ -53,7 +53,7 @@ class TaskManager(
         listener.unregisterListener(id)
     }
 
-    private fun registerProcessors(processingObjects: List<ProcessingObject?>) {
+    private fun registerProcessors(processingObjects: List<ProcessingObject>) {
         processor.registerProcessors(processingObjects)
     }
 

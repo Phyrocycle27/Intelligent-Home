@@ -1,6 +1,7 @@
 package tk.hiddenname.smarthome.service.database
 
 import org.springframework.data.domain.Sort
+import org.springframework.orm.jpa.JpaSystemException
 import org.springframework.stereotype.Service
 import tk.hiddenname.smarthome.exception.not_found.DeviceNotFoundException
 import tk.hiddenname.smarthome.exception.not_found.TaskNotFoundException
@@ -24,9 +25,13 @@ class TaskDatabaseService(private val repo: TaskRepository) {
         repo.delete(repo.findById(id).orElseThrow { DeviceNotFoundException(id) })
     }
 
-    fun getNextId() = repo.getNextId()
-
-    fun startIdSequence() = repo.startIdSequence()
+    fun getNextId(): Long {
+        return try {
+            repo.getNextId()
+        } catch (e: JpaSystemException) {
+            repo.startIdSequence()
+        }
+    }
 
     fun getAllByTriggerObjectsAction(triggerAction: TriggerAction) =
         repo.getAllByTriggerObjectsAction(triggerAction)

@@ -82,10 +82,10 @@ class DeviceRestController(
     fun delete(@PathVariable id: Long): ResponseEntity<Any> {
         val device = dbService.getOne(id)
 
+        taskService.removeProcessorByDevice(device)
+
         manager.unregister(device)
         dbService.delete(id)
-
-        taskService.removeProcessorByDevice(device)
 
         return ResponseEntity.noContent().build()
     }

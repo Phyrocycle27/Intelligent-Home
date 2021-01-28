@@ -58,7 +58,8 @@ case "`uname`" in
     # See https://developer.apple.com/library/mac/qa/qa1170/_index.html
     if [ -z "$JAVA_HOME" ]; then
       if [ -x "/usr/libexec/java_home" ]; then
-        export JAVA_HOME="`/usr/libexec/java_home`"
+        # shellcheck disable=SC2155
+        export JAVA_HOME="$(/usr/libexec/java_home)"
       else
         export JAVA_HOME="/Library/Java/Home"
       fi
@@ -68,7 +69,7 @@ esac
 
 if [ -z "$JAVA_HOME" ] ; then
   if [ -r /etc/gentoo-release ] ; then
-    JAVA_HOME=`java-config --jre-home`
+    JAVA_HOME=$(java-config --jre-home)
   fi
 fi
 
@@ -78,23 +79,23 @@ if [ -z "$M2_HOME" ] ; then
 
   # need this for relative symlinks
   while [ -h "$PRG" ] ; do
-    ls=`ls -ld "$PRG"`
-    link=`expr "$ls" : '.*-> \(.*\)$'`
+    ls=$(ls -ld "$PRG")
+    link=$(expr "$ls" : '.*-> \(.*\)$')
     if expr "$link" : '/.*' > /dev/null; then
       PRG="$link"
     else
-      PRG="`dirname "$PRG"`/$link"
+      PRG="$(dirname "$PRG")/$link"
     fi
   done
 
-  saveddir=`pwd`
+  saveddir=$(pwd)
 
-  M2_HOME=`dirname "$PRG"`/..
+  M2_HOME=$(dirname "$PRG")/..
 
   # make it fully qualified
   M2_HOME=`cd "$M2_HOME" && pwd`
 
-  cd "$saveddir"
+  cd "$saveddir" || exit
   # echo Using m2 at $M2_HOME
 fi
 
@@ -113,7 +114,7 @@ if $mingw ; then
   [ -n "$M2_HOME" ] &&
     M2_HOME="`(cd "$M2_HOME"; pwd)`"
   [ -n "$JAVA_HOME" ] &&
-    JAVA_HOME="`(cd "$JAVA_HOME"; pwd)`"
+    JAVA_HOME="`(cd "$JAVA_HOME" || exit; pwd)`"
   # TODO classpath?
 fi
 

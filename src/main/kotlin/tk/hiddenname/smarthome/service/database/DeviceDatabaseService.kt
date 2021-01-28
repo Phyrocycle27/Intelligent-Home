@@ -3,6 +3,7 @@ package tk.hiddenname.smarthome.service.database
 import org.slf4j.LoggerFactory
 import org.springframework.beans.BeanUtils
 import org.springframework.data.domain.Sort
+import org.springframework.orm.jpa.JpaSystemException
 import org.springframework.stereotype.Service
 import tk.hiddenname.smarthome.exception.not_found.DeviceNotFoundException
 import tk.hiddenname.smarthome.model.hardware.Device
@@ -44,9 +45,13 @@ class DeviceDatabaseService(private val repo: DeviceRepository) {
             }.orElseThrow { DeviceNotFoundException(id) }
     }
 
-    fun getNextId() = repo.getNextId()
-
-    fun startIdSequence() = repo.startIdSequence()
+    fun getNextId(): Long {
+        return try {
+            repo.getNextId()
+        } catch (e: JpaSystemException) {
+            repo.startIdSequence()
+        }
+    }
 
     fun delete(id: Long) {
         repo.delete(repo.findById(id).orElseThrow { DeviceNotFoundException(id) })

@@ -13,8 +13,8 @@ interface TaskRepository : JpaRepository<Task, Long> {
     @Query(value = "SELECT currval('task_id_seq') + 1", nativeQuery = true)
     fun getNextId(): Long
 
-    @Query(value = "SELECT nextval('task_id_seq')", nativeQuery = true)
-    fun startIdSequence()
+    @Query(value = "SELECT nextval('task_id_seq') + 1", nativeQuery = true)
+    fun startIdSequence(): Long
 
     fun getAllByProcessingObjectsAction(processingAction: ProcessingAction): MutableList<Task>
 

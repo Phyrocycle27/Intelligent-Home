@@ -1,7 +1,6 @@
 package tk.hiddenname.smarthome.service.hardware.manager
 
 import org.slf4j.LoggerFactory
-import org.springframework.orm.jpa.JpaSystemException
 import org.springframework.stereotype.Component
 import tk.hiddenname.smarthome.exception.not_specified.GpioNotSpecifiedException
 import tk.hiddenname.smarthome.exception.not_specified.SignalTypeNotSpecifiedException
@@ -59,16 +58,6 @@ class DeviceManager(
             } catch (e: PinSignalSupportException) {
                 log.warn(e.message)
             }
-        }
-        checkSensorIdSequence()
-    }
-
-    private fun checkSensorIdSequence() {
-        try {
-            service.getNextId()
-        } catch (e: JpaSystemException) {
-            log.warn(e.message)
-            service.startIdSequence()
         }
     }
 

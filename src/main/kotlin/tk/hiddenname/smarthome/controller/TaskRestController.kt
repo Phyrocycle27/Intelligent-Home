@@ -43,10 +43,10 @@ class TaskRestController(
         task.updateTimestamp = task.creationTimestamp
 
         var nextProcessingObjectId = processingObjectDBService.getNextId()
-        task.processingObjects.forEach { it?.id = nextProcessingObjectId++ }
+        task.processingObjects.forEach { it.id = nextProcessingObjectId++ }
 
         var nextTriggerObjectId = triggerObjectDBService.getNextId()
-        task.triggerObjects.forEach { it?.id = nextTriggerObjectId++ }
+        task.triggerObjects.forEach { it.id = nextTriggerObjectId++ }
 
         // TODO: setup the timetable ids
 

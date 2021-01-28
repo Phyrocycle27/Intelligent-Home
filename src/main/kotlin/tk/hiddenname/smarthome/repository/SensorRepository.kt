@@ -19,6 +19,6 @@ interface SensorRepository : JpaRepository<Sensor, Long> {
     @Query(value = "SELECT currval('sensor_id_seq') + 1", nativeQuery = true)
     fun getNextId(): Long
 
-    @Query(value = "SELECT nextval('sensor_id_seq')", nativeQuery = true)
-    fun startIdSequence()
+    @Query(value = "SELECT nextval('sensor_id_seq') + 1", nativeQuery = true)
+    fun startIdSequence(): Long
 }

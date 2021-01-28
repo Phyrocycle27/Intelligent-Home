@@ -1,5 +1,6 @@
 package tk.hiddenname.smarthome.service.database
 
+import org.springframework.orm.jpa.JpaSystemException
 import org.springframework.stereotype.Service
 import tk.hiddenname.smarthome.exception.not_found.ProcessingObjectNotFoundException
 import tk.hiddenname.smarthome.model.task.processing.objects.ProcessingObject
@@ -14,7 +15,11 @@ class ProcessingObjectDatabaseService(private val repo: ProcessingObjectReposito
 
     fun getAll(): List<ProcessingObject> = repo.findAll()
 
-    fun getNextId() = repo.getNextId()
-
-    fun startIdSequence() = repo.startIdSequence()
+    fun getNextId(): Long {
+        return try {
+            repo.getNextId()
+        } catch (e: JpaSystemException) {
+            repo.startIdSequence()
+        }
+    }
 }
